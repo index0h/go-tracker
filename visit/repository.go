@@ -10,7 +10,7 @@ type Repository interface {
 	FindClientID(sessionID uuid.Uuid) (clientID string, error)
 
 	// Find sessionID by clientID
-	FindSessionID(clientID string) (sessionID string, error)
+	FindSessionID(clientID string) (sessionID uuid.Uuid, error)
 
 	// Verify method MUST check that sessionID is not registered by another not empty clientID
 	Verify(sessionID uuid.Uuid, clientID string) (bool, error)
