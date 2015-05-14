@@ -2,7 +2,7 @@
 
 ELASTIC_TMP_PATH="/tmp/elastic.deb"
 
-curl -s -L https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.1.deb > $ELASTIC_TMP_PATH
+curl -s -L https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.5.2.deb > $ELASTIC_TMP_PATH
 
 sudo dpkg -i $ELASTIC_TMP_PATH
 

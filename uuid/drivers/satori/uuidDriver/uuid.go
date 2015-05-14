@@ -1,4 +1,4 @@
-package satori
+package uuidDriver
 
 import (
 	"github.com/index0h/go-tracker/uuid"

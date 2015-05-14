@@ -12,11 +12,11 @@ import (
 type Manager struct {
 	repository Repository
 	uuid       uuid.UuidMaker
-	logger     log.Logger
+	logger     *log.Logger
 }
 
 // Create new manager instance
-func NewManager(repository Repository, uuid uuid.UuidMaker, logger log.Logger) *Manager {
+func NewManager(repository Repository, uuid uuid.UuidMaker, logger *log.Logger) *Manager {
 	return &Manager{repository: repository, uuid: uuid, logger: logger}
 }
 
@@ -31,7 +31,7 @@ func (manager *Manager) Track(
 		if recoverError := recover(); recoverError != nil {
 			manager.logger.Panic(recoverError)
 
-			err = recoverError
+			err = errors.New("Something went wrong")
 		}
 	}()
 
@@ -43,7 +43,7 @@ func (manager *Manager) Track(
 
 	visit = entity.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, data, warnings)
 
-	return manager.repository.Insert(visit)
+	return visit, manager.repository.Insert(visit)
 }
 
 // Check tracking client id and session id
