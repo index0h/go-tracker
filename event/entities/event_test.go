@@ -1,10 +1,11 @@
 package entities
 
 import (
+	"testing"
+
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestNewEvent(t *testing.T) {

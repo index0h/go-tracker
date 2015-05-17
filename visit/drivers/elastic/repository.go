@@ -1,15 +1,16 @@
 package elastic
 
 import (
+	"errors"
+	"time"
+
 	"github.com/index0h/go-tracker/uuid"
 	"github.com/index0h/go-tracker/visit/entities"
 	elasticDriver "github.com/olivere/elastic"
-	"time"
-	"errors"
 )
 
 type Repository struct {
-	index *IndexService
+	index  *IndexService
 	client *elasticDriver.Client
 	uuid   uuid.Maker
 }

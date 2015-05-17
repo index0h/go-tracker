@@ -1,13 +1,14 @@
 package memoryDriver
 
 import (
+	"testing"
+
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
-	"github.com/index0h/go-tracker/visit/entities"
-	"github.com/stretchr/testify/mock"
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"github.com/index0h/go-tracker/visit"
+	"github.com/index0h/go-tracker/visit/entities"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestInterface(t *testing.T) {
@@ -98,7 +99,6 @@ func TestFindSessionIDCache(t *testing.T) {
 	nested.AssertExpectations(t)
 }
 
-
 func TestVerifyEmptySessionID(t *testing.T) {
 	checkRepository := NewRepository(new(NestedRepository), 10)
 
@@ -118,8 +118,7 @@ func TestVerifyEmptyClientID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-
-type NestedRepository struct{
+type NestedRepository struct {
 	mock.Mock
 }
 
@@ -137,7 +136,6 @@ func (repository *NestedRepository) FindSessionID(clientID string) (sessionID in
 
 	return sessionID, args.Error(1)
 }
-
 
 func (repository *NestedRepository) Verify(sessionID interfaceUUID.UUID, clientID string) (ok bool, err error) {
 	args := repository.Called(sessionID, clientID)

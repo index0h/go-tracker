@@ -1,10 +1,11 @@
 package elastic
 
 import (
-	"time"
 	"encoding/json"
-	"github.com/index0h/go-tracker/visit/entities"
+	"time"
+
 	"github.com/index0h/go-tracker/uuid"
+	"github.com/index0h/go-tracker/visit/entities"
 )
 
 type IndexService struct {
@@ -17,11 +18,11 @@ type IndexService struct {
 
 func NewIndexService(uuid uuid.Maker) *IndexService {
 	return &IndexService{
-		uuid: uuid,
+		uuid:            uuid,
 		timestampLayout: "2006-01-02 15:04:05",
-		namePrefix: "tracker-visit",
-		nameDateSuffix: "2006-01",
-		typeName: "visit",
+		namePrefix:      "tracker-visit",
+		nameDateSuffix:  "2006-01",
+		typeName:        "visit",
 	}
 }
 
@@ -83,10 +84,10 @@ func (index *IndexService) Body() string {
 func (index *IndexService) Marshal(visit *entities.Visit) (string, string, error) {
 	visitID := index.uuid.ToString(visit.VisitID())
 	model := mapVisit{
-		VisitID: visitID,
-		Timestamp: time.Unix(visit.Timestamp(), 0).Format(index.timestampLayout),
-		SessionID: index.uuid.ToString(visit.SessionID()),
-		ClientID: visit.ClientID(),
+		VisitID:     visitID,
+		Timestamp:   time.Unix(visit.Timestamp(), 0).Format(index.timestampLayout),
+		SessionID:   index.uuid.ToString(visit.SessionID()),
+		ClientID:    visit.ClientID(),
 		WarningList: visit.Warnings(),
 	}
 
@@ -113,7 +114,6 @@ func (index *IndexService) Unmarshal(data []byte) (visit *entities.Visit, err er
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return nil, err
 	}
-
 
 	return nil, nil
 }

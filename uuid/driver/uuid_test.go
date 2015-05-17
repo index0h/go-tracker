@@ -1,9 +1,10 @@
 package driver
 
 import (
+	"testing"
+
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestInterface(t *testing.T) {

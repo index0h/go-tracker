@@ -1,22 +1,23 @@
 package memoryDriver
 
 import (
+	"errors"
+
+	"github.com/golang/groupcache/lru"
 	"github.com/index0h/go-tracker/uuid"
 	"github.com/index0h/go-tracker/visit"
 	"github.com/index0h/go-tracker/visit/entities"
-	"github.com/golang/groupcache/lru"
-	"errors"
 )
 
 type Repository struct {
-	nested visit.Repository
+	nested          visit.Repository
 	sessionToClient *lru.Cache
 	clientToSession *lru.Cache
 }
 
 func NewRepository(nested visit.Repository, maxEntries int) *Repository {
 	return &Repository{
-		nested: nested,
+		nested:          nested,
 		sessionToClient: lru.New(int(maxEntries / 2)),
 		clientToSession: lru.New(int(maxEntries / 2)),
 	}
@@ -84,9 +85,9 @@ func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok b
 	}
 
 	var (
-		foundRaw interface{}
+		foundRaw       interface{}
 		foundSessionID uuid.UUID
-		foundClientID string
+		foundClientID  string
 	)
 
 	if foundRaw, ok = repository.sessionToClient.Get(sessionID); ok {

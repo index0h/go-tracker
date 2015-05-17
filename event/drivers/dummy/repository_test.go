@@ -1,13 +1,14 @@
 package dummy
 
 import (
+	"testing"
+
+	eventPackage "github.com/index0h/go-tracker/event"
+	eventEntities "github.com/index0h/go-tracker/event/entities"
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
-	eventEntities "github.com/index0h/go-tracker/event/entities"
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
 	"github.com/stretchr/testify/assert"
-	eventPackage "github.com/index0h/go-tracker/event"
-	"testing"
 )
 
 func TestInterface(t *testing.T) {

@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/index0h/go-tracker/visit"
 	elasticDriver "github.com/index0h/go-tracker/visit/drivers/elastic"
 	memoryDriver "github.com/index0h/go-tracker/visit/drivers/memory"
 	"github.com/olivere/elastic"
-	"log"
-	"os"
 )
 
 func main() {

@@ -1,17 +1,18 @@
 package entities
 
 import (
-	"github.com/index0h/go-tracker/uuid"
-	eventEntities "github.com/index0h/go-tracker/event/entities"
-	visitEntities "github.com/index0h/go-tracker/visit/entities"
 	"errors"
+
+	eventEntities "github.com/index0h/go-tracker/event/entities"
+	"github.com/index0h/go-tracker/uuid"
+	visitEntities "github.com/index0h/go-tracker/visit/entities"
 )
 
 type EventLog struct {
 	eventLogID uuid.UUID
-	timestamp int64
-	event *eventEntities.Event
-	visit *visitEntities.Visit
+	timestamp  int64
+	event      *eventEntities.Event
+	visit      *visitEntities.Visit
 }
 
 func NewEventLog(

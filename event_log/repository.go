@@ -1,9 +1,9 @@
 package event
 
 import (
+	eventLogEntities "github.com/index0h/go-tracker/event_log/entities"
 	"github.com/index0h/go-tracker/uuid"
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
-	eventLogEntities "github.com/index0h/go-tracker/event_log/entities"
 )
 
 type Repository interface {

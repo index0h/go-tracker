@@ -1,8 +1,9 @@
 package entities
 
 import (
-	"github.com/index0h/go-tracker/uuid"
 	"errors"
+
+	"github.com/index0h/go-tracker/uuid"
 )
 
 type Visit struct {

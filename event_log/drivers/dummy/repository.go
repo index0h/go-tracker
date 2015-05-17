@@ -1,10 +1,11 @@
 package dummy
 
 import (
-	"github.com/index0h/go-tracker/uuid"
-	eventLogEntities "github.com/index0h/go-tracker/event_log/entities"
-	visitEntities "github.com/index0h/go-tracker/visit/entities"
 	"errors"
+
+	eventLogEntities "github.com/index0h/go-tracker/event_log/entities"
+	"github.com/index0h/go-tracker/uuid"
+	visitEntities "github.com/index0h/go-tracker/visit/entities"
 )
 
 type Repository struct {

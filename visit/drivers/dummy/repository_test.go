@@ -1,11 +1,12 @@
 package dummy
 
 import (
+	"testing"
+
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/index0h/go-tracker/visit"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestInterface(t *testing.T) {

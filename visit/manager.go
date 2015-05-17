@@ -1,12 +1,12 @@
 package visit
 
 import (
+	"errors"
+	"log"
 	"time"
 
 	uuidInterface "github.com/index0h/go-tracker/uuid"
 	"github.com/index0h/go-tracker/visit/entities"
-	"log"
-	"errors"
 )
 
 type Manager struct {
