@@ -25,7 +25,7 @@ func NewRepository(nested visit.Repository, maxEntries int) *Repository {
 // Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
 func (repository *Repository) FindClientID(sessionID uuid.UUID) (clientID string, err error) {
 	if uuid.IsUUIDEmpty(sessionID) {
-		panic(errors.New("Empty sessioID is not allowed"))
+		return clientID, errors.New("Empty sessioID is not allowed")
 	}
 
 	if rawFound, ok := repository.sessionToClient.Get(sessionID); ok {
@@ -50,7 +50,7 @@ func (repository *Repository) FindClientID(sessionID uuid.UUID) (clientID string
 // Find sessionID by clientID. If it's not present in cache - will try to find by nested repository and cache result
 func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUID, err error) {
 	if clientID == "" {
-		panic(errors.New("Empty clientID is not allowed"))
+		return sessionID, errors.New("Empty clientID is not allowed")
 	}
 
 	if rawFound, ok := repository.clientToSession.Get(clientID); ok {
@@ -76,11 +76,11 @@ func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUI
 // If sessionID or clientID not found it'll run nested repository and cache result (if its ok)
 func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok bool, err error) {
 	if uuid.IsUUIDEmpty(sessionID) {
-		panic(errors.New("Empty sessioID is not allowed"))
+		return false, errors.New("Empty sessioID is not allowed")
 	}
 
 	if clientID == "" {
-		panic(errors.New("Empty clientID is not allowed"))
+		return false, errors.New("Empty clientID is not allowed")
 	}
 
 	var (
@@ -130,6 +130,10 @@ func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok b
 
 // Save visit to cache and run nested save
 func (repository *Repository) Insert(visit *entities.Visit) (err error) {
+	if visit == nil {
+		return errors.New("visit must be not nil")
+	}
+
 	repository.sessionToClient.Add(visit.SessionID(), visit.ClientID())
 
 	if visit.ClientID() != "" {

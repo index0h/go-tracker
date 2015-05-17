@@ -6,6 +6,10 @@ import (
 	"testing"
 )
 
+func TestInterface(t *testing.T) {
+	func(event interfaceUUID.Maker) {}(&UUID{})
+}
+
 func TestGenerateNotEmpty(t *testing.T) {
 	var emptyUUID interfaceUUID.UUID
 

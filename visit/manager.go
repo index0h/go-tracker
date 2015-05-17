@@ -41,7 +41,10 @@ func (manager *Manager) Track(
 		warnings = append(warnings, err.Error())
 	}
 
-	visit = entities.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, data, warnings)
+	visit, err = entities.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, data, warnings)
+	if err != nil {
+		return nil, err
+	}
 
 	return visit, manager.repository.Insert(visit)
 }

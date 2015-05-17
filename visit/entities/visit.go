@@ -22,31 +22,31 @@ func NewVisit(
 	clientID string,
 	data map[string]string,
 	warnings []string,
-) *Visit {
+) (*Visit, error) {
 	if uuid.IsUUIDEmpty(visitID) {
-		panic(errors.New("Empty visitID is not allowed"))
+		return nil, errors.New("Empty visitID is not allowed")
 	}
 
 	if uuid.IsUUIDEmpty(sessionID) {
-		panic(errors.New("Empty sessioID is not allowed"))
+		return nil, errors.New("Empty sessioID is not allowed")
 	}
 
-	addData := make(map[string]string, len(data))
+	copyData := make(map[string]string, len(data))
 	for key, value := range data {
-		addData[key] = value
+		copyData[key] = value
 	}
 
-	addWarnings := make([]string, len(warnings))
-	copy(addWarnings, warnings)
+	copyWarnings := make([]string, len(warnings))
+	copy(copyWarnings, warnings)
 
 	return &Visit{
 		visitID:   visitID,
 		timestamp: timestamp,
 		sessionID: sessionID,
 		clientID:  clientID,
-		data:      addData,
-		warnings:  addWarnings,
-	}
+		data:      copyData,
+		warnings:  copyWarnings,
+	}, nil
 }
 
 // Get visit id

@@ -3,54 +3,48 @@ package dummyDriver
 import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
+	"github.com/index0h/go-tracker/visit"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
+
+func TestInterface(t *testing.T) {
+	func(event visit.Repository) {}(&Repository{})
+}
 
 func TestFindClientIDEmpty(t *testing.T) {
 	checkRepository := Repository{}
 
-	defer func() {
-		if recoverError := recover(); recoverError == nil {
-			t.Error("Empty sessionID must panic")
-		}
-	}()
+	clientID, err := checkRepository.FindClientID(interfaceUUID.NewEmpty())
 
-	checkRepository.FindClientID(interfaceUUID.NewEmpty())
+	assert.Empty(t, clientID)
+	assert.NotNil(t, err)
 }
 
 func TestFindSessionIDEmpty(t *testing.T) {
 	checkRepository := Repository{}
 
-	defer func() {
-		if recoverError := recover(); recoverError == nil {
-			t.Error("Empty clientID must panic")
-		}
-	}()
+	sessionID, err := checkRepository.FindSessionID("")
 
-	checkRepository.FindSessionID("")
+	assert.Equal(t, interfaceUUID.NewEmpty(), sessionID)
+	assert.NotNil(t, err)
 }
 
 func TestVerifyEmptySessionID(t *testing.T) {
 	checkRepository := Repository{}
 
-	defer func() {
-		if recoverError := recover(); recoverError == nil {
-			t.Error("Empty clientID must panic")
-		}
-	}()
+	ok, err := checkRepository.Verify(interfaceUUID.NewEmpty(), "12345")
 
-	checkRepository.Verify(interfaceUUID.NewEmpty(), "12345")
+	assert.False(t, ok)
+	assert.NotNil(t, err)
 }
 
 func TestVerifyEmptyClientID(t *testing.T) {
 	uuid := new(uuidDriver.UUID)
 	checkRepository := Repository{}
 
-	defer func() {
-		if recoverError := recover(); recoverError == nil {
-			t.Error("Empty clientID must panic")
-		}
-	}()
+	ok, err := checkRepository.Verify(uuid.Generate(), "")
 
-	checkRepository.Verify(uuid.Generate(), "")
+	assert.False(t, ok)
+	assert.NotNil(t, err)
 }

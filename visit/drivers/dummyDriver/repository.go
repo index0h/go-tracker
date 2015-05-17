@@ -12,7 +12,7 @@ type Repository struct {
 // Find clientID by sessionID
 func (repository *Repository) FindClientID(sessionID uuid.UUID) (clientID string, err error) {
 	if uuid.IsUUIDEmpty(sessionID) {
-		panic(errors.New("Empty sessioID is not allowed"))
+		return clientID, errors.New("Empty sessioID is not allowed")
 	}
 
 	return clientID, err
@@ -21,7 +21,7 @@ func (repository *Repository) FindClientID(sessionID uuid.UUID) (clientID string
 // Find sessionID by clientID
 func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUID, err error) {
 	if clientID == "" {
-		panic(errors.New("Empty clientID is not allowed"))
+		return sessionID, errors.New("Empty clientID is not allowed")
 	}
 
 	return sessionID, err
@@ -30,11 +30,11 @@ func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUI
 // Verify method MUST check that sessionID is not registered by another not empty clientID
 func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok bool, err error) {
 	if uuid.IsUUIDEmpty(sessionID) {
-		panic(errors.New("Empty sessioID is not allowed"))
+		return false, errors.New("Empty sessioID is not allowed")
 	}
 
 	if clientID == "" {
-		panic(errors.New("Empty clientID is not allowed"))
+		return false, errors.New("Empty clientID is not allowed")
 	}
 
 	return true, err
