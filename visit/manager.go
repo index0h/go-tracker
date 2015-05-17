@@ -3,29 +3,29 @@ package visit
 import (
 	"time"
 
-	"github.com/index0h/go-tracker/uuid"
-	"github.com/index0h/go-tracker/visit/entity"
+	uuidInterface "github.com/index0h/go-tracker/uuid"
+	"github.com/index0h/go-tracker/visit/entities"
 	"log"
 	"errors"
 )
 
 type Manager struct {
 	repository Repository
-	uuid       uuid.UuidMaker
+	uuid       uuidInterface.Maker
 	logger     *log.Logger
 }
 
 // Create new manager instance
-func NewManager(repository Repository, uuid uuid.UuidMaker, logger *log.Logger) *Manager {
+func NewManager(repository Repository, uuid uuidInterface.Maker, logger *log.Logger) *Manager {
 	return &Manager{repository: repository, uuid: uuid, logger: logger}
 }
 
 // Track the visit
 func (manager *Manager) Track(
-	sessionID uuid.Uuid,
+	sessionID uuidInterface.UUID,
 	clientID string,
 	data map[string]string,
-) (visit *entity.Visit, err error) {
+) (visit *entities.Visit, err error) {
 	defer func() {
 		// In case of repository panic log error
 		if recoverError := recover(); recoverError != nil {
@@ -41,7 +41,7 @@ func (manager *Manager) Track(
 		warnings = append(warnings, err.Error())
 	}
 
-	visit = entity.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, data, warnings)
+	visit = entities.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, data, warnings)
 
 	return visit, manager.repository.Insert(visit)
 }
@@ -50,8 +50,8 @@ func (manager *Manager) Track(
 // If session id is empty - it'll be generated
 // If client id is NOT empty - manager check's if session is registered by another client id. In this case session id
 // will be regenerated.
-func (manager *Manager) verify(sessionID uuid.Uuid, clientID string) (uuid.Uuid, string, error) {
-	if uuid.IsUuidEmpty(sessionID) {
+func (manager *Manager) verify(sessionID uuidInterface.UUID, clientID string) (uuidInterface.UUID, string, error) {
+	if uuidInterface.IsUUIDEmpty(sessionID) {
 		return manager.uuid.Generate(), clientID, nil
 	}
 
@@ -65,5 +65,5 @@ func (manager *Manager) verify(sessionID uuid.Uuid, clientID string) (uuid.Uuid,
 		return sessionID, clientID, err
 	}
 
-	return manager.uuid.Generate(), clientID, errors.New("SessionID not apply registered by another ClientID")
+	return manager.uuid.Generate(), clientID, errors.New("SessionID registered by another ClientID")
 }

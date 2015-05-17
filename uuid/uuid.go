@@ -1,13 +1,15 @@
 package uuid
 
-type Uuid [16]byte
+type UUID [16]byte
 
-var emptyUuid Uuid
+var emptyUUID UUID
 
-func IsUuidEmpty(u Uuid) bool {
-	return (emptyUuid == u)
+// Check that uuid is empty
+func IsUUIDEmpty(u UUID) bool {
+	return (emptyUUID == u)
 }
 
-func NewEmpty() Uuid {
-	return Uuid{}
+// Creates empty uuid
+func NewEmpty() UUID {
+	return UUID{}
 }

@@ -1,11 +1,14 @@
-package entity
+package entities
 
-import "github.com/index0h/go-tracker/uuid"
+import (
+	"github.com/index0h/go-tracker/uuid"
+	"errors"
+)
 
 type Visit struct {
-	visitID   uuid.Uuid
+	visitID   uuid.UUID
 	timestamp int64
-	sessionID uuid.Uuid
+	sessionID uuid.UUID
 	clientID  string
 	data      map[string]string
 	warnings  []string
@@ -13,13 +16,21 @@ type Visit struct {
 
 // Create new visit instance
 func NewVisit(
-	visitID uuid.Uuid,
+	visitID uuid.UUID,
 	timestamp int64,
-	sessionID uuid.Uuid,
+	sessionID uuid.UUID,
 	clientID string,
 	data map[string]string,
 	warnings []string,
 ) *Visit {
+	if uuid.IsUUIDEmpty(visitID) {
+		panic(errors.New("Empty visitID is not allowed"))
+	}
+
+	if uuid.IsUUIDEmpty(sessionID) {
+		panic(errors.New("Empty sessioID is not allowed"))
+	}
+
 	addData := make(map[string]string, len(data))
 	for key, value := range data {
 		addData[key] = value
@@ -39,7 +50,7 @@ func NewVisit(
 }
 
 // Get visit id
-func (visit *Visit) VisitID() uuid.Uuid {
+func (visit *Visit) VisitID() uuid.UUID {
 	return visit.visitID
 }
 
@@ -49,7 +60,7 @@ func (visit *Visit) Timestamp() int64 {
 }
 
 // Get session id
-func (visit *Visit) SessionID() uuid.Uuid {
+func (visit *Visit) SessionID() uuid.UUID {
 	return visit.sessionID
 }
 

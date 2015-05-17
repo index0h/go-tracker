@@ -1,23 +1,21 @@
-package visitDriver
+package elasticDriver
 
 import (
 	"time"
 	"encoding/json"
-	"github.com/index0h/go-tracker/visit/entity"
+	"github.com/index0h/go-tracker/visit/entities"
 	"github.com/index0h/go-tracker/uuid"
 )
 
 type IndexService struct {
-	uuid uuid.UuidMaker
+	uuid            uuid.Maker
 	timestampLayout string
-
-	namePrefix string
-	nameDateSuffix string
-	typeName string
+	namePrefix      string
+	nameDateSuffix  string
+	typeName        string
 }
 
-func NewIndexService(uuid uuid.UuidMaker) *IndexService {
-
+func NewIndexService(uuid uuid.Maker) *IndexService {
 	return &IndexService{
 		uuid: uuid,
 		timestampLayout: "2006-01-02 15:04:05",
@@ -82,7 +80,7 @@ func (index *IndexService) Body() string {
 }`
 }
 
-func (index *IndexService) Marshal(visit *entity.Visit) (string, []byte, error) {
+func (index *IndexService) Marshal(visit *entities.Visit) (string, string, error) {
 	visitID := index.uuid.ToString(visit.VisitID())
 	model := mapVisit{
 		VisitID: visitID,
@@ -103,14 +101,14 @@ func (index *IndexService) Marshal(visit *entity.Visit) (string, []byte, error) 
 
 	result, err := json.Marshal(model)
 
-	return visitID, result, err
+	return visitID, string(result), err
 }
 
-func (index *IndexService) MarshalID(visitID uuid.Uuid) string {
+func (index *IndexService) MarshalID(visitID uuid.UUID) string {
 	return index.uuid.ToString(visitID)
 }
 
-func (index *IndexService) Unmarshal(data []byte) (visit *entity.Visit, err error) {
+func (index *IndexService) Unmarshal(data []byte) (visit *entities.Visit, err error) {
 	var raw mapVisit
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return nil, err
@@ -121,15 +119,15 @@ func (index *IndexService) Unmarshal(data []byte) (visit *entity.Visit, err erro
 }
 
 type mapVisit struct {
-	VisitID string `json:"_id"`
-	Timestamp string `json:"@timestamp"`
-	SessionID string `json:"sessionId"`
-	ClientID string `json:"clientId"`
-	DataList []mapDataList `json:"dataList"`
-	WarningList []string `json:"warningList"`
+	VisitID     string        `json:"_id"`
+	Timestamp   string        `json:"@timestamp"`
+	SessionID   string        `json:"sessionId"`
+	ClientID    string        `json:"clientId"`
+	DataList    []mapDataList `json:"dataList"`
+	WarningList []string      `json:"warningList"`
 }
 
 type mapDataList struct {
-	Key string `json:"key"`
+	Key   string `json:"key"`
 	Value string `json:"value"`
 }
