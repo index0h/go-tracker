@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/index0h/go-tracker/visit"
-	"github.com/index0h/go-tracker/visit/drivers/elasticDriver"
-	"github.com/index0h/go-tracker/visit/drivers/memoryDriver"
+	elasticDriver "github.com/index0h/go-tracker/visit/drivers/elastic"
+	memoryDriver "github.com/index0h/go-tracker/visit/drivers/memory"
 	"github.com/olivere/elastic"
 	"log"
 	"os"

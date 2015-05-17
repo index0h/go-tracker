@@ -2,7 +2,7 @@ package memoryDriver
 
 import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
-	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/index0h/go-tracker/visit/entities"
 	"github.com/stretchr/testify/mock"
 	"testing"

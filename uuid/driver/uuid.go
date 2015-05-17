@@ -1,4 +1,4 @@
-package uuidDriver
+package driver
 
 import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"

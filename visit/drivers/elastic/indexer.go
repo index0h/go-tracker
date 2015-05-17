@@ -1,4 +1,4 @@
-package elasticDriver
+package elastic
 
 import "github.com/index0h/go-tracker/visit/entities"
 

@@ -1,17 +1,17 @@
-package dummyDriver
+package dummy
 
 import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
-	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
-	eventEntities "github.com/index0h/go-tracker/event/entities"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
+	eventLogEntities "github.com/index0h/go-tracker/event_log/entities"
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
 	"github.com/stretchr/testify/assert"
-	eventPackage "github.com/index0h/go-tracker/event"
+	eventLogPackage "github.com/index0h/go-tracker/event_log"
 	"testing"
 )
 
 func TestInterface(t *testing.T) {
-	func(event eventPackage.Repository) {}(&Repository{})
+	func(event eventLogPackage.Repository) {}(&Repository{})
 }
 
 func TestFindAllByVisit(t *testing.T) {
@@ -53,7 +53,7 @@ func TestFindByIDEmpty(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	event := &eventEntities.Event{}
+	event := &eventLogEntities.EventLog{}
 	checkRepository := Repository{}
 
 	assert.Nil(t, checkRepository.Insert(event))
@@ -66,7 +66,7 @@ func TestInsertEmpty(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	event := &eventEntities.Event{}
+	event := &eventLogEntities.EventLog{}
 	checkRepository := Repository{}
 
 	assert.Nil(t, checkRepository.Update(event))

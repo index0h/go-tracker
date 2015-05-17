@@ -1,4 +1,4 @@
-package elasticDriver
+package elastic
 
 import (
 	"time"

@@ -4,7 +4,7 @@ import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	eventEntities "github.com/index0h/go-tracker/event/entities"
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
-	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/stretchr/testify/assert"
 	"time"
 	"testing"

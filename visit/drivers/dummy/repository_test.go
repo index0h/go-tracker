@@ -1,8 +1,8 @@
-package dummyDriver
+package dummy
 
 import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
-	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/index0h/go-tracker/visit"
 	"github.com/stretchr/testify/assert"
 	"testing"

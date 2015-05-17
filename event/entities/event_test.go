@@ -2,7 +2,7 @@ package entities
 
 import (
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
-	"github.com/index0h/go-tracker/uuid/drivers/uuidDriver"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
