@@ -25,9 +25,9 @@ func (repository *Repository) FindAllByVisit(
 	return result, err
 }
 
-func (repository *Repository) FindByID(eventId uuid.UUID) (result *eventLogEntities.EventLog, err error) {
-	if uuid.IsUUIDEmpty(eventId) {
-		return result, errors.New("Empty eventId is not allowed")
+func (repository *Repository) FindByID(eventID uuid.UUID) (result *eventLogEntities.EventLog, err error) {
+	if uuid.IsUUIDEmpty(eventID) {
+		return result, errors.New("Empty eventID is not allowed")
 	}
 
 	return result, err
