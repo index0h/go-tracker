@@ -11,22 +11,24 @@ import (
 )
 
 func BenchmarkCacheGet3(b *testing.B) {
-	CacheGet(3, b)
+	cacheGet(3, b)
 }
 
 func BenchmarkCacheGet5(b *testing.B) {
-	CacheGet(5, b)
+	cacheGet(5, b)
 }
 
 func BenchmarkCacheGet10(b *testing.B) {
-	CacheGet(10, b)
+	cacheGet(10, b)
 }
 
 func BenchmarkCacheGet15(b *testing.B) {
-	CacheGet(15, b)
+	cacheGet(15, b)
 }
 
-func CacheGet(countKeys uint, b *testing.B) {
+var symbols = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func cacheGet(countKeys uint, b *testing.B) {
 	b.StopTimer()
 
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -42,8 +44,6 @@ func CacheGet(countKeys uint, b *testing.B) {
 		_, _ = cache.Get(visits[i])
 	}
 }
-
-var symbols = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func generateVisits(countVisits uint, countData uint) ([]*visitEntities.Visit) {
 	result := make([]*visitEntities.Visit, countVisits)

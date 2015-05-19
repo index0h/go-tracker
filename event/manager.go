@@ -34,7 +34,7 @@ func (manager *Manager) FindAllByVisit(visit *visitEntities.Visit) (result []eve
 
 func (manager *Manager) FindByID(eventID uuidInterface.UUID) (result *eventEntities.Event, err error) {
 	if uuidInterface.IsUUIDEmpty(eventID) {
-		return result, errors.New("Empty eventId is not allowed")
+		return result, errors.New("Empty eventID is not allowed")
 	}
 
 	return manager.repository.FindByID(eventID)
