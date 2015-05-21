@@ -10,25 +10,25 @@ import (
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
 )
 
-func BenchmarkCacheGet3(b *testing.B) {
-	cacheGet(3, b)
+func BenchmarkFindAllByVisit3(b *testing.B) {
+	indexFindAllByVisit(3, b)
 }
 
-func BenchmarkCacheGet5(b *testing.B) {
-	cacheGet(5, b)
+func BenchmarkFindAllByVisit5(b *testing.B) {
+	indexFindAllByVisit(5, b)
 }
 
-func BenchmarkCacheGet10(b *testing.B) {
-	cacheGet(10, b)
+func BenchmarkFindAllByVisit10(b *testing.B) {
+	indexFindAllByVisit(10, b)
 }
 
-func BenchmarkCacheGet15(b *testing.B) {
-	cacheGet(15, b)
+func BenchmarkFindAllByVisit15(b *testing.B) {
+	indexFindAllByVisit(15, b)
 }
 
 var symbols = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func cacheGet(countKeys uint, b *testing.B) {
+func indexFindAllByVisit(countKeys uint, b *testing.B) {
 	b.StopTimer()
 
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -36,12 +36,12 @@ func cacheGet(countKeys uint, b *testing.B) {
 	events := generateEvents(uint(b.N), countKeys)
 	visits := generateVisits(uint(b.N), countKeys)
 
-	cache := NewCache()
-	cache.SetAll(events)
+	index := NewFilterIndex()
+	index.InsertAll(events)
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		_, _ = cache.Get(visits[i])
+		_, _ = index.FindAllByVisit(visits[i])
 	}
 }
 
