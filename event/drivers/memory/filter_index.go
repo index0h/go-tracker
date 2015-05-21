@@ -106,7 +106,7 @@ func (index *FilterIndex) Insert(event *eventEntities.Event) {
 
 func (index *FilterIndex) Update(eventFrom, eventTo *eventEntities.Event) (error) {
 	if eventFrom == eventTo {
-		return errors.New("events must be diferent")
+		return errors.New("events must be different")
 	}
 
 	index.Delete(eventFrom)
