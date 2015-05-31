@@ -81,8 +81,15 @@ func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok b
 		MustNot(elasticDriver.NewTermFilter(clientIDName, clientID)).
 		MustNot(elasticDriver.NewTermFilter(clientIDName, ""))
 
+	var indexName string
+	indexName, err = repository.indexName()
+
+	if err != nil {
+		return false, err
+	}
+
 	searchResult, err := repository.client.Search().
-		Index(repository.indexName()).
+		Index(indexName).
 		Query(&boolFilter).
 		Sort(timestampName, false).
 		From(0).Size(1).
@@ -101,16 +108,21 @@ func (repository *Repository) Insert(visit *entities.Visit) (err error) {
 		return errors.New("Empty visit is not allowed")
 	}
 
-	repository.client.CreateIndex(repository.indexName()).Body(repository.indexBody()).Do()
-
 	visitData, err := repository.visitToByte(visit)
 
 	if err != nil {
 		return err
 	}
 
+	var indexName string
+	indexName, err = repository.indexName()
+
+	if err != nil {
+		return err
+	}
+
 	_, err = repository.client.Index().
-		Index(repository.indexName()).
+		Index(indexName).
 		Type(typeName).
 		Id(repository.uuid.ToString(visit.VisitID())).
 		BodyString(string(visitData)).
@@ -119,15 +131,38 @@ func (repository *Repository) Insert(visit *entities.Visit) (err error) {
 	return err
 }
 
-// Return current index name
-func (repository *Repository) indexName() string {
-	return indexPrefix + time.Unix(time.Now().Unix(), 0).Format(indexSuffixLayout)
+// Return current index name and check that it exists
+func (repository *Repository) indexName() (result string, err error) {
+	result = indexPrefix + time.Unix(time.Now().Unix(), 0).Format(indexSuffixLayout)
+
+	if repository.currentIndexName != result {
+		exists, err := repository.client.IndexExists(result).Do()
+
+		if exists {
+			return result, nil
+		}
+
+		if err != nil {
+			return result, err
+		}
+
+		repository.currentIndexName = result
+	}
+
+	return result, nil
 }
 
 // Search one visit by filter term
 func (repository *Repository) searchOneVisitByTerm(term *elasticDriver.TermQuery) (visit *entities.Visit, err error) {
+	var indexName string
+	indexName, err = repository.indexName()
+
+	if err != nil {
+		return visit, err
+	}
+
 	searchResult, err := repository.client.Search().
-		Index(repository.indexName()).
+		Index(indexName).
 		Query(term).
 		Sort(timestampName, false).
 		From(0).Size(1).
@@ -156,6 +191,7 @@ func (repository *Repository) visitToByte(visit *entities.Visit) ([]byte, error)
 
 	dataFromVisit := visit.Data()
 	model.DataList = make([]mapDataList, len(dataFromVisit))
+
 	var i uint
 	for key, value := range dataFromVisit {
 		model.DataList[i] = mapDataList{Key: key, Value: value}
