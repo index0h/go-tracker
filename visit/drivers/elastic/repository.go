@@ -8,11 +8,10 @@ import (
 	"github.com/index0h/go-tracker/uuid"
 	"github.com/index0h/go-tracker/visit/entities"
 	elasticDriver "github.com/olivere/elastic"
-	"fmt"
 )
 
 const (
-	indexPrefix = "nya-"
+	indexPrefix = "track-visit-"
 	indexSuffixLayout = "2006-01"
 	typeName = "visit"
 	timestampLayout = "2006-01-02 15:04:05"
@@ -21,20 +20,6 @@ const (
 	clientIDName = "clientID"
 	timestampName = "@timestamp"
 )
-
-type mapVisit struct {
-	VisitID     string        `json:"_id"`
-	Timestamp   string        `json:"@timestamp"`
-	SessionID   string        `json:"sessionId"`
-	ClientID    string        `json:"clientId"`
-	DataList    []mapDataList `json:"dataList"`
-	WarningList []string      `json:"warningList"`
-}
-
-type mapDataList struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
 
 type Repository struct {
 	currentIndexName string
@@ -46,6 +31,7 @@ func NewRepository(client *elasticDriver.Client, uuid uuid.Maker) *Repository {
 	return &Repository{client: client, uuid: uuid}
 }
 
+// Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
 func (repository *Repository) FindClientID(sessionID uuid.UUID) (clientID string, err error) {
 	if uuid.IsUUIDEmpty(sessionID) {
 		return clientID, errors.New("Empty sessionID is not allowed")
@@ -62,6 +48,7 @@ func (repository *Repository) FindClientID(sessionID uuid.UUID) (clientID string
 	return visit.ClientID(), err
 }
 
+// Find sessionID by clientID. If it's not present in cache - will try to find by nested repository and cache result
 func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUID, err error) {
 	if clientID == "" {
 		return sessionID, errors.New("Empty clientID is not allowed")
@@ -71,8 +58,6 @@ func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUI
 
 	visit, err := repository.searchOneVisitByTerm(&termQuery)
 
-	fmt.Println(visit, "NYAA")
-
 	if (err != nil) || (visit == nil) {
 		return sessionID, err
 	}
@@ -80,6 +65,8 @@ func (repository *Repository) FindSessionID(clientID string) (sessionID uuid.UUI
 	return visit.SessionID(), err
 }
 
+// Verify method MUST check that sessionID is not registered by another not empty clientID
+// If sessionID or clientID not found it'll run nested repository and cache result (if its ok)
 func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok bool, err error) {
 	if uuid.IsUUIDEmpty(sessionID) {
 		return false, errors.New("Empty sessioID is not allowed")
@@ -108,6 +95,7 @@ func (repository *Repository) Verify(sessionID uuid.UUID, clientID string) (ok b
 	return true, nil
 }
 
+// Save visit
 func (repository *Repository) Insert(visit *entities.Visit) (err error) {
 	if visit == nil {
 		return errors.New("Empty visit is not allowed")
@@ -131,6 +119,12 @@ func (repository *Repository) Insert(visit *entities.Visit) (err error) {
 	return err
 }
 
+// Return current index name
+func (repository *Repository) indexName() string {
+	return indexPrefix + time.Unix(time.Now().Unix(), 0).Format(indexSuffixLayout)
+}
+
+// Search one visit by filter term
 func (repository *Repository) searchOneVisitByTerm(term *elasticDriver.TermQuery) (visit *entities.Visit, err error) {
 	searchResult, err := repository.client.Search().
 		Index(repository.indexName()).
@@ -150,10 +144,7 @@ func (repository *Repository) searchOneVisitByTerm(term *elasticDriver.TermQuery
 	return repository.rawToVisit(rawVisit)
 }
 
-func (repository *Repository) indexName() string {
-	return indexPrefix + time.Unix(time.Now().Unix(), 0).Format(indexSuffixLayout)
-}
-
+// Convert visit to bytes
 func (repository *Repository) visitToByte(visit *entities.Visit) ([]byte, error) {
 	model := mapVisit{
 		VisitID:     repository.uuid.ToString(visit.VisitID()),
@@ -175,6 +166,7 @@ func (repository *Repository) visitToByte(visit *entities.Visit) ([]byte, error)
 	return json.Marshal(model)
 }
 
+// Convert mapVisit to Visit instance
 func (repository *Repository) rawToVisit(rawVisit *mapVisit) (visit *entities.Visit, err error) {
 	timestamp, err := time.Parse(timestampLayout, rawVisit.Timestamp)
 
@@ -197,6 +189,7 @@ func (repository *Repository) rawToVisit(rawVisit *mapVisit) (visit *entities.Vi
 	)
 }
 
+// Return visit index mapping
 func (repository *Repository) indexBody() string {
 	return `{
   "mapping":{
@@ -219,4 +212,18 @@ func (repository *Repository) indexBody() string {
     }
   }
 }`
+}
+
+type mapVisit struct {
+	VisitID     string        `json:"_id"`
+	Timestamp   string        `json:"@timestamp"`
+	SessionID   string        `json:"sessionId"`
+	ClientID    string        `json:"clientId"`
+	DataList    []mapDataList `json:"dataList"`
+	WarningList []string      `json:"warningList"`
+}
+
+type mapDataList struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }

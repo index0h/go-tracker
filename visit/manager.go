@@ -26,15 +26,6 @@ func (manager *Manager) Track(
 	clientID string,
 	data map[string]string,
 ) (visit *entities.Visit, err error) {
-	defer func() {
-		// In case of repository panic log error
-		if recoverError := recover(); recoverError != nil {
-			manager.logger.Panic(recoverError)
-
-			err = errors.New("Something went wrong")
-		}
-	}()
-
 	var warnings []string
 
 	if sessionID, clientID, err = manager.verify(sessionID, clientID); err != nil {
