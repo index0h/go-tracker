@@ -5,8 +5,8 @@ import (
 	"log"
 
 	eventLogEntities "github.com/index0h/go-tracker/event_log/entities"
-	visitEntities "github.com/index0h/go-tracker/visit/entities"
 	uuidInterface "github.com/index0h/go-tracker/uuid"
+	visitEntities "github.com/index0h/go-tracker/visit/entities"
 )
 
 type Manager struct {

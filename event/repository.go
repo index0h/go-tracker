@@ -8,10 +8,10 @@ import (
 
 type Repository interface {
 	//
-	FindAll() (result []eventEntities.Event, err error)
+	FindAll() (result []*eventEntities.Event, err error)
 
 	//
-	FindAllByVisit(*visitEntities.Visit) (result []eventEntities.Event, err error)
+	FindAllByVisit(*visitEntities.Visit) (result []*eventEntities.Event, err error)
 
 	//
 	FindByID(uuid.UUID) (result *eventEntities.Event, err error)

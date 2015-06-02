@@ -1,9 +1,9 @@
 package visit
 
 import (
-	"testing"
 	"log"
 	"os"
+	"testing"
 
 	interfaceUUID "github.com/index0h/go-tracker/uuid"
 	uuidDriver "github.com/index0h/go-tracker/uuid/driver"

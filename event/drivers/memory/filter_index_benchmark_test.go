@@ -5,39 +5,39 @@ import (
 	"testing"
 	"time"
 
-	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	eventEntities "github.com/index0h/go-tracker/event/entities"
+	uuidDriver "github.com/index0h/go-tracker/uuid/driver"
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
 )
 
-func BenchmarkFindAllByVisit3(b *testing.B) {
-	indexFindAllByVisit(3, b)
+func BenchmarkFilterIndexFindAllByVisit3(b *testing.B) {
+	filterIndexFindAllByVisit(3, b)
 }
 
-func BenchmarkFindAllByVisit5(b *testing.B) {
-	indexFindAllByVisit(5, b)
+func BenchmarkFilterIndexFindAllByVisit5(b *testing.B) {
+	filterIndexFindAllByVisit(5, b)
 }
 
-func BenchmarkFindAllByVisit10(b *testing.B) {
-	indexFindAllByVisit(10, b)
+func BenchmarkFilterIndexFindAllByVisit10(b *testing.B) {
+	filterIndexFindAllByVisit(10, b)
 }
 
-func BenchmarkFindAllByVisit15(b *testing.B) {
-	indexFindAllByVisit(15, b)
+func BenchmarkFilterIndexFindAllByVisit15(b *testing.B) {
+	filterIndexFindAllByVisit(15, b)
 }
 
-var symbols = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var filterIndexSymbols = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func indexFindAllByVisit(countKeys uint, b *testing.B) {
+func filterIndexFindAllByVisit(countKeys uint, b *testing.B) {
 	b.StopTimer()
 
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	events := generateEvents(uint(b.N), countKeys)
-	visits := generateVisits(uint(b.N), countKeys)
+	events := filterIndexGenerateEvents(uint(b.N), countKeys)
+	visits := filterIndexGenerateVisits(uint(b.N), countKeys)
 
 	index := NewFilterIndex()
-	index.InsertAll(events)
+	index.Refresh(events)
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
@@ -45,13 +45,13 @@ func indexFindAllByVisit(countKeys uint, b *testing.B) {
 	}
 }
 
-func generateVisits(countVisits uint, countData uint) ([]*visitEntities.Visit) {
+func filterIndexGenerateVisits(countVisits uint, countData uint) []*visitEntities.Visit {
 	result := make([]*visitEntities.Visit, countVisits)
 
 	uuid := uuidDriver.UUID{}
 
 	for i := uint(0); i < countVisits; i++ {
-		data := generateKeyValue(countData)
+		data := filterIndexGenerateKeyValue(countData)
 
 		result[i], _ = visitEntities.NewVisit(uuid.Generate(), int64(0), uuid.Generate(), "", data, []string{})
 	}
@@ -59,13 +59,13 @@ func generateVisits(countVisits uint, countData uint) ([]*visitEntities.Visit) {
 	return result
 }
 
-func generateEvents(count uint, countData uint) ([]*eventEntities.Event) {
+func filterIndexGenerateEvents(count uint, countData uint) []*eventEntities.Event {
 	result := make([]*eventEntities.Event, count)
 
 	uuid := uuidDriver.UUID{}
 
 	for i := uint(0); i < count; i++ {
-		filters := generateKeyValue(countData)
+		filters := filterIndexGenerateKeyValue(countData)
 
 		result[i], _ = eventEntities.NewEvent(uuid.Generate(), true, map[string]string{}, filters)
 	}
@@ -73,28 +73,27 @@ func generateEvents(count uint, countData uint) ([]*eventEntities.Event) {
 	return result
 }
 
-func generateKeyValue(count uint) (result map[string]string) {
+func filterIndexGenerateKeyValue(count uint) (result map[string]string) {
 	result = make(map[string]string, count)
 
 	for i := uint(0); i < count; i++ {
-		result[generateString()] = generateString()
+		result[filterIndexGenerateString()] = filterIndexGenerateString()
 	}
 
 	return result
 }
 
-func generateString() string {
+func filterIndexGenerateString() string {
 	count := 5
 	result := make([]byte, count)
 
 	var number int
 
 	for i := 0; i < count; i++ {
-		number = rand.Intn(len(symbols) - 1)
+		number = rand.Intn(len(filterIndexSymbols) - 1)
 
-		result[i] = symbols[number]
+		result[i] = filterIndexSymbols[number]
 	}
 
 	return string(result)
 }
-

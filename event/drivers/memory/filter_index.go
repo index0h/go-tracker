@@ -1,13 +1,11 @@
 package memory
 
 import (
-	"sync"
-
+	"errors"
 	eventEntities "github.com/index0h/go-tracker/event/entities"
 	visitEntities "github.com/index0h/go-tracker/visit/entities"
-	"errors"
+	"sync"
 )
-
 
 type FilterIndex struct {
 	sync.RWMutex
@@ -15,11 +13,11 @@ type FilterIndex struct {
 	events map[string]map[string]map[*eventEntities.Event]uint
 }
 
-func NewFilterIndex() (*FilterIndex) {
+func NewFilterIndex() *FilterIndex {
 	return &FilterIndex{events: make(map[string]map[string]map[*eventEntities.Event]uint)}
 }
 
-func (index *FilterIndex) InsertAll(events []*eventEntities.Event) {
+func (index *FilterIndex) Refresh(events []*eventEntities.Event) {
 	tmpStorage := make(map[string]map[string]map[*eventEntities.Event]uint)
 
 	for _, event := range events {
@@ -51,6 +49,10 @@ func (index *FilterIndex) InsertAll(events []*eventEntities.Event) {
 }
 
 func (index *FilterIndex) FindAllByVisit(visit *visitEntities.Visit) (result []*eventEntities.Event, err error) {
+	if visit == nil {
+		return result, errors.New("visit must be not nil")
+	}
+
 	data := visit.Data()
 
 	foundEvents := map[*eventEntities.Event]uint{}
@@ -75,15 +77,18 @@ func (index *FilterIndex) FindAllByVisit(visit *visitEntities.Visit) (result []*
 
 	for event, count := range foundEvents {
 		if count == 0 {
-			_ = append(result, event)
+			result = append(result, event)
 		}
 	}
 
 	return result, nil
 }
 
+func (index *FilterIndex) Insert(event *eventEntities.Event) error {
+	if event == nil {
+		return errors.New("event must be not nil")
+	}
 
-func (index *FilterIndex) Insert(event *eventEntities.Event) {
 	filters := event.Filters()
 	length := uint(len(filters))
 
@@ -102,41 +107,61 @@ func (index *FilterIndex) Insert(event *eventEntities.Event) {
 	}
 
 	index.Unlock()
-}
-
-func (index *FilterIndex) Update(eventFrom, eventTo *eventEntities.Event) (error) {
-	if eventFrom == eventTo {
-		return errors.New("events must be different")
-	}
-
-	index.Delete(eventFrom)
-	index.Insert(eventTo)
 
 	return nil
 }
 
-func (index *FilterIndex) Delete(event *eventEntities.Event) {
+func (index *FilterIndex) Delete(event *eventEntities.Event) error {
+	if event == nil {
+		return errors.New("event must be not nil")
+	}
+
 	filters := event.Filters()
 
 	index.Lock()
 
 	for key, value := range filters {
-		if _, ok := index.events[key][value][event]; !ok {
+		if _, ok := index.events[key][value][event]; ok {
 			delete(index.events[key][value], event)
 		}
 
 		if len(index.events[key][value]) > 0 {
-			continue;
+			continue
 		}
 
 		delete(index.events[key], value)
 
 		if len(index.events[key]) > 0 {
-			continue;
+			continue
 		}
 
 		delete(index.events, key)
 	}
 
 	index.Unlock()
+
+	return nil
+}
+
+func (index *FilterIndex) Update(eventFrom, eventTo *eventEntities.Event) error {
+	if eventFrom == nil {
+		return errors.New("eventFrom must be not nil")
+	}
+
+	if eventTo == nil {
+		return errors.New("eventTo must be not nil")
+	}
+
+	if eventFrom == eventTo {
+		return errors.New("events must be different")
+	}
+
+	if eventFrom.EventID() != eventTo.EventID() {
+		return errors.New("events must have same EventID")
+	}
+
+	index.Delete(eventFrom)
+	index.Insert(eventTo)
+
+	return nil
 }

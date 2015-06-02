@@ -11,11 +11,11 @@ import (
 type Repository struct {
 }
 
-func (repository *Repository) FindAll() (result []eventEntities.Event, err error) {
+func (repository *Repository) FindAll() (result []*eventEntities.Event, err error) {
 	return result, err
 }
 
-func (repository *Repository) FindAllByVisit(visit *visitEntities.Visit) (result []eventEntities.Event, err error) {
+func (repository *Repository) FindAllByVisit(visit *visitEntities.Visit) (result []*eventEntities.Event, err error) {
 	if visit == nil {
 		return result, errors.New("visit must be not nil")
 	}

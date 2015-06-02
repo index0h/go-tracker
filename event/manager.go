@@ -5,8 +5,8 @@ import (
 	"log"
 
 	eventEntities "github.com/index0h/go-tracker/event/entities"
-	visitEntities "github.com/index0h/go-tracker/visit/entities"
 	uuidInterface "github.com/index0h/go-tracker/uuid"
+	visitEntities "github.com/index0h/go-tracker/visit/entities"
 )
 
 type Manager struct {
@@ -20,11 +20,11 @@ func NewManager(repository Repository, uuid uuidInterface.Maker, logger *log.Log
 	return &Manager{repository: repository, uuid: uuid, logger: logger}
 }
 
-func (manager *Manager) FindAll() (result []eventEntities.Event, err error) {
+func (manager *Manager) FindAll() (result []*eventEntities.Event, err error) {
 	return manager.repository.FindAll()
 }
 
-func (manager *Manager) FindAllByVisit(visit *visitEntities.Visit) (result []eventEntities.Event, err error) {
+func (manager *Manager) FindAllByVisit(visit *visitEntities.Visit) (result []*eventEntities.Event, err error) {
 	if visit == nil {
 		return result, errors.New("visit must be not nil")
 	}

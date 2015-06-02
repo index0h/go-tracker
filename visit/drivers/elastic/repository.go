@@ -1,8 +1,8 @@
 package elastic
 
 import (
-	"errors"
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/index0h/go-tracker/uuid"
@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	indexPrefix = "track-visit-"
+	indexPrefix       = "track-visit-"
 	indexSuffixLayout = "2006-01"
-	typeName = "visit"
-	timestampLayout = "2006-01-02 15:04:05"
-	visitIDName = "_id"
-	sessionIDName = "sessionID"
-	clientIDName = "clientID"
-	timestampName = "@timestamp"
+	typeName          = "visit"
+	timestampLayout   = "2006-01-02 15:04:05"
+	visitIDName       = "_id"
+	sessionIDName     = "sessionID"
+	clientIDName      = "clientID"
+	timestampName     = "@timestamp"
 )
 
 type Repository struct {
