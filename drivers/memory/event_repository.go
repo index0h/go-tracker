@@ -3,7 +3,7 @@ package memory
 import (
 	"errors"
 
-	indexes "./event_repository_indexes"
+	indexes "github.com/index0h/go-tracker/drivers/memory/event_repository_indexes"
 	"github.com/index0h/go-tracker/common"
 	"github.com/index0h/go-tracker/components"
 	"github.com/index0h/go-tracker/entities"
