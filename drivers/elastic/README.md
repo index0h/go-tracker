@@ -75,7 +75,7 @@ Event index
         "number_of_shards": 2
     },
     "mappings": {
-        "visit": {
+        "event": {
             "properties": {
                 "_source": {
                     "enabled": false
