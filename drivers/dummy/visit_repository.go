@@ -19,15 +19,6 @@ func (repository *VisitRepository) FindClientID(sessionID common.UUID) (clientID
 	return clientID, err
 }
 
-// Find sessionID by clientID
-func (repository *VisitRepository) FindSessionID(clientID string) (sessionID common.UUID, err error) {
-	if clientID == "" {
-		return sessionID, errors.New("Empty clientID is not allowed")
-	}
-
-	return sessionID, err
-}
-
 // Verify method MUST check that sessionID is not registered by another not empty clientID
 func (repository *VisitRepository) Verify(sessionID common.UUID, clientID string) (ok bool, err error) {
 	if common.IsUUIDEmpty(sessionID) {

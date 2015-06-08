@@ -22,15 +22,6 @@ func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_VisitRepository_FindSessionID_Empty(t *testing.T) {
-	checkVisitRepository := VisitRepository{}
-
-	sessionID, err := checkVisitRepository.FindSessionID("")
-
-	assert.Equal(t, common.UUID{}, sessionID)
-	assert.NotNil(t, err)
-}
-
 func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 

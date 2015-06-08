@@ -48,31 +48,6 @@ func (repository *VisitRepository) FindClientID(sessionID common.UUID) (clientID
 	return clientID, err
 }
 
-// Find sessionID by clientID. If it's not present in cache - will try to find by nested repository and cache result
-func (repository *VisitRepository) FindSessionID(clientID string) (sessionID common.UUID, err error) {
-	if clientID == "" {
-		return sessionID, errors.New("Empty clientID is not allowed")
-	}
-
-	if rawFound, ok := repository.clientToSession.Get(clientID); ok {
-		sessionID, _ = rawFound.(common.UUID)
-
-		return sessionID, nil
-	}
-
-	sessionID, err = repository.nested.FindSessionID(clientID)
-
-	if err == nil {
-		repository.clientToSession.Add(clientID, sessionID)
-
-		if !common.IsUUIDEmpty(sessionID) {
-			repository.sessionToClient.Add(sessionID, clientID)
-		}
-	}
-
-	return sessionID, err
-}
-
 // Verify method MUST check that sessionID is not registered by another not empty clientID
 // If sessionID or clientID not found it'll run nested repository and cache result (if its ok)
 func (repository *VisitRepository) Verify(sessionID common.UUID, clientID string) (ok bool, err error) {

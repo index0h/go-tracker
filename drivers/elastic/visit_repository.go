@@ -7,67 +7,39 @@ import (
 
 	"github.com/index0h/go-tracker/common"
 	"github.com/index0h/go-tracker/entities"
-	elasticDriver "github.com/olivere/elastic"
+	driver "github.com/olivere/elastic"
 )
 
-const (
-	indexPrefix       = "track-visit-"
-	indexSuffixLayout = "2006-01"
-	typeName          = "visit"
-	timestampLayout   = "2006-01-02 15:04:05"
-	visitIDName       = "_id"
-	sessionIDName     = "sessionID"
-	clientIDName      = "clientID"
-	timestampName     = "@timestamp"
-)
-
-type Repository struct {
-	currentIndexName string
-	client           *elasticDriver.Client
-	uuid             common.UUIDProviderInterface
+type VisitRepository struct {
+	typeName string
+	client   *driver.Client
+	uuid     common.UUIDProviderInterface
 }
 
-func NewRepository(client *elasticDriver.Client, uuid common.UUIDProviderInterface) *Repository {
-	return &Repository{client: client, uuid: uuid}
+func NewVisitRepository(client *driver.Client, uuid common.UUIDProviderInterface) *VisitRepository {
+	return &VisitRepository{typeName: "visit", client: client, uuid: uuid}
 }
 
 // Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
-func (repository *Repository) FindClientID(sessionID common.UUID) (clientID string, err error) {
+func (repository *VisitRepository) FindClientID(sessionID common.UUID) (clientID string, err error) {
 	if common.IsUUIDEmpty(sessionID) {
 		return clientID, errors.New("Empty sessionID is not allowed")
 	}
 
-	termQuery := elasticDriver.NewTermQuery(sessionIDName, repository.uuid.ToString(sessionID))
+	termQuery := driver.NewTermQuery("sessionId", repository.uuid.ToString(sessionID))
 
-	visit, err := repository.searchOneVisitByTerm(&termQuery)
+	visit, err := repository.find(&termQuery, 0, 1)
 
-	if (err != nil) || (visit == nil) {
+	if (err != nil) || (len(visit) == 0) {
 		return clientID, err
 	}
 
-	return visit.ClientID(), err
-}
-
-// Find sessionID by clientID. If it's not present in cache - will try to find by nested repository and cache result
-func (repository *Repository) FindSessionID(clientID string) (sessionID common.UUID, err error) {
-	if clientID == "" {
-		return sessionID, errors.New("Empty clientID is not allowed")
-	}
-
-	termQuery := elasticDriver.NewTermQuery(clientIDName, clientID)
-
-	visit, err := repository.searchOneVisitByTerm(&termQuery)
-
-	if (err != nil) || (visit == nil) {
-		return sessionID, err
-	}
-
-	return visit.SessionID(), err
+	return visit[0].ClientID(), err
 }
 
 // Verify method MUST check that sessionID is not registered by another not empty clientID
 // If sessionID or clientID not found it'll run nested repository and cache result (if its ok)
-func (repository *Repository) Verify(sessionID common.UUID, clientID string) (ok bool, err error) {
+func (repository *VisitRepository) Verify(sessionID common.UUID, clientID string) (ok bool, err error) {
 	if common.IsUUIDEmpty(sessionID) {
 		return false, errors.New("Empty sessioID is not allowed")
 	}
@@ -76,26 +48,14 @@ func (repository *Repository) Verify(sessionID common.UUID, clientID string) (ok
 		return false, errors.New("Empty clientID is not allowed")
 	}
 
-	boolFilter := elasticDriver.NewBoolFilter().
-		Must(elasticDriver.NewTermFilter(sessionIDName, repository.uuid.ToString(sessionID))).
-		MustNot(elasticDriver.NewTermFilter(clientIDName, clientID)).
-		MustNot(elasticDriver.NewTermFilter(clientIDName, ""))
+	boolFilter := driver.NewBoolFilter().
+		Must(driver.NewTermFilter("sessionId", repository.uuid.ToString(sessionID))).
+		MustNot(driver.NewTermFilter("clientId", clientID)).
+		MustNot(driver.NewTermFilter("clientId", ""))
 
-	var indexName string
-	indexName, err = repository.indexName()
+	visits, err := repository.find(&boolFilter, 0, 1)
 
-	if err != nil {
-		return false, err
-	}
-
-	searchResult, err := repository.client.Search().
-		Index(indexName).
-		Query(&boolFilter).
-		Sort(timestampName, false).
-		From(0).Size(1).
-		Do()
-
-	if (err != nil) || (searchResult.TotalHits() > 0) {
+	if (err != nil) || (len(visits) > 0) {
 		return false, err
 	}
 
@@ -103,7 +63,7 @@ func (repository *Repository) Verify(sessionID common.UUID, clientID string) (ok
 }
 
 // Save visit
-func (repository *Repository) Insert(visit *entities.Visit) (err error) {
+func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
 	if visit == nil {
 		return errors.New("Empty visit is not allowed")
 	}
@@ -114,16 +74,9 @@ func (repository *Repository) Insert(visit *entities.Visit) (err error) {
 		return err
 	}
 
-	var indexName string
-	indexName, err = repository.indexName()
-
-	if err != nil {
-		return err
-	}
-
 	_, err = repository.client.Index().
-		Index(indexName).
-		Type(typeName).
+		Index(repository.indexName()).
+		Type(repository.typeName).
 		Id(repository.uuid.ToString(visit.VisitID())).
 		BodyString(string(visitData)).
 		Do()
@@ -131,70 +84,67 @@ func (repository *Repository) Insert(visit *entities.Visit) (err error) {
 	return err
 }
 
-// Return current index name and check that it exists
-func (repository *Repository) indexName() (result string, err error) {
-	result = indexPrefix + time.Unix(time.Now().Unix(), 0).Format(indexSuffixLayout)
+func (repository *VisitRepository) find(term driver.Query, limit, offset uint) ([]*entities.Visit, error) {
+	request := repository.client.
+		Search().
+		Index(repository.indexName()).
+		Type(repository.typeName).
+		Sort("@timestamp", false)
 
-	if repository.currentIndexName != result {
-		exists, err := repository.client.IndexExists(result).Do()
+	if term != nil {
+		request = request.Query(term)
+	}
 
-		if exists {
-			return result, nil
-		}
+	if limit > 0 {
+		request = request.From(int(limit))
+	}
+
+	if offset > 0 {
+		request = request.Size(int(offset))
+	}
+
+	searchResult, err := request.Do()
+
+	if (err != nil) || (searchResult.TotalHits() == 0) {
+		return []*entities.Visit{}, err
+	}
+
+	result := make([]*entities.Visit, searchResult.TotalHits())
+
+	for i, hit := range searchResult.Hits.Hits {
+		visit, err := repository.byteToVisit(*hit.Source)
 
 		if err != nil {
-			return result, err
+			return []*entities.Visit{}, err
 		}
 
-		repository.currentIndexName = result
+		result[i] = visit
 	}
 
 	return result, nil
 }
 
-// Search one visit by filter term
-func (repository *Repository) searchOneVisitByTerm(term *elasticDriver.TermQuery) (visit *entities.Visit, err error) {
-	var indexName string
-	indexName, err = repository.indexName()
-
-	if err != nil {
-		return visit, err
-	}
-
-	searchResult, err := repository.client.Search().
-		Index(indexName).
-		Query(term).
-		Sort(timestampName, false).
-		From(0).Size(1).
-		Do()
-
-	if (err != nil) || (searchResult.TotalHits() == 0) {
-		return visit, err
-	}
-
-	rawVisit := new(mapVisit)
-
-	json.Unmarshal(*searchResult.Hits.Hits[0].Source, rawVisit)
-
-	return repository.rawToVisit(rawVisit)
+// Return current index name and check that it exists
+func (repository *VisitRepository) indexName() string {
+	return "tracker-" + time.Unix(time.Now().Unix(), 0).Format("2006-01")
 }
 
 // Convert visit to bytes
-func (repository *Repository) visitToByte(visit *entities.Visit) ([]byte, error) {
-	model := mapVisit{
+func (repository *VisitRepository) visitToByte(visit *entities.Visit) ([]byte, error) {
+	model := visitStructVisit{
 		VisitID:     repository.uuid.ToString(visit.VisitID()),
-		Timestamp:   time.Unix(visit.Timestamp(), 0).Format(timestampLayout),
+		Timestamp:   time.Unix(visit.Timestamp(), 0).Format("2006-01-02 15:04:05"),
 		SessionID:   repository.uuid.ToString(visit.SessionID()),
 		ClientID:    visit.ClientID(),
 		WarningList: visit.Warnings(),
 	}
 
 	dataFromVisit := visit.Data()
-	model.DataList = make([]mapDataList, len(dataFromVisit))
+	model.DataList = make([]visitStructHash, len(dataFromVisit))
 
 	var i uint
 	for key, value := range dataFromVisit {
-		model.DataList[i] = mapDataList{Key: key, Value: value}
+		model.DataList[i] = visitStructHash{Key: key, Value: value}
 
 		i++
 	}
@@ -202,64 +152,49 @@ func (repository *Repository) visitToByte(visit *entities.Visit) ([]byte, error)
 	return json.Marshal(model)
 }
 
-// Convert mapVisit to Visit instance
-func (repository *Repository) rawToVisit(rawVisit *mapVisit) (visit *entities.Visit, err error) {
-	timestamp, err := time.Parse(timestampLayout, rawVisit.Timestamp)
-
-	if err != nil {
-		return visit, err
+func (repository *VisitRepository) byteToVisit(data []byte) (*entities.Visit, error) {
+	if len(data) == 0 {
+		return nil, errors.New("Empty data is not allowed")
 	}
 
-	dataList := make(map[string]string, len(rawVisit.DataList))
-	for _, value := range rawVisit.DataList {
+	structVisit := new(visitStructVisit)
+
+	err := json.Unmarshal(data, structVisit)
+	if err != nil {
+		return nil, err
+	}
+
+	timestamp, err := time.Parse("2006-01-02 15:04:05", structVisit.Timestamp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	dataList := make(map[string]string, len(structVisit.DataList))
+	for _, value := range structVisit.DataList {
 		dataList[value.Key] = value.Value
 	}
 
 	return entities.NewVisit(
-		repository.uuid.ToBytes(rawVisit.VisitID),
+		repository.uuid.ToBytes(structVisit.VisitID),
 		timestamp.Unix(),
-		repository.uuid.ToBytes(rawVisit.SessionID),
-		rawVisit.ClientID,
+		repository.uuid.ToBytes(structVisit.SessionID),
+		structVisit.ClientID,
 		dataList,
-		rawVisit.WarningList,
+		structVisit.WarningList,
 	)
 }
 
-// Return visit index mapping
-func (repository *Repository) indexBody() string {
-	return `{
-  "mapping":{
-    "visit":{
-      "properties":{
-        "_id":{"index":"not_analyzed", "stored":true, "type":"string"},
-        "@timestamp":{"format":"YYYY-MM-DD HH:mm:ss", "type":"date"},
-        "clientId":{"index":"not_analyzed", "type":"string"},
-        "dataList":{
-          "include_in_parent":true,
-          "type":"nested",
-          "properties":{
-            "key":{"index":"not_analyzed", "type":"string"},
-            "value":{"index":"not_analyzed", "type":"string"}
-          }
-        },
-        "sessionId":{"index":"not_analyzed", "type":"string"},
-        "warnings":{"index":"not_analyzed", "type":"string"}
-      }
-    }
-  }
-}`
+type visitStructVisit struct {
+	VisitID     string            `json:"_id"`
+	Timestamp   string            `json:"@timestamp"`
+	SessionID   string            `json:"sessionId"`
+	ClientID    string            `json:"clientId"`
+	DataList    []visitStructHash `json:"dataList"`
+	WarningList []string          `json:"warningList"`
 }
 
-type mapVisit struct {
-	VisitID     string        `json:"_id"`
-	Timestamp   string        `json:"@timestamp"`
-	SessionID   string        `json:"sessionId"`
-	ClientID    string        `json:"clientId"`
-	DataList    []mapDataList `json:"dataList"`
-	WarningList []string      `json:"warningList"`
-}
-
-type mapDataList struct {
+type visitStructHash struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }

@@ -55,46 +55,6 @@ func TestFindClientIDCache(t *testing.T) {
 	nested.AssertExpectations(t)
 }
 
-func TestFindSessionIDEmpty(t *testing.T) {
-	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
-
-	sessionID, err := checkVisitRepository.FindSessionID("")
-
-	assert.Equal(t, common.UUID{}, sessionID)
-	assert.NotNil(t, err)
-}
-
-func TestFindSessionIDNew(t *testing.T) {
-	nested := new(NestedVisitRepository)
-	checkVisitRepository := NewVisitRepository(nested, 10)
-	expected := uuid.New().Generate()
-	clientID := "12345"
-
-	nested.On("FindSessionID", clientID).Return(expected, nil)
-
-	sessionID, err := checkVisitRepository.FindSessionID(clientID)
-
-	assert.Empty(t, err)
-	assert.Equal(t, expected, sessionID)
-	nested.AssertExpectations(t)
-}
-
-func TestFindSessionIDCache(t *testing.T) {
-	nested := new(NestedVisitRepository)
-	checkVisitRepository := NewVisitRepository(nested, 10)
-	expected := uuid.New().Generate()
-	clientID := "12345"
-
-	nested.On("FindSessionID", clientID).Return(expected, nil).Once()
-	checkVisitRepository.FindSessionID(clientID)
-
-	sessionID, err := checkVisitRepository.FindSessionID(clientID)
-
-	assert.Empty(t, err)
-	assert.Equal(t, expected, sessionID)
-	nested.AssertExpectations(t)
-}
-
 func TestVerifyEmptySessionID(t *testing.T) {
 	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
 
