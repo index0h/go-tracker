@@ -124,7 +124,7 @@ Event index
                             "type": "string"
                         }
                     }
-                },
+                }
             }
         }
     }
