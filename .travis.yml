@@ -10,7 +10,7 @@ install:
   - go get -t -v github.com/mattn/goveralls
 
 script:
-  - ./.coverage.sh
+  - bash ./.coverage.sh
 
 after_success:
   - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.cov -service=travis-ci
