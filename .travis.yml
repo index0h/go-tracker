@@ -5,8 +5,9 @@ go:
   - 1.4
 
 install:
-  - go get golang.org/x/tools/cmd/cover
-  - go get -v github.com/mattn/goveralls
+  - go get -t -v ./...
+  - go get -t -v golang.org/x/tools/cmd/cover
+  - go get -t -v github.com/mattn/goveralls
 
 script:
   - go test -cover ./... | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/''
