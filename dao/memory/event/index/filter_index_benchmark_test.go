@@ -1,4 +1,4 @@
-package event_repository_indexes
+package index
 
 import (
 	"math/rand"

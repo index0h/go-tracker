@@ -4,23 +4,23 @@ import (
 	"errors"
 
 	"github.com/index0h/go-tracker/dao"
-	indexes "github.com/index0h/go-tracker/dao/memory/event_repository_indexes"
+	"github.com/index0h/go-tracker/dao/memory/event/index"
 	"github.com/index0h/go-tracker/entities"
 )
 
 type Repository struct {
-	filteredEvents *indexes.FilterIndex
-	alwaysEvents   *indexes.ListIndex
-	allEvents      *indexes.MapIndex
+	filteredEvents *index.FilterIndex
+	alwaysEvents   *index.ListIndex
+	allEvents      *index.MapIndex
 
 	nested dao.EventRepositoryInterface
 }
 
 func NewRepository(nested dao.EventRepositoryInterface) (result *Repository, err error) {
 	result = &Repository{
-		filteredEvents: indexes.NewFilterIndex(),
-		alwaysEvents:   indexes.NewListIndex(),
-		allEvents:      indexes.NewMapIndex(),
+		filteredEvents: index.NewFilterIndex(),
+		alwaysEvents:   index.NewListIndex(),
+		allEvents:      index.NewMapIndex(),
 		nested:         nested,
 	}
 

@@ -1,4 +1,4 @@
-package event_repository_indexes
+package index
 
 import (
 	"testing"
@@ -7,108 +7,95 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_ListIndex_Refresh_Two(t *testing.T) {
+func TestMapIndexRefreshTwo(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
-	events := []*entities.Event{eventA, eventB}
+	pushEvents := []*entities.Event{eventA, eventB}
+	events := map[[16]byte]*entities.Event{eventA.EventID(): eventA, eventB.EventID(): eventB}
 
-	testIndex := NewListIndex()
-	testIndex.Refresh(events)
+	testIndex := NewMapIndex()
+	testIndex.Refresh(pushEvents)
 
-	commonEventSlicesEqual(t, events, testIndex.events)
+	assert.Equal(t, events, testIndex.events)
 }
 
-func Test_ListIndex_Refresh_RemoveEvents(t *testing.T) {
+func TestMapIndexRefreshRemoveEvents(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
 	events := []*entities.Event{eventA, eventB}
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Refresh(events)
 
-	newEvents := []*entities.Event{}
-	testIndex.Refresh(newEvents)
+	testIndex.Refresh([]*entities.Event{})
 
 	assert.Len(t, testIndex.events, 0)
 }
 
-func Test_ListIndex_Refresh_Copies(t *testing.T) {
-	eventA := commonGenerateNotFilteredEvent()
-	eventB := commonGenerateNotFilteredEvent()
-
-	events := []*entities.Event{eventA, eventB, eventA, eventB}
-	eventsClean := []*entities.Event{eventA, eventB}
-
-	testIndex := NewListIndex()
-	testIndex.Refresh(events)
-
-	commonEventSlicesEqual(t, eventsClean, testIndex.events)
-}
-
-func Test_ListIndex_FindAll_Empty(t *testing.T) {
-	testIndex := NewListIndex()
+func TestMapIndexFindAllEmpty(t *testing.T) {
+	testIndex := NewMapIndex()
 
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func Test_ListIndex_FindAll_WithData(t *testing.T) {
+func TestMapIndexFindAllWithData(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
 	events := []*entities.Event{eventA, eventB}
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Refresh(events)
 
 	commonEventSlicesEqual(t, events, testIndex.FindAll())
 }
 
-func Test_ListIndex_InsertEmpty(t *testing.T) {
-	testIndex := NewListIndex()
+func TestMapIndexInsertEmpty(t *testing.T) {
+	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Insert(nil))
 }
 
-func Test_ListIndex_Insert_TwoEvents(t *testing.T) {
+func TestMapIndexInsertTwoEvents(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
 	events := []*entities.Event{eventA, eventB}
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)
 	testIndex.Insert(eventB)
 
-	commonEventSlicesEqual(t, events, testIndex.events)
+	commonEventSlicesEqual(t, events, testIndex.FindAll())
 }
 
-func Test_ListIndex_Insert_Duplicates(t *testing.T) {
+func TestMapIndexInsertDuplicates(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
 	events := []*entities.Event{eventA, eventB}
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)
 	testIndex.Insert(eventA)
 	testIndex.Insert(eventB)
 	testIndex.Insert(eventB)
 
-	commonEventSlicesEqual(t, events, testIndex.events)
+	commonEventSlicesEqual(t, events, testIndex.FindAll())
 }
 
-func Test_ListIndex_Delete_Empty(t *testing.T) {
-	testIndex := NewListIndex()
+func TestMapIndexDeleteEmpty(t *testing.T) {
+	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Delete(nil))
 }
 
-func Test_ListIndex_Delete_EventByPointer(t *testing.T) {
+func TestMapIndexDeleteEventByPointer(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)
 
 	testIndex.Delete(eventA)
@@ -116,11 +103,11 @@ func Test_ListIndex_Delete_EventByPointer(t *testing.T) {
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func Test_ListIndex_DeleteE_ventByUUID(t *testing.T) {
+func TestMapIndexDeleteEventByUUID(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB, _ := entities.NewEvent(eventA.EventID(), true, map[string]string{}, map[string]string{})
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)
 
 	testIndex.Delete(eventB)
@@ -128,52 +115,51 @@ func Test_ListIndex_DeleteE_ventByUUID(t *testing.T) {
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func Test_ListIndex_Update_EmptyFrom(t *testing.T) {
+func TestMapIndexUpdateEmptyFrom(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Update(nil, eventA))
 }
 
-func Test_ListIndex_Update_EmptyTo(t *testing.T) {
+func TestMapIndexUpdateEmptyTo(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Update(eventA, nil))
 }
 
-func Test_ListIndex_Update_Equal(t *testing.T) {
+func TestMapIndexUpdateEqual(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Update(eventA, eventA))
 }
 
-func Test_ListIndex_Update_NotEqualUUID(t *testing.T) {
+func TestMapIndexUpdateNotEqualUUID(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Update(eventA, eventB))
 }
 
-func Test_ListIndex_Update(t *testing.T) {
+func TestMapIndexUpdate(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB, _ := entities.NewEvent(eventA.EventID(), false, map[string]string{}, map[string]string{})
 
-	testIndex := NewListIndex()
+	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)
 
 	assert.Len(t, testIndex.events, 1)
-	assert.Equal(t, eventA, testIndex.events[0])
+	assert.Equal(t, eventA, testIndex.events[eventA.EventID()])
 
 	assert.Nil(t, testIndex.Update(eventA, eventB))
 
 	assert.Len(t, testIndex.events, 1)
-	assert.Equal(t, eventB, testIndex.events[0])
-
+	assert.Equal(t, eventB, testIndex.events[eventB.EventID()])
 }
