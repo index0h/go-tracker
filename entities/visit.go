@@ -1,15 +1,11 @@
 package entities
 
-import (
-	"errors"
-
-	"github.com/index0h/go-tracker/common"
-)
+import "errors"
 
 type Visit struct {
-	visitID   common.UUID
+	visitID   [16]byte
 	timestamp int64
-	sessionID common.UUID
+	sessionID [16]byte
 	clientID  string
 	data      map[string]string
 	warnings  []string
@@ -17,18 +13,18 @@ type Visit struct {
 
 // Create new visit instance
 func NewVisit(
-	visitID common.UUID,
+	visitID [16]byte,
 	timestamp int64,
-	sessionID common.UUID,
+	sessionID [16]byte,
 	clientID string,
 	data map[string]string,
 	warnings []string,
 ) (*Visit, error) {
-	if common.IsUUIDEmpty(visitID) {
+	if visitID == [16]byte{} {
 		return nil, errors.New("Empty visitID is not allowed")
 	}
 
-	if common.IsUUIDEmpty(sessionID) {
+	if sessionID == [16]byte{} {
 		return nil, errors.New("Empty sessioID is not allowed")
 	}
 
@@ -51,7 +47,7 @@ func NewVisit(
 }
 
 // Get visit id
-func (visit *Visit) VisitID() common.UUID {
+func (visit *Visit) VisitID() [16]byte {
 	return visit.visitID
 }
 
@@ -61,7 +57,7 @@ func (visit *Visit) Timestamp() int64 {
 }
 
 // Get session id
-func (visit *Visit) SessionID() common.UUID {
+func (visit *Visit) SessionID() [16]byte {
 	return visit.sessionID
 }
 

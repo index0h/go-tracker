@@ -1,20 +1,16 @@
 package entities
 
-import (
-	"errors"
-
-	"github.com/index0h/go-tracker/common"
-)
+import "errors"
 
 type EventLog struct {
-	eventLogID common.UUID
+	eventLogID [16]byte
 	timestamp  int64
 	event      *Event
 	visit      *Visit
 }
 
-func NewEventLog(eventLogID common.UUID, timestamp int64, event *Event, visit *Visit) (*EventLog, error) {
-	if common.IsUUIDEmpty(eventLogID) {
+func NewEventLog(eventLogID [16]byte, timestamp int64, event *Event, visit *Visit) (*EventLog, error) {
+	if eventLogID == [16]byte{} {
 		return nil, errors.New("Empty eventLogID is not allowed")
 	}
 
@@ -29,7 +25,7 @@ func NewEventLog(eventLogID common.UUID, timestamp int64, event *Event, visit *V
 	return &EventLog{eventLogID: eventLogID, timestamp: timestamp, event: event, visit: visit}, nil
 }
 
-func (eventLog *EventLog) EventLogID() common.UUID {
+func (eventLog *EventLog) EventLogID() [16]byte {
 	return eventLog.eventLogID
 }
 

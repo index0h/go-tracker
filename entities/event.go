@@ -1,20 +1,16 @@
 package entities
 
-import (
-	"errors"
-
-	"github.com/index0h/go-tracker/common"
-)
+import "errors"
 
 type Event struct {
-	eventID common.UUID
+	eventID [16]byte
 	enabled bool
 	data    map[string]string
 	filters map[string]string
 }
 
-func NewEvent(eventID common.UUID, enabled bool, data map[string]string, filters map[string]string) (*Event, error) {
-	if common.IsUUIDEmpty(eventID) {
+func NewEvent(eventID [16]byte, enabled bool, data map[string]string, filters map[string]string) (*Event, error) {
+	if eventID == [16]byte{} {
 		return nil, errors.New("Empty eventID is not allowed")
 	}
 
@@ -31,7 +27,7 @@ func NewEvent(eventID common.UUID, enabled bool, data map[string]string, filters
 	return &Event{eventID: eventID, enabled: enabled, data: copyData, filters: copyFilters}, nil
 }
 
-func (event *Event) EventID() common.UUID {
+func (event *Event) EventID() [16]byte {
 	return event.eventID
 }
 

@@ -5,8 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/index0h/go-tracker/common"
-	"github.com/index0h/go-tracker/drivers/uuid"
+	"github.com/index0h/go-tracker/dao/uuid"
 	"github.com/index0h/go-tracker/entities"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -19,7 +18,7 @@ func Test_VisitManager_Track_Empty(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, error := checkManager.Track(common.UUID{}, "", map[string]string{})
+	visit, error := checkManager.Track([16]byte{}, "", map[string]string{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())
@@ -63,7 +62,7 @@ func Test_VisitManager_Track_ClientID(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, error := checkManager.Track(common.UUID{}, clientID, map[string]string{})
+	visit, error := checkManager.Track([16]byte{}, clientID, map[string]string{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())
@@ -126,22 +125,22 @@ type mockVisitRepository struct {
 	mock.Mock
 }
 
-func (repository *mockVisitRepository) FindClientID(sessionID common.UUID) (clientID string, err error) {
+func (repository *mockVisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
 	args := repository.Called(sessionID)
 
 	return args.String(0), args.Error(1)
 }
 
-func (repository *mockVisitRepository) FindSessionID(clientID string) (sessionID common.UUID, err error) {
+func (repository *mockVisitRepository) FindSessionID(clientID string) (sessionID [16]byte, err error) {
 	args := repository.Called(clientID)
 
 	raw := args.Get(0)
-	sessionID, _ = raw.(common.UUID)
+	sessionID, _ = raw.([16]byte)
 
 	return sessionID, args.Error(1)
 }
 
-func (repository *mockVisitRepository) Verify(sessionID common.UUID, clientID string) (ok bool, err error) {
+func (repository *mockVisitRepository) Verify(sessionID [16]byte, clientID string) (ok bool, err error) {
 	args := repository.Called(sessionID, clientID)
 
 	return args.Bool(0), args.Error(1)

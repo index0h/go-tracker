@@ -4,20 +4,20 @@ import (
 	"errors"
 	"log"
 
-	"github.com/index0h/go-tracker/common"
+	"github.com/index0h/go-tracker/dao"
 	"github.com/index0h/go-tracker/entities"
 )
 
 type EventManager struct {
-	repository EventRepositoryInterface
-	uuid       common.UUIDProviderInterface
+	repository dao.EventRepositoryInterface
+	uuid       dao.UUIDProviderInterface
 	logger     *log.Logger
 }
 
 // Create new manager instance
 func NewEventManager(
-	repository EventRepositoryInterface,
-	uuid common.UUIDProviderInterface,
+	repository dao.EventRepositoryInterface,
+	uuid dao.UUIDProviderInterface,
 	logger *log.Logger,
 ) *EventManager {
 	return &EventManager{repository: repository, uuid: uuid, logger: logger}
@@ -35,8 +35,8 @@ func (manager *EventManager) FindAllByVisit(visit *entities.Visit) (result []*en
 	return manager.repository.FindAllByVisit(visit)
 }
 
-func (manager *EventManager) FindByID(eventID common.UUID) (result *entities.Event, err error) {
-	if common.IsUUIDEmpty(eventID) {
+func (manager *EventManager) FindByID(eventID [16]byte) (result *entities.Event, err error) {
+	if eventID == [16]byte{} {
 		return result, errors.New("Empty eventID is not allowed")
 	}
 

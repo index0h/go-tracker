@@ -3,8 +3,7 @@ package entities
 import (
 	"testing"
 
-	"github.com/index0h/go-tracker/common"
-	"github.com/index0h/go-tracker/drivers/uuid"
+	"github.com/index0h/go-tracker/dao/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +17,7 @@ func Test_Event_NewEvent(t *testing.T) {
 }
 
 func Test_Event_NewEvent_EmptyEventID(t *testing.T) {
-	visit, err := NewEvent(common.UUID{}, true, map[string]string{}, map[string]string{})
+	visit, err := NewEvent([16]byte{}, true, map[string]string{}, map[string]string{})
 
 	assert.Nil(t, visit)
 	assert.NotNil(t, err)
