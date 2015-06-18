@@ -1,5 +1,8 @@
 language: go
 
+services:
+  - elasticsearch
+
 go:
   - 1.3
   - 1.4
@@ -9,6 +12,9 @@ install:
   - go get -t -v -u github.com/golang/lint/golint
   - go get -t -v github.com/mattn/goveralls
   - go get -t -v ./...
+
+before_script:
+  - sleep 10
 
 script:
   - bash ./.test.sh
