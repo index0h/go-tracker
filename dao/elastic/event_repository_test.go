@@ -73,6 +73,17 @@ func Test_EventRepository_FindAllByVisit_RealVisit(t *testing.T) {
 	eventRepository_EventSlicesEqual(t, events, foundEvents)
 }
 
+func Test_EventRepository_FindAllByVisit_NoEventsForVisit(t *testing.T) {
+	_, repository := eventRepository_CreateRepository()
+
+	visit := eventRepository_GenerateVisit(map[string]string{"A": "A", "B": "B"})
+
+	foundEvents, err := repository.FindAllByVisit(visit)
+
+	assert.Nil(t, err)
+	assert.Empty(t, foundEvents)
+}
+
 func Test_EventRepository_FindAll_WithData(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 

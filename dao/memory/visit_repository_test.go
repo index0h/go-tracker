@@ -22,7 +22,7 @@ func Test_VisitRepository_NewVisitRepository_EmptyClient(t *testing.T) {
 }
 
 func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
-	checkVisitRepository, _ := NewVisitRepository(new(NestedVisitRepository), 10)
+	checkVisitRepository, _ := NewVisitRepository(new(nestedVisitRepository), 10)
 
 	clientID, err := checkVisitRepository.FindClientID([16]byte{})
 
@@ -31,7 +31,7 @@ func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 }
 
 func Test_VisitRepository_FindClientID_New(t *testing.T) {
-	nested := new(NestedVisitRepository)
+	nested := new(nestedVisitRepository)
 	checkVisitRepository, _ := NewVisitRepository(nested, 10)
 	expected := "12345"
 	sessionID := uuid.New().Generate()
@@ -46,7 +46,7 @@ func Test_VisitRepository_FindClientID_New(t *testing.T) {
 }
 
 func Test_VisitRepository_FindClientID_Cache(t *testing.T) {
-	nested := new(NestedVisitRepository)
+	nested := new(nestedVisitRepository)
 	checkVisitRepository, _ := NewVisitRepository(nested, 10)
 	expected := "12345"
 	sessionID := uuid.New().Generate()
@@ -61,8 +61,24 @@ func Test_VisitRepository_FindClientID_Cache(t *testing.T) {
 	nested.AssertExpectations(t)
 }
 
+func Test_VisitRepository_Verify(t *testing.T) {
+	nested := new(nestedVisitRepository)
+	checkVisitRepository, _ := NewVisitRepository(nested, 10)
+
+	sessionID := uuid.New().Generate()
+	clientID := "12345"
+
+	nested.On("Verify", sessionID, clientID).Return(true, nil)
+
+	ok, err := checkVisitRepository.Verify(sessionID, clientID)
+
+	assert.True(t, ok)
+	assert.Nil(t, err)
+	nested.AssertExpectations(t)
+}
+
 func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
-	checkVisitRepository, _ := NewVisitRepository(new(NestedVisitRepository), 10)
+	checkVisitRepository, _ := NewVisitRepository(new(nestedVisitRepository), 10)
 
 	ok, err := checkVisitRepository.Verify([16]byte{}, "12345")
 
@@ -71,7 +87,7 @@ func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
-	checkVisitRepository, _ := NewVisitRepository(new(NestedVisitRepository), 10)
+	checkVisitRepository, _ := NewVisitRepository(new(nestedVisitRepository), 10)
 
 	ok, err := checkVisitRepository.Verify(uuid.New().Generate(), "")
 
@@ -79,17 +95,17 @@ func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-type NestedVisitRepository struct {
+type nestedVisitRepository struct {
 	mock.Mock
 }
 
-func (repository *NestedVisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
+func (repository *nestedVisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
 	args := repository.Called(sessionID)
 
 	return args.String(0), args.Error(1)
 }
 
-func (repository *NestedVisitRepository) FindSessionID(clientID string) (sessionID [16]byte, err error) {
+func (repository *nestedVisitRepository) FindSessionID(clientID string) (sessionID [16]byte, err error) {
 	args := repository.Called(clientID)
 
 	raw := args.Get(0)
@@ -98,13 +114,13 @@ func (repository *NestedVisitRepository) FindSessionID(clientID string) (session
 	return sessionID, args.Error(1)
 }
 
-func (repository *NestedVisitRepository) Verify(sessionID [16]byte, clientID string) (ok bool, err error) {
+func (repository *nestedVisitRepository) Verify(sessionID [16]byte, clientID string) (ok bool, err error) {
 	args := repository.Called(sessionID, clientID)
 
 	return args.Bool(0), args.Error(1)
 }
 
-func (repository *NestedVisitRepository) Insert(visit *entities.Visit) (err error) {
+func (repository *nestedVisitRepository) Insert(visit *entities.Visit) (err error) {
 	args := repository.Called(visit)
 
 	return args.Error(0)
