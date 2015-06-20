@@ -19,7 +19,7 @@ func Test_EventLog_NewEventLog(t *testing.T) {
 
 	assert.NotNil(t, eventLog)
 	assert.Nil(t, err)
-	assert.Equal(t, eventLogID, eventLog.eventLogID)
+	assert.Equal(t, eventLogID, eventLog.EventLogID())
 	assert.Equal(t, timestamp, eventLog.Timestamp())
 	assert.Equal(t, event, eventLog.Event())
 	assert.Equal(t, visit, eventLog.Visit())
@@ -39,7 +39,7 @@ func Test_EventLog_NewEventLog_EmptyEventLogID(t *testing.T) {
 func Test_EventLog_NewEventLog_EmptyEvent(t *testing.T) {
 	visit := &Visit{}
 
-	eventLog, err := NewEventLog([16]byte{}, time.Now().Unix(), nil, visit, map[string]string{})
+	eventLog, err := NewEventLog(uuid.New().Generate(), time.Now().Unix(), nil, visit, map[string]string{})
 
 	assert.Nil(t, eventLog)
 	assert.NotNil(t, err)
@@ -48,7 +48,7 @@ func Test_EventLog_NewEventLog_EmptyEvent(t *testing.T) {
 func Test_EventLog_NewEventLog_EmptyVisit(t *testing.T) {
 	event := &Event{}
 
-	eventLog, err := NewEventLog([16]byte{}, time.Now().Unix(), event, nil, map[string]string{})
+	eventLog, err := NewEventLog(uuid.New().Generate(), time.Now().Unix(), event, nil, map[string]string{})
 
 	assert.Nil(t, eventLog)
 	assert.NotNil(t, err)

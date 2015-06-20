@@ -42,7 +42,7 @@ func Test_UUID_ToBytes_Empty(t *testing.T) {
 }
 
 func Test_UUID_ToBytes_Panic(t *testing.T) {
-	panicFunc := func () {
+	panicFunc := func() {
 		New().ToBytes("Some wrong data here")
 	}
 
