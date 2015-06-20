@@ -6,8 +6,7 @@ import (
 	"github.com/index0h/go-tracker/entities"
 )
 
-type EventRepository struct {
-}
+type EventRepository struct{}
 
 func (repository *EventRepository) FindAll() (result []*entities.Event, err error) {
 	return result, err

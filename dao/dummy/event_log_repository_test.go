@@ -13,6 +13,15 @@ func Test_EventLogRepository_Interface(t *testing.T) {
 	func(eventLog dao.EventLogRepositoryInterface) {}(&EventLogRepository{})
 }
 
+func Test_EventLogRepository_FindAll(t *testing.T) {
+	checkRepository := EventLogRepository{}
+
+	result, err := checkRepository.FindAll()
+
+	assert.Empty(t, result)
+	assert.Nil(t, err)
+}
+
 func Test_EventLogRepository_FindAllByVisit(t *testing.T) {
 	visit := &entities.Visit{}
 	checkEventLogRepository := EventLogRepository{}

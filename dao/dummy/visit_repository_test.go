@@ -5,8 +5,8 @@ import (
 
 	"github.com/index0h/go-tracker/dao"
 	"github.com/index0h/go-tracker/dao/uuid"
-	"github.com/stretchr/testify/assert"
 	"github.com/index0h/go-tracker/entities"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_VisitRepository_Interface(t *testing.T) {

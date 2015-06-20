@@ -6,8 +6,7 @@ import (
 	"github.com/index0h/go-tracker/entities"
 )
 
-type VisitRepository struct {
-}
+type VisitRepository struct{}
 
 // Find clientID by sessionID
 func (repository *VisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
@@ -32,7 +31,7 @@ func (repository *VisitRepository) Verify(sessionID [16]byte, clientID string) (
 }
 
 // Save visit
-func (repository *VisitRepository) Insert(visit *entities.Visit) (error) {
+func (repository *VisitRepository) Insert(visit *entities.Visit) error {
 	if visit == nil {
 		return errors.New("Empty visit is not allowed")
 	}

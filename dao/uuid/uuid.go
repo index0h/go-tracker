@@ -4,8 +4,7 @@ import (
 	satoriUUID "github.com/satori/go.uuid"
 )
 
-type UUID struct {
-}
+type UUID struct {}
 
 // Check that uuid is empty
 func New() *UUID {
