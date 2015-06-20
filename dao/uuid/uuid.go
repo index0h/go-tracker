@@ -22,11 +22,8 @@ func (uuid *UUID) Generate() [16]byte {
 
 // Converts uuid from bytes to string
 func (uuid *UUID) ToString(uuidBytes [16]byte) string {
-	result, err := satoriUUID.FromBytes(uuidBytes[:])
-
-	if err != nil {
-		panic("Invalid UUID bytes")
-	}
+	// Force set 16 bytes, so there is no errors could be in satori UUID
+	result, _ := satoriUUID.FromBytes(uuidBytes[:])
 
 	return result.String()
 }

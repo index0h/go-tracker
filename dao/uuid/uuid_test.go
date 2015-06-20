@@ -41,6 +41,14 @@ func Test_UUID_ToBytes_Empty(t *testing.T) {
 	assert.Equal(t, emptyUUID, checkUUID.ToBytes("00000000-0000-0000-0000-000000000000"))
 }
 
+func Test_UUID_ToBytes_Panic(t *testing.T) {
+	panicFunc := func () {
+		New().ToBytes("Some wrong data here")
+	}
+
+	assert.Panics(t, panicFunc)
+}
+
 func Test_UUID_DoubleConvert(t *testing.T) {
 	checkUUID := new(UUID)
 
