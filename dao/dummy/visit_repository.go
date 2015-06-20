@@ -32,6 +32,10 @@ func (repository *VisitRepository) Verify(sessionID [16]byte, clientID string) (
 }
 
 // Save visit
-func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
-	return err
+func (repository *VisitRepository) Insert(visit *entities.Visit) (error) {
+	if visit == nil {
+		return errors.New("Empty visit is not allowed")
+	}
+
+	return nil
 }
