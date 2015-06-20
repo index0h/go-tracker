@@ -211,7 +211,7 @@ func visitRepository_CreateRepository() (*driver.Client, *VisitRepository) {
 	//client, _ := driver.NewClient(driver.SetTraceLog(log.New(os.Stdout, "logger: ", log.Lshortfile)))
 	client, _ := driver.NewClient()
 	repository := NewVisitRepository(client, uuid.New())
-	repository.indexPrefix = "tracker-test-"
+	repository.indexPrefix = "tracker-test"
 	repository.RefreshAfterInsert = true
 
 	return client, repository
