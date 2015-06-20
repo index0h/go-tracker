@@ -91,6 +91,10 @@ func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) ([]*ent
 }
 
 func (repository *EventRepository) FindByID(id [16]byte) (*entities.Event, error) {
+	if id == [16]byte{} {
+		return nil, errors.New("Empty id is not allowed")
+	}
+
 	termQuery := driver.NewTermQuery("_id", repository.uuid.ToString(id))
 
 	result, err := repository.find(&termQuery, 0, 1)

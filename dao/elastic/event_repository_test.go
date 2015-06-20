@@ -94,7 +94,7 @@ func Test_EventRepository_FindByID_Empty(t *testing.T) {
 
 	foundEvent, err := repository.FindByID([16]byte{})
 
-	assert.Nil(t, err)
+	assert.NotNil(t, err)
 	assert.Nil(t, foundEvent)
 }
 

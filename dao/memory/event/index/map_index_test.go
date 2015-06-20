@@ -3,6 +3,7 @@ package index
 import (
 	"testing"
 
+	"github.com/index0h/go-tracker/dao/uuid"
 	"github.com/index0h/go-tracker/entities"
 	"github.com/stretchr/testify/assert"
 )
@@ -50,6 +51,39 @@ func Test_MapIndex_FindAll_WithData(t *testing.T) {
 	testIndex.Refresh(events)
 
 	commonEventSlicesEqual(t, events, testIndex.FindAll())
+}
+
+func Test_EventRepository_FindByID_Empty(t *testing.T) {
+	testIndex := NewMapIndex()
+
+	foundEvent, err := testIndex.FindByID([16]byte{})
+
+	assert.NotNil(t, err)
+	assert.Nil(t, foundEvent)
+}
+
+func Test_EventRepository_FindByID_NotFound(t *testing.T) {
+	testIndex := NewMapIndex()
+
+	foundEvent, err := testIndex.FindByID(uuid.New().Generate())
+
+	assert.Nil(t, err)
+	assert.Nil(t, foundEvent)
+}
+
+func Test_EventRepository_FindByID_RealID(t *testing.T) {
+	eventA := commonGenerateNotFilteredEvent()
+	eventB := commonGenerateNotFilteredEvent()
+
+	events := []*entities.Event{eventA, eventB}
+
+	testIndex := NewMapIndex()
+	testIndex.Refresh(events)
+
+	foundEvent, err := testIndex.FindByID(eventA.EventID())
+
+	assert.Nil(t, err)
+	assert.Equal(t, eventA.EventID(), foundEvent.EventID())
 }
 
 func Test_MapIndex_Insert_Nil(t *testing.T) {
@@ -111,6 +145,16 @@ func Test_MapIndex_Delete_EventByUUID(t *testing.T) {
 	testIndex.Insert(eventA)
 
 	testIndex.Delete(eventB)
+
+	assert.Len(t, testIndex.FindAll(), 0)
+}
+
+func Test_MapIndex_Delete_NotPresent(t *testing.T) {
+	eventA := commonGenerateNotFilteredEvent()
+
+	testIndex := NewMapIndex()
+
+	testIndex.Delete(eventA)
 
 	assert.Len(t, testIndex.FindAll(), 0)
 }
