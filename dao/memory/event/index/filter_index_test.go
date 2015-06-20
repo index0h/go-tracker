@@ -51,6 +51,19 @@ func Test_FilterIndex_Refresh_RemoveEvents(t *testing.T) {
 	assert.Len(t, testIndex.events, 0)
 }
 
+func Test_FilterIndex_Refresh_Disabled(t *testing.T) {
+	event, _ := entities.NewEvent(uuid.New().Generate(), false, map[string]string{}, map[string]string{"A": "A"})
+
+	events := []*entities.Event{event}
+
+	testIndex := NewFilterIndex()
+	testIndex.Refresh(events)
+
+	testIndex.Refresh([]*entities.Event{})
+
+	assert.Len(t, testIndex.events, 0)
+}
+
 func Test_FilterIndex_FindAllByVisit_Empty(t *testing.T) {
 	testIndex := NewFilterIndex()
 
@@ -172,6 +185,21 @@ func Test_FilterIndex_Delete_EventByPointer(t *testing.T) {
 	assert.Empty(t, testIndex.events)
 }
 
+func Test_FilterIndex_Delete_SameKeyValue(t *testing.T) {
+	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
+	eventB := filterIndexGenerateEvent(map[string]string{"A": "A"})
+	eventC := filterIndexGenerateEvent(map[string]string{"A": "B"})
+
+	testIndex := NewFilterIndex()
+	testIndex.Insert(eventA)
+	testIndex.Insert(eventB)
+	testIndex.Insert(eventC)
+
+	testIndex.Delete(eventA)
+
+	assert.Len(t, testIndex.events, 1)
+}
+
 func Test_FilterIndex_Update_EmptyFrom(t *testing.T) {
 	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
 
@@ -230,9 +258,9 @@ func Test_FilterIndex_Update(t *testing.T) {
 }
 
 func filterIndexGenerateEvent(filters map[string]string) *entities.Event {
-	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{}, filters)
+	event, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{}, filters)
 
-	return eventA
+	return event
 }
 
 func filterIndexGenerateVisit(data map[string]string) *entities.Visit {

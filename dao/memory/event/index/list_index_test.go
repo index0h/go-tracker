@@ -116,7 +116,7 @@ func Test_ListIndex_Delete_EventByPointer(t *testing.T) {
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func Test_ListIndex_DeleteE_ventByUUID(t *testing.T) {
+func Test_ListIndex_Delete_EventByUUID(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB, _ := entities.NewEvent(eventA.EventID(), true, map[string]string{}, map[string]string{})
 
@@ -124,6 +124,16 @@ func Test_ListIndex_DeleteE_ventByUUID(t *testing.T) {
 	testIndex.Insert(eventA)
 
 	testIndex.Delete(eventB)
+
+	assert.Len(t, testIndex.FindAll(), 0)
+}
+
+func Test_ListIndex_Delete_NotFound(t *testing.T) {
+	event := commonGenerateNotFilteredEvent()
+
+	testIndex := NewListIndex()
+
+	testIndex.Delete(event)
 
 	assert.Len(t, testIndex.FindAll(), 0)
 }
