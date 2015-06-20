@@ -3,10 +3,10 @@ package elastic
 import (
 	"testing"
 
-	"github.com/index0h/go-tracker/entities"
 	"github.com/index0h/go-tracker/dao"
-	driver "github.com/olivere/elastic"
 	"github.com/index0h/go-tracker/dao/uuid"
+	"github.com/index0h/go-tracker/entities"
+	driver "github.com/olivere/elastic"
 	"github.com/stretchr/testify/assert"
 )
 

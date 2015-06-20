@@ -12,10 +12,10 @@ import (
 
 type VisitRepository struct {
 	RefreshAfterInsert bool
-	indexPrefix string
-	typeName string
-	client   *driver.Client
-	uuid     dao.UUIDProviderInterface
+	indexPrefix        string
+	typeName           string
+	client             *driver.Client
+	uuid               dao.UUIDProviderInterface
 }
 
 func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) *VisitRepository {
@@ -82,7 +82,7 @@ func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
 		Id(repository.uuid.ToString(visit.VisitID())).
 		BodyString(string(visitData))
 
-	if (repository.RefreshAfterInsert) {
+	if repository.RefreshAfterInsert {
 		request.Refresh(true)
 	}
 
