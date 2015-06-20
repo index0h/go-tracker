@@ -92,6 +92,7 @@ func (repository *EventRepository) Insert(event *entities.Event) (err error) {
 		Type(repository.typeName).
 		Id(repository.uuid.ToString(event.EventID())).
 		BodyString(string(eventData)).
+		Refresh(true).
 		Do()
 
 	return err
@@ -113,6 +114,7 @@ func (repository *EventRepository) Update(event *entities.Event) (err error) {
 		Type(repository.typeName).
 		Id(repository.uuid.ToString(event.EventID())).
 		Doc(string(eventData)).
+		Refresh(true).
 		Do()
 
 	return err

@@ -18,8 +18,16 @@ type VisitRepository struct {
 	uuid               dao.UUIDProviderInterface
 }
 
-func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) *VisitRepository {
-	return &VisitRepository{typeName: "visit", indexPrefix: "tracker-", client: client, uuid: uuid}
+func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (*VisitRepository, error) {
+	if client == nil {
+		return nil, errors.New("client must be not nil")
+	}
+
+	if uuid == nil {
+		return nil, errors.New("uuid must be not nil")
+	}
+
+	return &VisitRepository{typeName: "visit", indexPrefix: "tracker-", client: client, uuid: uuid}, nil
 }
 
 // Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
