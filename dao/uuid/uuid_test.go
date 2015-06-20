@@ -8,7 +8,7 @@ import (
 )
 
 func Test_UUID_Interface(t *testing.T) {
-	func(event dao.UUIDProviderInterface) {}(&UUID{})
+	func(event dao.UUIDProviderInterface) {}(New())
 }
 
 func Test_UUID_Generate_NotEmpty(t *testing.T) {

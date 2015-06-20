@@ -10,12 +10,22 @@ import (
 
 func Test_Visit_NewVisit(t *testing.T) {
 	visitID := uuid.New().Generate()
+	timestamp := time.Now().Unix()
 	sessionID := uuid.New().Generate()
+	clientID := "someClientID"
+	data := map[string]string{"data": "here"}
+	warnings := []string{"warning"}
 
-	visit, err := NewVisit(visitID, time.Now().Unix(), sessionID, "", map[string]string{}, []string{})
+	visit, err := NewVisit(visitID, timestamp, sessionID, clientID, data, warnings)
 
 	assert.NotNil(t, visit)
 	assert.Nil(t, err)
+	assert.Equal(t, visitID, visit.VisitID())
+	assert.Equal(t, timestamp, visit.Timestamp())
+	assert.Equal(t, sessionID, visit.SessionID())
+	assert.Equal(t, clientID, visit.ClientID())
+	assert.Equal(t, data, visit.Data())
+	assert.Equal(t, warnings, visit.Warnings())
 }
 
 func Test_Visit_NewVisit_EmptyVisitID(t *testing.T) {

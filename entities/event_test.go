@@ -9,11 +9,18 @@ import (
 
 func Test_Event_NewEvent(t *testing.T) {
 	eventID := uuid.New().Generate()
+	enabled := true
+	data := map[string]string{"data": "here"}
+	filters := map[string]string{"A": "B"}
 
-	event, err := NewEvent(eventID, true, map[string]string{}, map[string]string{})
+	event, err := NewEvent(eventID, enabled, data, filters)
 
 	assert.NotNil(t, event)
 	assert.Nil(t, err)
+	assert.Equal(t, eventID, event.EventID())
+	assert.Equal(t, enabled, event.Enabled())
+	assert.Equal(t, data, event.Data())
+	assert.Equal(t, filters, event.Filters())
 }
 
 func Test_Event_NewEvent_EmptyEventID(t *testing.T) {
