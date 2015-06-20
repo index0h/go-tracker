@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
 	"github.com/index0h/go-tracker/dao/uuid"
+	"github.com/index0h/go-tracker/entities"
 	driver "github.com/olivere/elastic"
 	"github.com/stretchr/testify/assert"
 	"time"
@@ -13,6 +13,21 @@ import (
 
 func Test_EventRepository_Interface(t *testing.T) {
 	func(event dao.EventRepositoryInterface) {}(&EventRepository{})
+}
+
+func Test_EventRepository_NewEventRepository_EmptyClient(t *testing.T) {
+	repository, err := NewEventRepository(nil, uuid.New())
+
+	assert.Nil(t, repository)
+	assert.NotNil(t, err)
+}
+
+func Test_EventRepository_NewEventRepository_EmptyUUIDProvider(t *testing.T) {
+	client, _ := driver.NewClient()
+	repository, err := NewEventRepository(client, nil)
+
+	assert.Nil(t, repository)
+	assert.NotNil(t, err)
 }
 
 func Test_EventRepository_FindAll_Empty(t *testing.T) {
@@ -150,8 +165,8 @@ func Test_EventRepository_Update_Nil(t *testing.T) {
 func Test_EventRepository_Update_Real(t *testing.T) {
 	client, repository := eventRepository_CreateRepository()
 
-	eventA := eventRepository_GenerateEvent(map[string]string{"A":"A"})
-	eventB, _ := entities.NewEvent(eventA.EventID(), false, eventA.Data(), map[string]string{"B":"B"})
+	eventA := eventRepository_GenerateEvent(map[string]string{"A": "A"})
+	eventB, _ := entities.NewEvent(eventA.EventID(), false, eventA.Data(), map[string]string{"B": "B"})
 
 	_ = repository.Insert(eventA)
 
@@ -209,7 +224,7 @@ func eventRepository_EventSlicesEqual(t *testing.T, first, second []*entities.Ev
 }
 
 func eventRepository_GenerateEvent(filters map[string]string) *entities.Event {
-	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{}, filters)
+	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{"data": "here"}, filters)
 
 	return eventA
 }

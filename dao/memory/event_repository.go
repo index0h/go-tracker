@@ -16,7 +16,11 @@ type Repository struct {
 	nested dao.EventRepositoryInterface
 }
 
-func NewRepository(nested dao.EventRepositoryInterface) (result *Repository, err error) {
+func NewEventRepository(nested dao.EventRepositoryInterface) (result *Repository, err error) {
+	if nested == nil {
+		return nil, errors.New("Empty nested is not allowed")
+	}
+
 	result = &Repository{
 		filteredEvents: index.NewFilterIndex(),
 		alwaysEvents:   index.NewListIndex(),

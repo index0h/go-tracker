@@ -14,12 +14,16 @@ type VisitRepository struct {
 	clientToSession *lru.Cache
 }
 
-func NewVisitRepository(nested dao.VisitRepositoryInterface, maxEntries int) *VisitRepository {
+func NewVisitRepository(nested dao.VisitRepositoryInterface, maxEntries int) (*VisitRepository, error) {
+	if nested == nil {
+		return nil, errors.New("Empty nested is not allowed")
+	}
+
 	return &VisitRepository{
 		nested:          nested,
 		sessionToClient: lru.New(int(maxEntries / 2)),
 		clientToSession: lru.New(int(maxEntries / 2)),
-	}
+	}, nil
 }
 
 // Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result

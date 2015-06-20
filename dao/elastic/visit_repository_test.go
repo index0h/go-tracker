@@ -14,6 +14,21 @@ func Test_VisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
+func Test_VisitRepository_NewVisitRepository_EmptyClient(t *testing.T) {
+	repository, err := NewVisitRepository(nil, uuid.New())
+
+	assert.Nil(t, repository)
+	assert.NotNil(t, err)
+}
+
+func Test_VisitRepository_NewVisitRepository_EmptyUUIDProvider(t *testing.T) {
+	client, _ := driver.NewClient()
+	repository, err := NewVisitRepository(client, nil)
+
+	assert.Nil(t, repository)
+	assert.NotNil(t, err)
+}
+
 func Test_VisitRepository_FindClientID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()

@@ -14,8 +14,15 @@ func Test_VisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
+func Test_VisitRepository_NewVisitRepository_EmptyClient(t *testing.T) {
+	repository, err := NewVisitRepository(nil, 10)
+
+	assert.Nil(t, repository)
+	assert.NotNil(t, err)
+}
+
 func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
-	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
+	checkVisitRepository, _ := NewVisitRepository(new(NestedVisitRepository), 10)
 
 	clientID, err := checkVisitRepository.FindClientID([16]byte{})
 
@@ -25,7 +32,7 @@ func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 
 func Test_VisitRepository_FindClientID_New(t *testing.T) {
 	nested := new(NestedVisitRepository)
-	checkVisitRepository := NewVisitRepository(nested, 10)
+	checkVisitRepository, _ := NewVisitRepository(nested, 10)
 	expected := "12345"
 	sessionID := uuid.New().Generate()
 
@@ -40,7 +47,7 @@ func Test_VisitRepository_FindClientID_New(t *testing.T) {
 
 func Test_VisitRepository_FindClientID_Cache(t *testing.T) {
 	nested := new(NestedVisitRepository)
-	checkVisitRepository := NewVisitRepository(nested, 10)
+	checkVisitRepository, _ := NewVisitRepository(nested, 10)
 	expected := "12345"
 	sessionID := uuid.New().Generate()
 
@@ -55,7 +62,7 @@ func Test_VisitRepository_FindClientID_Cache(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
-	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
+	checkVisitRepository, _ := NewVisitRepository(new(NestedVisitRepository), 10)
 
 	ok, err := checkVisitRepository.Verify([16]byte{}, "12345")
 
@@ -64,7 +71,7 @@ func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
-	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
+	checkVisitRepository, _ := NewVisitRepository(new(NestedVisitRepository), 10)
 
 	ok, err := checkVisitRepository.Verify(uuid.New().Generate(), "")
 
