@@ -11,6 +11,7 @@ import (
 )
 
 type VisitRepository struct {
+	RefreshAfterInsert bool
 	indexPrefix string
 	typeName string
 	client   *driver.Client
@@ -74,12 +75,18 @@ func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
 		return err
 	}
 
-	_, err = repository.client.Index().
+	request := repository.client.
+		Index().
 		Index(repository.indexName()).
 		Type(repository.typeName).
 		Id(repository.uuid.ToString(visit.VisitID())).
-		BodyString(string(visitData)).
-		Do()
+		BodyString(string(visitData))
+
+	if (repository.RefreshAfterInsert) {
+		request.Refresh(true)
+	}
+
+	_, err = request.Do()
 
 	return err
 }

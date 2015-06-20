@@ -8,7 +8,6 @@ import (
 	driver "github.com/olivere/elastic"
 	"github.com/index0h/go-tracker/dao/uuid"
 	"github.com/stretchr/testify/assert"
-	"time"
 )
 
 func Test_VisitRepository_Interface(t *testing.T) {
@@ -28,8 +27,6 @@ func Test_VisitRepository_FindClientID(t *testing.T) {
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
 	_ = repository.Insert(visit)
-
-	visitRepository_Sleep()
 
 	foundClientID, err := repository.FindClientID(sessionID)
 	assert.Nil(t, err)
@@ -58,8 +55,6 @@ func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	visitRepository_Sleep()
-
 	foundClientID, err := repository.FindClientID(uuid.New().Generate())
 	assert.Nil(t, err)
 	assert.Empty(t, foundClientID)
@@ -79,8 +74,6 @@ func Test_VisitRepository_Verify(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	visitRepository_Sleep()
-
 	ok, err := repository.Verify(sessionID, clientID)
 	assert.Nil(t, err)
 	assert.True(t, ok)
@@ -99,8 +92,6 @@ func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
 	_ = repository.Insert(visit)
-
-	visitRepository_Sleep()
 
 	ok, err := repository.Verify(sessionID, "Some another client ID")
 	assert.Nil(t, err)
@@ -140,8 +131,6 @@ func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	visitRepository_Sleep()
-
 	ok, err := repository.Verify(uuid.New().Generate(), "")
 	assert.NotNil(t, err)
 	assert.False(t, ok)
@@ -160,8 +149,6 @@ func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
 	_ = repository.Insert(visit)
-
-	visitRepository_Sleep()
 
 	ok, err := repository.Verify([16]byte{}, clientID)
 	assert.NotNil(t, err)
@@ -225,11 +212,7 @@ func visitRepository_CreateRepository() (*driver.Client, *VisitRepository) {
 	client, _ := driver.NewClient()
 	repository := NewVisitRepository(client, uuid.New())
 	repository.indexPrefix = "tracker-test-"
+	repository.RefreshAfterInsert = true
 
 	return client, repository
-}
-
-// Used to wait for document is saved
-func visitRepository_Sleep() {
-	time.Sleep(1500 * time.Millisecond)
 }
