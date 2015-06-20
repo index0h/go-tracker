@@ -15,14 +15,10 @@ func Test_VisitRepository_Interface(t *testing.T) {
 }
 
 func Test_VisitRepository_FindClientID(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -42,14 +38,10 @@ func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 }
 
 func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -61,14 +53,10 @@ func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -80,14 +68,10 @@ func Test_VisitRepository_Verify(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -99,14 +83,10 @@ func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_WrongSessionID(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -118,14 +98,10 @@ func Test_VisitRepository_Verify_WrongSessionID(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -137,14 +113,10 @@ func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 }
 
 func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
-	client, repository := visitRepository_CreateRepository()
+	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
-
-	indexName := repository.indexName()
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
 
@@ -166,8 +138,6 @@ func Test_VisitRepository_Insert(t *testing.T) {
 
 	indexName := repository.indexName()
 	typeName := repository.typeName
-
-	_, _ = client.DeleteIndex(indexName).Do()
 
 	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, data, warnings)
 
@@ -208,11 +178,13 @@ func Test_VisitRepository_Insert_Nil(t *testing.T) {
 }
 
 func visitRepository_CreateRepository() (*driver.Client, *VisitRepository) {
-	//client, _ := driver.NewClient(driver.SetTraceLog(log.New(os.Stdout, "logger: ", log.Lshortfile)))
 	client, _ := driver.NewClient()
 	repository, _ := NewVisitRepository(client, uuid.New())
 	repository.indexPrefix = "tracker-test-"
 	repository.RefreshAfterInsert = true
+
+	_, _ = client.DeleteIndex(repository.indexName()).Do()
+	_, _ = client.CreateIndex(repository.indexName()).Do()
 
 	return client, repository
 }

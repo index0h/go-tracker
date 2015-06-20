@@ -33,35 +33,61 @@ func (repository *EventRepository) FindAll() ([]*entities.Event, error) {
 }
 
 func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) ([]*entities.Event, error) {
+	if visit == nil {
+		return []*entities.Event{}, errors.New("Empty visit is not allowed")
+	}
+
 	data := visit.Data()
 
 	outer := driver.NewBoolFilter().Must(driver.NewTermFilter("enabled", true))
-
-	rangeOuter := driver.NewBoolFilter().Should(driver.NewMissingFilter("filter.key"))
 
 	keys := make([]string, len(data))
 
 	var i uint
 	for key, value := range data {
 		inner := driver.NewBoolFilter().
-			Must(driver.NewTermFilter("filter.key", key)).
-			MustNot(driver.NewTermFilter("filter.value", value))
+			Must(driver.NewTermFilter("filterList.key", key)).
+			MustNot(driver.NewTermFilter("filterList.value", value))
 
 		nested := driver.NewNestedFilter("filterList").Filter(inner)
 
-		outer.MustNot(nested)
+		outer = outer.MustNot(nested)
 
 		keys[i] = key
 		i++
 	}
 
+	postFilter := driver.NewBoolFilter().Should(driver.NewMissingFilter("filterList.key"))
+
 	if i > 0 {
-		rangeOuter.Should(driver.NewTermsFilter("filter.key", keys))
+		postFilter = postFilter.Should(driver.NewBoolFilter().Must(driver.NewTermsFilter("filterList.key", keys)))
 	}
 
-	outer.Must(rangeOuter)
+	searchResult, err := repository.client.
+		Search().
+		Index(repository.indexName).
+		Type(repository.typeName).
+		Query(outer).
+		PostFilter(postFilter).
+		Do()
 
-	return repository.find(&outer, 0, 0)
+	if (err != nil) || (searchResult.TotalHits() == 0) {
+		return []*entities.Event{}, err
+	}
+
+	result := make([]*entities.Event, searchResult.TotalHits())
+
+	for i, hit := range searchResult.Hits.Hits {
+		event, err := repository.byteToEvent(*hit.Source)
+
+		if err != nil {
+			return []*entities.Event{}, err
+		}
+
+		result[i] = event
+	}
+
+	return result, nil
 }
 
 func (repository *EventRepository) FindByID(id [16]byte) (*entities.Event, error) {
@@ -103,21 +129,7 @@ func (repository *EventRepository) Update(event *entities.Event) (err error) {
 		return errors.New("Empty event is not allowed")
 	}
 
-	eventData, err := repository.eventToByte(event)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = repository.client.Update().
-		Index(repository.indexName).
-		Type(repository.typeName).
-		Id(repository.uuid.ToString(event.EventID())).
-		Doc(string(eventData)).
-		Refresh(true).
-		Do()
-
-	return err
+	return repository.Insert(event)
 }
 
 func (repository *EventRepository) find(term driver.Query, limit, offset uint) ([]*entities.Event, error) {
@@ -179,7 +191,7 @@ func (repository *EventRepository) eventToByte(event *entities.Event) ([]byte, e
 	structEvent.FilterList = make([]eventStructHash, len(filtersFromEvent))
 
 	i = 0
-	for key, value := range dataFromEvent {
+	for key, value := range filtersFromEvent {
 		structEvent.FilterList[i] = eventStructHash{Key: key, Value: value}
 
 		i++
