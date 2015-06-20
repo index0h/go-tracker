@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestInterface(t *testing.T) {
+func Test_VisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
-func TestFindClientIDEmpty(t *testing.T) {
+func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
 
 	clientID, err := checkVisitRepository.FindClientID([16]byte{})
@@ -23,7 +23,7 @@ func TestFindClientIDEmpty(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func TestFindClientIDNew(t *testing.T) {
+func Test_VisitRepository_FindClientID_New(t *testing.T) {
 	nested := new(NestedVisitRepository)
 	checkVisitRepository := NewVisitRepository(nested, 10)
 	expected := "12345"
@@ -38,7 +38,7 @@ func TestFindClientIDNew(t *testing.T) {
 	nested.AssertExpectations(t)
 }
 
-func TestFindClientIDCache(t *testing.T) {
+func Test_VisitRepository_FindClientID_Cache(t *testing.T) {
 	nested := new(NestedVisitRepository)
 	checkVisitRepository := NewVisitRepository(nested, 10)
 	expected := "12345"
@@ -54,7 +54,7 @@ func TestFindClientIDCache(t *testing.T) {
 	nested.AssertExpectations(t)
 }
 
-func TestVerifyEmptySessionID(t *testing.T) {
+func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
 
 	ok, err := checkVisitRepository.Verify([16]byte{}, "12345")
@@ -63,7 +63,7 @@ func TestVerifyEmptySessionID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func TestVerifyEmptyClientID(t *testing.T) {
+func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 	checkVisitRepository := NewVisitRepository(new(NestedVisitRepository), 10)
 
 	ok, err := checkVisitRepository.Verify(uuid.New().Generate(), "")

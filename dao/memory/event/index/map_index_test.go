@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMapIndexRefreshTwo(t *testing.T) {
+func Test_MapIndex_Refresh_Two(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
@@ -20,7 +20,7 @@ func TestMapIndexRefreshTwo(t *testing.T) {
 	assert.Equal(t, events, testIndex.events)
 }
 
-func TestMapIndexRefreshRemoveEvents(t *testing.T) {
+func Test_MapIndex_Refresh_RemoveEvents(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
@@ -34,13 +34,13 @@ func TestMapIndexRefreshRemoveEvents(t *testing.T) {
 	assert.Len(t, testIndex.events, 0)
 }
 
-func TestMapIndexFindAllEmpty(t *testing.T) {
+func Test_MapIndex_FindAll_Empty(t *testing.T) {
 	testIndex := NewMapIndex()
 
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func TestMapIndexFindAllWithData(t *testing.T) {
+func Test_MapIndex_FindAll_WithData(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
@@ -52,13 +52,13 @@ func TestMapIndexFindAllWithData(t *testing.T) {
 	commonEventSlicesEqual(t, events, testIndex.FindAll())
 }
 
-func TestMapIndexInsertEmpty(t *testing.T) {
+func Test_MapIndex_Insert_Nil(t *testing.T) {
 	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Insert(nil))
 }
 
-func TestMapIndexInsertTwoEvents(t *testing.T) {
+func Test_MapIndex_Insert_TwoEvents(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
@@ -71,7 +71,7 @@ func TestMapIndexInsertTwoEvents(t *testing.T) {
 	commonEventSlicesEqual(t, events, testIndex.FindAll())
 }
 
-func TestMapIndexInsertDuplicates(t *testing.T) {
+func Test_MapIndex_Insert_Duplicates(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
@@ -86,13 +86,13 @@ func TestMapIndexInsertDuplicates(t *testing.T) {
 	commonEventSlicesEqual(t, events, testIndex.FindAll())
 }
 
-func TestMapIndexDeleteEmpty(t *testing.T) {
+func Test_MapIndex_Delete_Nil(t *testing.T) {
 	testIndex := NewMapIndex()
 
 	assert.NotNil(t, testIndex.Delete(nil))
 }
 
-func TestMapIndexDeleteEventByPointer(t *testing.T) {
+func Test_MapIndex_Delete_EventByPointer(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
 	testIndex := NewMapIndex()
@@ -103,7 +103,7 @@ func TestMapIndexDeleteEventByPointer(t *testing.T) {
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func TestMapIndexDeleteEventByUUID(t *testing.T) {
+func Test_MapIndex_Delete_EventByUUID(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB, _ := entities.NewEvent(eventA.EventID(), true, map[string]string{}, map[string]string{})
 
@@ -115,7 +115,7 @@ func TestMapIndexDeleteEventByUUID(t *testing.T) {
 	assert.Len(t, testIndex.FindAll(), 0)
 }
 
-func TestMapIndexUpdateEmptyFrom(t *testing.T) {
+func Test_MapIndex_Update_EmptyFrom(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
 	testIndex := NewMapIndex()
@@ -123,7 +123,7 @@ func TestMapIndexUpdateEmptyFrom(t *testing.T) {
 	assert.NotNil(t, testIndex.Update(nil, eventA))
 }
 
-func TestMapIndexUpdateEmptyTo(t *testing.T) {
+func Test_MapIndex_Update_EmptyTo(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
 	testIndex := NewMapIndex()
@@ -131,7 +131,7 @@ func TestMapIndexUpdateEmptyTo(t *testing.T) {
 	assert.NotNil(t, testIndex.Update(eventA, nil))
 }
 
-func TestMapIndexUpdateEqual(t *testing.T) {
+func Test_MapIndex_Update_Equal(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 
 	testIndex := NewMapIndex()
@@ -139,7 +139,7 @@ func TestMapIndexUpdateEqual(t *testing.T) {
 	assert.NotNil(t, testIndex.Update(eventA, eventA))
 }
 
-func TestMapIndexUpdateNotEqualUUID(t *testing.T) {
+func Test_MapIndex_Update_NotEqualUUID(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB := commonGenerateNotFilteredEvent()
 
@@ -148,7 +148,7 @@ func TestMapIndexUpdateNotEqualUUID(t *testing.T) {
 	assert.NotNil(t, testIndex.Update(eventA, eventB))
 }
 
-func TestMapIndexUpdate(t *testing.T) {
+func Test_MapIndex_Update(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
 	eventB, _ := entities.NewEvent(eventA.EventID(), false, map[string]string{}, map[string]string{})
 

@@ -54,10 +54,10 @@ func Test_FilterIndex_Refresh_RemoveEvents(t *testing.T) {
 func Test_FilterIndex_FindAllByVisit_Empty(t *testing.T) {
 	testIndex := NewFilterIndex()
 
-	event, error := testIndex.FindAllByVisit(nil)
+	event, err := testIndex.FindAllByVisit(nil)
 
 	assert.Nil(t, event)
-	assert.NotNil(t, error)
+	assert.NotNil(t, err)
 }
 
 func TestFilterIndexFindAllByNotFoundVisit(t *testing.T) {
@@ -65,10 +65,10 @@ func TestFilterIndexFindAllByNotFoundVisit(t *testing.T) {
 
 	visit := filterIndexGenerateVisit(map[string]string{"A": "A"})
 
-	event, error := testIndex.FindAllByVisit(visit)
+	event, err := testIndex.FindAllByVisit(visit)
 
 	assert.Nil(t, event)
-	assert.Nil(t, error)
+	assert.Nil(t, err)
 }
 
 func Test_FilterIndex_FindAllByVisit_WithData(t *testing.T) {

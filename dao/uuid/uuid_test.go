@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_UUID_UUIDProviderInterface(t *testing.T) {
+func Test_UUID_Interface(t *testing.T) {
 	func(event dao.UUIDProviderInterface) {}(&UUID{})
 }
 
-func Test_UUID_GenerateNotEmpty(t *testing.T) {
+func Test_UUID_Generate_NotEmpty(t *testing.T) {
 	var emptyUUID [16]byte
 
 	checkUUID := new(UUID)
@@ -19,7 +19,7 @@ func Test_UUID_GenerateNotEmpty(t *testing.T) {
 	assert.NotEqual(t, emptyUUID, checkUUID.Generate())
 }
 
-func Test_UUID_GenerateDuplicate(t *testing.T) {
+func Test_UUID_Generate_Duplicate(t *testing.T) {
 	checkUUID := new(UUID)
 
 	assert.NotEqual(t, checkUUID.Generate(), checkUUID.Generate())
@@ -33,7 +33,7 @@ func Test_UUID_ToStringEmpty(t *testing.T) {
 	assert.Equal(t, "00000000-0000-0000-0000-000000000000", checkUUID.ToString(emptyUUID))
 }
 
-func Test_UUID_ToBytesEmpty(t *testing.T) {
+func Test_UUID_ToBytes_Empty(t *testing.T) {
 	var emptyUUID [16]byte
 
 	checkUUID := new(UUID)

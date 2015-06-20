@@ -36,7 +36,7 @@ func Test_Visit_NewVisit_EmptySessionID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Visit_NewVisit_DataCopy(t *testing.T) {
+func Test_Visit_Data_Copy(t *testing.T) {
 	data := map[string]string{"A": "B"}
 
 	visitID := uuid.New().Generate()
@@ -48,7 +48,7 @@ func Test_Visit_NewVisit_DataCopy(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_Visit_NewVisit_WarningsCopy(t *testing.T) {
+func Test_Visit_Warnings_Copy(t *testing.T) {
 	warnings := []string{"test"}
 
 	visitID := uuid.New().Generate()

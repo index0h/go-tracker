@@ -23,7 +23,7 @@ func Test_Event_NewEvent_EmptyEventID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_Event_DataCopy(t *testing.T) {
+func Test_Event_Data_Copy(t *testing.T) {
 	data := map[string]string{"A": "B"}
 
 	eventID := uuid.New().Generate()
@@ -34,7 +34,7 @@ func Test_Event_DataCopy(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_Event_FiltersCopy(t *testing.T) {
+func Test_Event_Filters_Copy(t *testing.T) {
 	filters := map[string]string{"A": "B"}
 
 	eventID := uuid.New().Generate()

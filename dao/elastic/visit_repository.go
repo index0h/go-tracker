@@ -11,13 +11,14 @@ import (
 )
 
 type VisitRepository struct {
+	indexPrefix string
 	typeName string
 	client   *driver.Client
 	uuid     dao.UUIDProviderInterface
 }
 
 func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) *VisitRepository {
-	return &VisitRepository{typeName: "visit", client: client, uuid: uuid}
+	return &VisitRepository{typeName: "visit", indexPrefix: "tracker-", client: client, uuid: uuid}
 }
 
 // Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
@@ -38,7 +39,6 @@ func (repository *VisitRepository) FindClientID(sessionID [16]byte) (clientID st
 }
 
 // Verify method MUST check that sessionID is not registered by another not empty clientID
-// If sessionID or clientID not found it'll run nested repository and cache result (if its ok)
 func (repository *VisitRepository) Verify(sessionID [16]byte, clientID string) (ok bool, err error) {
 	if sessionID == [16]byte{} {
 		return false, errors.New("Empty sessioID is not allowed")
@@ -126,7 +126,7 @@ func (repository *VisitRepository) find(term driver.Query, limit, offset uint) (
 
 // Return current index name and check that it exists
 func (repository *VisitRepository) indexName() string {
-	return "tracker-" + time.Unix(time.Now().Unix(), 0).Format("2006-01")
+	return repository.indexPrefix + time.Unix(time.Now().Unix(), 0).Format("2006-01")
 }
 
 // Convert visit to bytes

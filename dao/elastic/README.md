@@ -6,9 +6,6 @@ Visit index
 ```json
 {
     "template": "tracker-*",
-    "settings": {
-        "number_of_shards": 1
-    },
     "mappings": {
         "visit": {
             "properties": {
@@ -71,9 +68,6 @@ Event index
 ```json
 {
     "template": "tracker",
-    "settings": {
-        "number_of_shards": 2
-    },
     "mappings": {
         "event": {
             "properties": {

@@ -8,9 +8,7 @@ import (
 	driver "github.com/olivere/elastic"
 	"github.com/index0h/go-tracker/dao/uuid"
 	"github.com/stretchr/testify/assert"
-	"fmt"
-	"log"
-	"os"
+	"time"
 )
 
 func Test_VisitRepository_Interface(t *testing.T) {
@@ -18,8 +16,7 @@ func Test_VisitRepository_Interface(t *testing.T) {
 }
 
 func Test_Visit_Repository_FindClientID(t *testing.T) {
-	client, _ := driver.NewClient(driver.SetTraceLog(log.New(os.Stdout, "logger: ", log.Lshortfile)))
-	repository := NewVisitRepository(client, uuid.New())
+	client, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
@@ -32,18 +29,156 @@ func Test_Visit_Repository_FindClientID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
 
-
-	foundClientID, err := repository.FindClientID(uuid.New().ToBytes("242f4fd4-e446-4b1a-aa25-e89ddd50d1e5"))
-fmt.Printf("%+v\n\n", foundClientID)
+	foundClientID, err := repository.FindClientID(sessionID)
 	assert.Nil(t, err)
 	assert.Equal(t, clientID, foundClientID)
 }
 
+func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
+	_, repository := visitRepository_CreateRepository()
 
-func Test_Visit_Repository_Insert(t *testing.T) {
-	client, _ := driver.NewClient()
-	repository := NewVisitRepository(client, uuid.New())
+	foundClientID, err := repository.FindClientID([16]byte{})
+	assert.NotNil(t, err)
+	assert.Empty(t, foundClientID)
+}
+
+func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
+	visitID := uuid.New().Generate()
+	sessionID := uuid.New().Generate()
+	clientID := "test_FindClientID"
+
+	indexName := repository.indexName()
+
+	_, _ = client.DeleteIndex(indexName).Do()
+
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+
+	_ = repository.Insert(visit)
+
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
+
+	foundClientID, err := repository.FindClientID(uuid.New().Generate())
+	assert.Nil(t, err)
+	assert.Empty(t, foundClientID)
+}
+
+func Test_VisitRepository_Verify(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
+	visitID := uuid.New().Generate()
+	sessionID := uuid.New().Generate()
+	clientID := "test_FindClientID"
+
+	indexName := repository.indexName()
+
+	_, _ = client.DeleteIndex(indexName).Do()
+
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+
+	_ = repository.Insert(visit)
+
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
+
+	ok, err := repository.Verify(sessionID, clientID)
+	assert.Nil(t, err)
+	assert.True(t, ok)
+}
+
+func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
+	visitID := uuid.New().Generate()
+	sessionID := uuid.New().Generate()
+	clientID := "test_FindClientID"
+
+	indexName := repository.indexName()
+
+	_, _ = client.DeleteIndex(indexName).Do()
+
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+
+	_ = repository.Insert(visit)
+
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
+
+	ok, err := repository.Verify(sessionID, "Some another client ID")
+	assert.Nil(t, err)
+	assert.False(t, ok)
+}
+
+func Test_VisitRepository_Verify_WrongSessionID(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
+	visitID := uuid.New().Generate()
+	sessionID := uuid.New().Generate()
+	clientID := "test_FindClientID"
+
+	indexName := repository.indexName()
+
+	_, _ = client.DeleteIndex(indexName).Do()
+
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+
+	_ = repository.Insert(visit)
+
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
+
+	ok, err := repository.Verify(uuid.New().Generate(), clientID)
+	assert.Nil(t, err)
+	assert.True(t, ok)
+}
+
+func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
+	visitID := uuid.New().Generate()
+	sessionID := uuid.New().Generate()
+	clientID := "test_FindClientID"
+
+	indexName := repository.indexName()
+
+	_, _ = client.DeleteIndex(indexName).Do()
+
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+
+	_ = repository.Insert(visit)
+
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
+
+	ok, err := repository.Verify(uuid.New().Generate(), "")
+	assert.NotNil(t, err)
+	assert.False(t, ok)
+}
+
+func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
+	visitID := uuid.New().Generate()
+	sessionID := uuid.New().Generate()
+	clientID := "test_FindClientID"
+
+	indexName := repository.indexName()
+
+	_, _ = client.DeleteIndex(indexName).Do()
+
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+
+	_ = repository.Insert(visit)
+
+	// Used to wait for document is saved
+	time.Sleep(1 * time.Second)
+
+	ok, err := repository.Verify([16]byte{}, clientID)
+	assert.NotNil(t, err)
+	assert.False(t, ok)
+}
+
+func Test_VisitRepository_Insert(t *testing.T) {
+	client, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "clientID"
@@ -86,11 +221,19 @@ func Test_Visit_Repository_Insert(t *testing.T) {
 	assert.Equal(t, visit.Warnings(), foundVisit.Warnings())
 }
 
-func Test_Visit_Repository_InsertNil(t *testing.T) {
-	client, _ := driver.NewClient()
-	repository := NewVisitRepository(client, uuid.New())
+func Test_VisitRepository_Insert_Nil(t *testing.T) {
+	_, repository := visitRepository_CreateRepository()
 
 	err := repository.Insert(nil)
 
 	assert.NotNil(t, err)
+}
+
+func visitRepository_CreateRepository() (*driver.Client, *VisitRepository) {
+	//client, _ := driver.NewClient(driver.SetTraceLog(log.New(os.Stdout, "logger: ", log.Lshortfile)))
+	client, _ := driver.NewClient()
+	repository := NewVisitRepository(client, uuid.New())
+	repository.indexPrefix = "tracker-test-"
+
+	return client, repository
 }
