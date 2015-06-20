@@ -15,7 +15,7 @@ func Test_VisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
-func Test_Visit_Repository_FindClientID(t *testing.T) {
+func Test_VisitRepository_FindClientID(t *testing.T) {
 	client, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
@@ -29,8 +29,7 @@ func Test_Visit_Repository_FindClientID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
+	visitRepository_Sleep()
 
 	foundClientID, err := repository.FindClientID(sessionID)
 	assert.Nil(t, err)
@@ -59,8 +58,7 @@ func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
+	visitRepository_Sleep()
 
 	foundClientID, err := repository.FindClientID(uuid.New().Generate())
 	assert.Nil(t, err)
@@ -81,8 +79,7 @@ func Test_VisitRepository_Verify(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
+	visitRepository_Sleep()
 
 	ok, err := repository.Verify(sessionID, clientID)
 	assert.Nil(t, err)
@@ -103,8 +100,7 @@ func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
+	visitRepository_Sleep()
 
 	ok, err := repository.Verify(sessionID, "Some another client ID")
 	assert.Nil(t, err)
@@ -125,9 +121,6 @@ func Test_VisitRepository_Verify_WrongSessionID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
-
 	ok, err := repository.Verify(uuid.New().Generate(), clientID)
 	assert.Nil(t, err)
 	assert.True(t, ok)
@@ -147,8 +140,7 @@ func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
+	visitRepository_Sleep()
 
 	ok, err := repository.Verify(uuid.New().Generate(), "")
 	assert.NotNil(t, err)
@@ -169,8 +161,7 @@ func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 
 	_ = repository.Insert(visit)
 
-	// Used to wait for document is saved
-	time.Sleep(1 * time.Second)
+	visitRepository_Sleep()
 
 	ok, err := repository.Verify([16]byte{}, clientID)
 	assert.NotNil(t, err)
@@ -236,4 +227,9 @@ func visitRepository_CreateRepository() (*driver.Client, *VisitRepository) {
 	repository.indexPrefix = "tracker-test-"
 
 	return client, repository
+}
+
+// Used to wait for document is saved
+func visitRepository_Sleep() {
+	time.Sleep(1500 * time.Millisecond)
 }
