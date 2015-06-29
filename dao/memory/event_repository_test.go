@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/index0h/go-tracker/dao"
+	"github.com/index0h/go-tracker/entities"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/index0h/go-tracker/entities"
 )
 
 func Test_EventRepository_Interface(t *testing.T) {

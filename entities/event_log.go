@@ -39,9 +39,9 @@ func NewEventLog(
 
 	return &EventLog{
 		eventLogID: eventLogID,
-		timestamp: timestamp,
-		visitID: visit.visitID,
-		visitData: visit.Data(),
+		timestamp:  timestamp,
+		visitID:    visit.visitID,
+		visitData:  visit.Data(),
 		eventsData: eventsData,
 	}, nil
 }
