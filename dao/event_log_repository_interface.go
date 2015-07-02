@@ -14,7 +14,4 @@ type EventLogRepositoryInterface interface {
 
 	//
 	Insert(*entities.EventLog) (err error)
-
-	//
-	Update(*entities.EventLog) (err error)
 }

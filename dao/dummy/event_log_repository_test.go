@@ -71,16 +71,3 @@ func Test_EventLogRepository_Insert_Empty(t *testing.T) {
 
 	assert.NotNil(t, checkEventLogRepository.Insert(nil))
 }
-
-func Test_EventLogRepository_Update(t *testing.T) {
-	event := &entities.EventLog{}
-	checkEventLogRepository := EventLogRepository{}
-
-	assert.Nil(t, checkEventLogRepository.Update(event))
-}
-
-func Test_EventLogRepository_Update_Empty(t *testing.T) {
-	checkEventLogRepository := EventLogRepository{}
-
-	assert.NotNil(t, checkEventLogRepository.Update(nil))
-}

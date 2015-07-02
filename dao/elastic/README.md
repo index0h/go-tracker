@@ -57,6 +57,73 @@ Visit index
                     "type": "string"
                 }
             }
+        },
+        "event_log": {
+            "properties": {
+                "_source": {
+                    "enabled": false
+                },
+                "_index": {
+                    "enabled": false
+                },
+                "_type": {
+                    "enabled": false
+                },
+                "_all": {
+                    "enabled": false
+                },
+                "_id": {
+                    "index": "not_analyzed",
+                    "stored": true,
+                    "type": "string"
+                },
+                "@timestamp": {
+                    "format": "YYYY-MM-DD HH:mm:ss",
+                    "type": "date"
+                },
+                "visitId": {
+                    "index": "not_analyzed",
+                    "type": "string"
+                },
+                "visitDataList": {
+                    "include_in_parent": true,
+                    "type": "nested",
+                    "properties": {
+                        "key": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "value": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        }
+                    }
+                },
+                "eventList": {
+                    "include_in_parent": true,
+                    "type": "nested",
+                    "properties": {
+                        "eventId": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "dataList": {
+                            "include_in_parent": true,
+                            "type": "nested",
+                            "properties": {
+                                "key": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "index": "not_analyzed",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+            }
         }
     }
 }

@@ -35,11 +35,3 @@ func (repository *EventLogRepository) Insert(event *entities.EventLog) (err erro
 
 	return err
 }
-
-func (repository *EventLogRepository) Update(event *entities.EventLog) (err error) {
-	if event == nil {
-		return errors.New("event must be not nil")
-	}
-
-	return err
-}

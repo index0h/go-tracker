@@ -50,11 +50,3 @@ func (manager *EventLogManager) Insert(eventLog *entities.EventLog) (err error) 
 
 	return manager.repository.Insert(eventLog)
 }
-
-func (manager *EventLogManager) Update(eventLog *entities.EventLog) (err error) {
-	if eventLog == nil {
-		return errors.New("eventLog must be not nil")
-	}
-
-	return manager.repository.Update(eventLog)
-}
