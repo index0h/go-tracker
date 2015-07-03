@@ -1,0 +1,16 @@
+---
+server:
+  install: '1'
+  packages: [git, htop, mc, mercurial, binutils, bison, gcc, build-essential, openjdk-7-jdk]
+  timezone: UTC
+  locale: en_US.UTF-8
+vagrant_local:
+  install: '1'
+  vm:
+    base_box: trusty64
+    hostname: go-tracker
+    ip: 192.168.100.126
+    memory: '1024'
+    sharedfolder: ./
+    useVagrantCloud: '1'
+    syncType: '0'

@@ -1,0 +1,4 @@
+---
+- name: start gvm
+  sudo: no
+  raw: gvm use {{ go_version }} --default

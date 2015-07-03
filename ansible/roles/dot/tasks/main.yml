@@ -1,0 +1,16 @@
+---
+- name: Copy dot files to root
+  copy: src={{ item.src }} dest=/root/{{ item.dest }} owner=root group=root mode=0644
+  with_items:
+    - { src: root.bashrc, dest: .bashrc }
+    - { src: .vimrc, dest: .vimrc }
+    - { src: .bash_aliases, dest: .bash_aliases }
+    - { src: .bash_git, dest: .bash_git }
+
+- name: Copy dot files to vagrant
+  copy: src={{ item }} dest=/home/vagrant/{{ item }} owner=vagrant group=vagrant mode=0644
+  with_items:
+    - .bashrc
+    - .vimrc
+    - .bash_aliases
+    - .bash_git

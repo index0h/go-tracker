@@ -1,5 +1,3 @@
-# User specific aliases and functions
-
 if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi

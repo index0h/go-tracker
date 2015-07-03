@@ -1,0 +1,15 @@
+---
+- name: Install GVM
+  sudo: yes
+  sudo_user: vagrant
+  shell: curl -s https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
+    executable="/bin/bash"
+  ignore_errors: true
+
+- name: Install Golang
+  sudo: yes
+  sudo_user: vagrant
+  shell: source "$HOME/.gvm/scripts/gvm" && gvm install go{{ go_version }}
+    executable="/bin/bash"
+  ignore_errors: true
+  notify: start gvm
