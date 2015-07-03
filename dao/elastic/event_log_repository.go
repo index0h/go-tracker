@@ -96,7 +96,7 @@ func (repository *EventLogRepository) eventLogToByte(eventLog *entities.EventLog
 	model.EventList = make([]eventLogStructEvent, len(eventsData))
 	for eventID, dataList := range eventsData {
 		event := eventLogStructEvent{
-			EventID: repository.uuid.ToString(eventID),
+			EventID:       repository.uuid.ToString(eventID),
 			EventDataList: make([]eventLogStructHash, len(dataList)),
 		}
 
