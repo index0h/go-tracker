@@ -10,18 +10,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_VisitRepository_Interface(t *testing.T) {
+func TestVisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
-func Test_VisitRepository_NewVisitRepository_EmptyClient(t *testing.T) {
+func TestVisitRepository_NewVisitRepository_EmptyClient(t *testing.T) {
 	repository, err := NewVisitRepository(nil, uuid.New())
 
 	assert.Nil(t, repository)
 	assert.NotNil(t, err)
 }
 
-func Test_VisitRepository_NewVisitRepository_EmptyUUIDProvider(t *testing.T) {
+func TestVisitRepository_NewVisitRepository_EmptyUUIDProvider(t *testing.T) {
 	client, _ := driver.NewClient()
 	repository, err := NewVisitRepository(client, nil)
 
@@ -29,13 +29,13 @@ func Test_VisitRepository_NewVisitRepository_EmptyUUIDProvider(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_VisitRepository_FindClientID(t *testing.T) {
+func TestVisitRepository_FindClientID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -44,7 +44,7 @@ func Test_VisitRepository_FindClientID(t *testing.T) {
 	assert.Equal(t, clientID, foundClientID)
 }
 
-func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
+func TestVisitRepository_FindClientID_Empty(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 
 	foundClientID, err := repository.FindClientID([16]byte{})
@@ -52,13 +52,13 @@ func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 	assert.Empty(t, foundClientID)
 }
 
-func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
+func TestVisitRepository_FindClientID_WrongSessionID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -67,13 +67,13 @@ func Test_VisitRepository_FindClientID_WrongSessionID(t *testing.T) {
 	assert.Empty(t, foundClientID)
 }
 
-func Test_VisitRepository_Verify(t *testing.T) {
+func TestVisitRepository_Verify(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -82,13 +82,13 @@ func Test_VisitRepository_Verify(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
+func TestVisitRepository_Verify_WrongClientID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -97,13 +97,13 @@ func Test_VisitRepository_Verify_WrongClientID(t *testing.T) {
 	assert.False(t, ok)
 }
 
-func Test_VisitRepository_Verify_WrongSessionID(t *testing.T) {
+func TestVisitRepository_Verify_WrongSessionID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -112,13 +112,13 @@ func Test_VisitRepository_Verify_WrongSessionID(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
+func TestVisitRepository_Verify_EmptyClientID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -127,13 +127,13 @@ func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 	assert.False(t, ok)
 }
 
-func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
+func TestVisitRepository_Verify_EmptySessionID(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, map[string]string{}, []string{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -142,19 +142,18 @@ func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 	assert.False(t, ok)
 }
 
-func Test_VisitRepository_Insert(t *testing.T) {
+func TestVisitRepository_Insert(t *testing.T) {
 	client, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "clientID"
-	data := map[string]string{"data": "here"}
-	warnings := []string{"i'm warning"}
+	fields := entities.Hash{"data": "here"}
 	timestamp := int64(15)
 
 	indexName := repository.indexName()
 	typeName := repository.typeName
 
-	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, data, warnings)
+	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, fields)
 
 	err := repository.Insert(visit)
 
@@ -180,11 +179,10 @@ func Test_VisitRepository_Insert(t *testing.T) {
 	assert.Equal(t, visit.Timestamp(), foundVisit.Timestamp())
 	assert.Equal(t, visit.SessionID(), foundVisit.SessionID())
 	assert.Equal(t, visit.ClientID(), foundVisit.ClientID())
-	assert.Equal(t, visit.Data(), foundVisit.Data())
-	assert.Equal(t, visit.Warnings(), foundVisit.Warnings())
+	assert.Equal(t, visit.Fields(), foundVisit.Fields())
 }
 
-func Test_VisitRepository_Insert_Nil(t *testing.T) {
+func TestVisitRepository_Insert_Nil(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 
 	err := repository.Insert(nil)
@@ -195,7 +193,7 @@ func Test_VisitRepository_Insert_Nil(t *testing.T) {
 func visitRepository_CreateRepository() (*driver.Client, *VisitRepository) {
 	client, _ := driver.NewClient()
 	repository, _ := NewVisitRepository(client, uuid.New())
-	repository.indexPrefix = "tracker-test-"
+	repository.indexPrefix = "test-tracker-"
 	repository.RefreshAfterInsert = true
 
 	_, _ = client.DeleteIndex(repository.indexName()).Do()

@@ -4,22 +4,14 @@ import "errors"
 
 type Visit struct {
 	visitID   [16]byte
-	timestamp int64
 	sessionID [16]byte
 	clientID  string
-	data      map[string]string
-	warnings  []string
+	timestamp int64
+	fields    Hash
 }
 
 // Create new visit instance
-func NewVisit(
-	visitID [16]byte,
-	timestamp int64,
-	sessionID [16]byte,
-	clientID string,
-	data map[string]string,
-	warnings []string,
-) (*Visit, error) {
+func NewVisit(visitID [16]byte, timestamp int64, sessionID [16]byte, clientID string, fields Hash) (*Visit, error) {
 	if visitID == [16]byte{} {
 		return nil, errors.New("Empty visitID is not allowed")
 	}
@@ -28,21 +20,12 @@ func NewVisit(
 		return nil, errors.New("Empty sessioID is not allowed")
 	}
 
-	copyData := make(map[string]string, len(data))
-	for key, value := range data {
-		copyData[key] = value
-	}
-
-	copyWarnings := make([]string, len(warnings))
-	copy(copyWarnings, warnings)
-
 	return &Visit{
 		visitID:   visitID,
-		timestamp: timestamp,
 		sessionID: sessionID,
 		clientID:  clientID,
-		data:      copyData,
-		warnings:  copyWarnings,
+		timestamp: timestamp,
+		fields:    fields.Copy(),
 	}, nil
 }
 
@@ -67,19 +50,6 @@ func (visit *Visit) ClientID() string {
 }
 
 // Get visit data
-func (visit *Visit) Data() map[string]string {
-	result := make(map[string]string, len(visit.data))
-	for key, value := range visit.data {
-		result[key] = value
-	}
-
-	return result
-}
-
-// Get visit warnings
-func (visit *Visit) Warnings() []string {
-	result := make([]string, len(visit.warnings))
-	_ = copy(result, visit.warnings)
-
-	return result
+func (visit *Visit) Fields() Hash {
+	return visit.fields.Copy()
 }

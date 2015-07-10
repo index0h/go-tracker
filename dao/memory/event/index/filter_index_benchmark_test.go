@@ -50,7 +50,7 @@ func filterIndexGenerateVisits(countVisits uint, countData uint) []*entities.Vis
 	for i := uint(0); i < countVisits; i++ {
 		data := filterIndexGenerateKeyValue(countData)
 
-		result[i], _ = entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data, []string{})
+		result[i], _ = entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data)
 	}
 
 	return result

@@ -264,7 +264,7 @@ func filterIndexGenerateEvent(filters map[string]string) *entities.Event {
 }
 
 func filterIndexGenerateVisit(data map[string]string) *entities.Visit {
-	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data, []string{})
+	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data)
 	return visit
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func Test_VisitManager_Track_Empty(t *testing.T) {
+func TestVisitManager_Track_Empty(t *testing.T) {
 	repository := new(mockVisitRepository)
 	uuidProvider := uuid.New()
 	logger := log.New(os.Stdout, "logger: ", log.Lshortfile)
@@ -24,12 +24,11 @@ func Test_VisitManager_Track_Empty(t *testing.T) {
 	assert.NotNil(t, visit.VisitID())
 	assert.NotNil(t, visit.SessionID())
 	assert.Equal(t, "", visit.ClientID())
-	assert.Empty(t, visit.Data())
-	assert.Empty(t, visit.Warnings())
+	assert.Empty(t, visit.Fields())
 	assert.Nil(t, err)
 }
 
-func Test_VisitManager_Track_SessionID(t *testing.T) {
+func TestVisitManager_Track_SessionID(t *testing.T) {
 	repository := new(mockVisitRepository)
 	uuidProvider := uuid.New()
 	logger := log.New(os.Stdout, "logger: ", log.Lshortfile)
@@ -46,14 +45,13 @@ func Test_VisitManager_Track_SessionID(t *testing.T) {
 	assert.NotNil(t, visit.VisitID())
 	assert.Equal(t, sessionID, visit.SessionID())
 	assert.Equal(t, clientID, visit.ClientID())
-	assert.Empty(t, visit.Data())
-	assert.Empty(t, visit.Warnings())
+	assert.Empty(t, visit.Fields())
 	assert.Nil(t, err)
 
 	repository.AssertExpectations(t)
 }
 
-func Test_VisitManager_Track_ClientID(t *testing.T) {
+func TestVisitManager_Track_ClientID(t *testing.T) {
 	repository := new(mockVisitRepository)
 	uuidProvider := uuid.New()
 	logger := log.New(os.Stdout, "logger: ", log.Lshortfile)
@@ -68,12 +66,11 @@ func Test_VisitManager_Track_ClientID(t *testing.T) {
 	assert.NotNil(t, visit.VisitID())
 	assert.NotEqual(t, sessionID, visit.SessionID())
 	assert.Equal(t, clientID, visit.ClientID())
-	assert.Empty(t, visit.Data())
-	assert.Empty(t, visit.Warnings())
+	assert.Empty(t, visit.Fields())
 	assert.Nil(t, err)
 }
 
-func Test_VisitManager_Track_VerifyTrue(t *testing.T) {
+func TestVisitManager_Track_VerifyTrue(t *testing.T) {
 	repository := new(mockVisitRepository)
 	uuidProvider := uuid.New()
 	logger := log.New(os.Stdout, "logger: ", log.Lshortfile)
@@ -90,14 +87,13 @@ func Test_VisitManager_Track_VerifyTrue(t *testing.T) {
 	assert.NotNil(t, visit.VisitID())
 	assert.Equal(t, sessionID, visit.SessionID())
 	assert.Equal(t, clientID, visit.ClientID())
-	assert.Empty(t, visit.Data())
-	assert.Empty(t, visit.Warnings())
+	assert.Empty(t, visit.Fields())
 	assert.Nil(t, err)
 
 	repository.AssertExpectations(t)
 }
 
-func Test_VisitManager_Track_VerifyFalse(t *testing.T) {
+func TestVisitManager_Track_VerifyFalse(t *testing.T) {
 	repository := new(mockVisitRepository)
 	uuidProvider := uuid.New()
 	logger := log.New(os.Stdout, "logger: ", log.Lshortfile)
@@ -114,8 +110,7 @@ func Test_VisitManager_Track_VerifyFalse(t *testing.T) {
 	assert.NotNil(t, visit.VisitID())
 	assert.NotEqual(t, sessionID, visit.SessionID())
 	assert.Equal(t, clientID, visit.ClientID())
-	assert.Empty(t, visit.Data())
-	assert.NotEmpty(t, visit.Warnings())
+	assert.NotEmpty(t, visit.Fields())
 	assert.Nil(t, err)
 
 	repository.AssertExpectations(t)

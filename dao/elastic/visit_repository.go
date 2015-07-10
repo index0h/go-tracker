@@ -146,22 +146,12 @@ func (repository *VisitRepository) indexName() string {
 
 // Convert visit to bytes
 func (repository *VisitRepository) visitToByte(visit *entities.Visit) ([]byte, error) {
-	model := visitStructVisit{
-		VisitID:     repository.uuid.ToString(visit.VisitID()),
-		Timestamp:   time.Unix(visit.Timestamp(), 0).Format("2006-01-02 15:04:05"),
-		SessionID:   repository.uuid.ToString(visit.SessionID()),
-		ClientID:    visit.ClientID(),
-		WarningList: visit.Warnings(),
-	}
-
-	dataFromVisit := visit.Data()
-	model.DataList = make([]visitStructHash, len(dataFromVisit))
-
-	var i uint
-	for key, value := range dataFromVisit {
-		model.DataList[i] = visitStructHash{Key: key, Value: value}
-
-		i++
+	model := elasticVisit{
+		VisitID:   repository.uuid.ToString(visit.VisitID()),
+		Timestamp: time.Unix(visit.Timestamp(), 0).Format("2006-01-02 15:04:05"),
+		SessionID: repository.uuid.ToString(visit.SessionID()),
+		ClientID:  visit.ClientID(),
+		Fields:    keyValFromHash(visit.Fields()),
 	}
 
 	return json.Marshal(model)
@@ -172,7 +162,7 @@ func (repository *VisitRepository) byteToVisit(data []byte) (*entities.Visit, er
 		return nil, errors.New("Empty data is not allowed")
 	}
 
-	structVisit := new(visitStructVisit)
+	structVisit := new(elasticVisit)
 
 	err := json.Unmarshal(data, structVisit)
 	if err != nil {
@@ -185,31 +175,11 @@ func (repository *VisitRepository) byteToVisit(data []byte) (*entities.Visit, er
 		return nil, err
 	}
 
-	dataList := make(map[string]string, len(structVisit.DataList))
-	for _, value := range structVisit.DataList {
-		dataList[value.Key] = value.Value
-	}
-
 	return entities.NewVisit(
 		repository.uuid.ToBytes(structVisit.VisitID),
 		timestamp.Unix(),
 		repository.uuid.ToBytes(structVisit.SessionID),
 		structVisit.ClientID,
-		dataList,
-		structVisit.WarningList,
+		hashFromKeyVal(structVisit.Fields),
 	)
-}
-
-type visitStructVisit struct {
-	VisitID     string            `json:"_id"`
-	Timestamp   string            `json:"@timestamp"`
-	SessionID   string            `json:"sessionId"`
-	ClientID    string            `json:"clientId"`
-	DataList    []visitStructHash `json:"dataList"`
-	WarningList []string          `json:"warningList"`
-}
-
-type visitStructHash struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
 }

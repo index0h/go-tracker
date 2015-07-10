@@ -28,15 +28,13 @@ func NewVisitManager(
 func (manager *VisitManager) Track(
 	sessionID [16]byte,
 	clientID string,
-	data map[string]string,
+	fields entities.Hash,
 ) (visit *entities.Visit, err error) {
-	var warnings []string
-
 	if sessionID, clientID, err = manager.verify(sessionID, clientID); err != nil {
-		warnings = append(warnings, err.Error())
+		fields["warning:VisitManager"] = err.Error()
 	}
 
-	visit, err = entities.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, data, warnings)
+	visit, err = entities.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, fields)
 	if err != nil {
 		return nil, err
 	}

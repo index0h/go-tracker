@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_EventRepository_Interface(t *testing.T) {
+func TestEventRepository_Interface(t *testing.T) {
 	func(event dao.EventRepositoryInterface) {}(&EventRepository{})
 }
 
-func Test_EventRepository_FindAll(t *testing.T) {
+func TestEventRepository_FindAll(t *testing.T) {
 	checkRepository := EventRepository{}
 
 	result, err := checkRepository.FindAll()
@@ -22,7 +22,7 @@ func Test_EventRepository_FindAll(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_EventRepository_FindAllByVisit(t *testing.T) {
+func TestEventRepository_FindAllByVisit(t *testing.T) {
 	visit := &entities.Visit{}
 	checkRepository := EventRepository{}
 
@@ -32,7 +32,7 @@ func Test_EventRepository_FindAllByVisit(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_EventRepository_FindAllByVisit_Empty(t *testing.T) {
+func TestEventRepository_FindAllByVisit_Empty(t *testing.T) {
 	checkRepository := EventRepository{}
 
 	result, err := checkRepository.FindAllByVisit(nil)
@@ -41,7 +41,7 @@ func Test_EventRepository_FindAllByVisit_Empty(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_EventRepository_FindByID(t *testing.T) {
+func TestEventRepository_FindByID(t *testing.T) {
 	checkRepository := EventRepository{}
 
 	result, err := checkRepository.FindByID(uuid.New().Generate())
@@ -50,7 +50,7 @@ func Test_EventRepository_FindByID(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_EventRepository_FindByID_Empty(t *testing.T) {
+func TestEventRepository_FindByID_Empty(t *testing.T) {
 	checkRepository := EventRepository{}
 
 	result, err := checkRepository.FindByID([16]byte{})
@@ -59,27 +59,27 @@ func Test_EventRepository_FindByID_Empty(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_EventRepository_Insert(t *testing.T) {
+func TestEventRepository_Insert(t *testing.T) {
 	event := &entities.Event{}
 	checkRepository := EventRepository{}
 
 	assert.Nil(t, checkRepository.Insert(event))
 }
 
-func Test_EventRepository_Insert_Empty(t *testing.T) {
+func TestEventRepository_Insert_Empty(t *testing.T) {
 	checkRepository := EventRepository{}
 
 	assert.NotNil(t, checkRepository.Insert(nil))
 }
 
-func Test_EventRepository_Update(t *testing.T) {
+func TestEventRepository_Update(t *testing.T) {
 	event := &entities.Event{}
 	checkRepository := EventRepository{}
 
 	assert.Nil(t, checkRepository.Update(event))
 }
 
-func Test_EventRepository_Update_Empty(t *testing.T) {
+func TestEventRepository_Update_Empty(t *testing.T) {
 	checkRepository := EventRepository{}
 
 	assert.NotNil(t, checkRepository.Update(nil))

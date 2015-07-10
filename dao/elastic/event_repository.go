@@ -37,19 +37,19 @@ func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) ([]*ent
 		return []*entities.Event{}, errors.New("Empty visit is not allowed")
 	}
 
-	data := visit.Data()
+	fields := visit.Fields()
 
 	outer := driver.NewBoolFilter().Must(driver.NewTermFilter("enabled", true))
 
-	keys := make([]string, len(data))
+	keys := make([]string, len(fields))
 
 	var i uint
-	for key, value := range data {
+	for key, value := range fields {
 		inner := driver.NewBoolFilter().
-			Must(driver.NewTermFilter("filterList.key", key)).
-			MustNot(driver.NewTermFilter("filterList.value", value))
+			Must(driver.NewTermFilter("filters.key", key)).
+			MustNot(driver.NewTermFilter("filters.value", value))
 
-		nested := driver.NewNestedFilter("filterList").Filter(inner)
+		nested := driver.NewNestedFilter("filters").Filter(inner)
 
 		outer = outer.MustNot(nested)
 
@@ -57,10 +57,10 @@ func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) ([]*ent
 		i++
 	}
 
-	postFilter := driver.NewBoolFilter().Should(driver.NewMissingFilter("filterList.key"))
+	postFilter := driver.NewBoolFilter().Should(driver.NewMissingFilter("filters.key"))
 
 	if i > 0 {
-		postFilter = postFilter.Should(driver.NewBoolFilter().Must(driver.NewTermsFilter("filterList.key", keys)))
+		postFilter = postFilter.Should(driver.NewBoolFilter().Must(driver.NewTermsFilter("filters.key", keys)))
 	}
 
 	searchResult, err := repository.client.
@@ -176,29 +176,11 @@ func (repository *EventRepository) find(term driver.Query, limit, offset uint) (
 }
 
 func (repository *EventRepository) eventToByte(event *entities.Event) ([]byte, error) {
-	structEvent := eventStructEvent{
+	structEvent := elasticEvent{
 		EventID: repository.uuid.ToString(event.EventID()),
 		Enabled: event.Enabled(),
-	}
-
-	dataFromEvent := event.Data()
-	structEvent.DataList = make([]eventStructHash, len(dataFromEvent))
-
-	var i uint
-	for key, value := range dataFromEvent {
-		structEvent.DataList[i] = eventStructHash{Key: key, Value: value}
-
-		i++
-	}
-
-	filtersFromEvent := event.Filters()
-	structEvent.FilterList = make([]eventStructHash, len(filtersFromEvent))
-
-	i = 0
-	for key, value := range filtersFromEvent {
-		structEvent.FilterList[i] = eventStructHash{Key: key, Value: value}
-
-		i++
+		Fields:  keyValFromHash(event.Fields()),
+		Filters: keyValFromHash(event.Filters()),
 	}
 
 	return json.Marshal(structEvent)
@@ -209,34 +191,16 @@ func (repository *EventRepository) byteToEvent(data []byte) (*entities.Event, er
 		return nil, errors.New("Empty data is not allowed")
 	}
 
-	structEvent := new(eventStructEvent)
+	structEvent := new(elasticEvent)
 
-	err := json.Unmarshal(data, structEvent)
-	if err != nil {
+	if err := json.Unmarshal(data, structEvent); err != nil {
 		return nil, err
 	}
 
-	dataList := make(map[string]string, len(structEvent.DataList))
-	for _, value := range structEvent.DataList {
-		dataList[value.Key] = value.Value
-	}
-
-	filtersList := make(map[string]string, len(structEvent.FilterList))
-	for _, value := range structEvent.FilterList {
-		filtersList[value.Key] = value.Value
-	}
-
-	return entities.NewEvent(repository.uuid.ToBytes(structEvent.EventID), structEvent.Enabled, dataList, filtersList)
-}
-
-type eventStructEvent struct {
-	EventID    string            `json:"_id"`
-	Enabled    bool              `json:"enabled"`
-	DataList   []eventStructHash `json:"dataList"`
-	FilterList []eventStructHash `json:"filterList"`
-}
-
-type eventStructHash struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	return entities.NewEvent(
+		repository.uuid.ToBytes(structEvent.EventID),
+		structEvent.Enabled,
+		hashFromKeyVal(structEvent.Fields),
+		hashFromKeyVal(structEvent.Filters),
+	)
 }

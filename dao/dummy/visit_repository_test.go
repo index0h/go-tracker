@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_VisitRepository_Interface(t *testing.T) {
+func TestVisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
-func Test_VisitRepository_FindClientID(t *testing.T) {
+func TestVisitRepository_FindClientID(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	clientID, err := checkVisitRepository.FindClientID(uuid.New().Generate())
@@ -22,7 +22,7 @@ func Test_VisitRepository_FindClientID(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
+func TestVisitRepository_FindClientID_Empty(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	clientID, err := checkVisitRepository.FindClientID([16]byte{})
@@ -31,7 +31,7 @@ func Test_VisitRepository_FindClientID_Empty(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_VisitRepository_Verify(t *testing.T) {
+func TestVisitRepository_Verify(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	ok, err := checkVisitRepository.Verify(uuid.New().Generate(), "12345")
@@ -40,7 +40,7 @@ func Test_VisitRepository_Verify(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
+func TestVisitRepository_Verify_EmptySessionID(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	ok, err := checkVisitRepository.Verify([16]byte{}, "12345")
@@ -49,7 +49,7 @@ func Test_VisitRepository_Verify_EmptySessionID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
+func TestVisitRepository_Verify_EmptyClientID(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	ok, err := checkVisitRepository.Verify(uuid.New().Generate(), "")
@@ -58,24 +58,23 @@ func Test_VisitRepository_Verify_EmptyClientID(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_VisitRepository_Insert(t *testing.T) {
+func TestVisitRepository_Insert(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "clientID"
 	data := map[string]string{"data": "here"}
-	warnings := []string{"i'm warning"}
 	timestamp := int64(15)
 
-	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, data, warnings)
+	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, data)
 
 	err := checkVisitRepository.Insert(visit)
 
 	assert.Nil(t, err)
 }
 
-func Test_VisitRepository_Insert_Nil(t *testing.T) {
+func TestVisitRepository_Insert_Nil(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 
 	err := checkVisitRepository.Insert(nil)

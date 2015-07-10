@@ -8,15 +8,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Visit_NewVisit(t *testing.T) {
+func TestVisit_NewVisit(t *testing.T) {
 	visitID := uuid.New().Generate()
 	timestamp := time.Now().Unix()
 	sessionID := uuid.New().Generate()
 	clientID := "someClientID"
-	data := map[string]string{"data": "here"}
-	warnings := []string{"warning"}
+	fields := Hash{"data": "here"}
 
-	visit, err := NewVisit(visitID, timestamp, sessionID, clientID, data, warnings)
+	visit, err := NewVisit(visitID, timestamp, sessionID, clientID, fields)
 
 	assert.NotNil(t, visit)
 	assert.Nil(t, err)
@@ -24,48 +23,35 @@ func Test_Visit_NewVisit(t *testing.T) {
 	assert.Equal(t, timestamp, visit.Timestamp())
 	assert.Equal(t, sessionID, visit.SessionID())
 	assert.Equal(t, clientID, visit.ClientID())
-	assert.Equal(t, data, visit.Data())
-	assert.Equal(t, warnings, visit.Warnings())
+	assert.Equal(t, fields, visit.Fields())
 }
 
-func Test_Visit_NewVisit_EmptyVisitID(t *testing.T) {
+func TestVisit_NewVisit_EmptyVisitID(t *testing.T) {
 	sessionID := uuid.New().Generate()
 
-	visit, err := NewVisit([16]byte{}, time.Now().Unix(), sessionID, "", map[string]string{}, []string{})
+	visit, err := NewVisit([16]byte{}, time.Now().Unix(), sessionID, "", Hash{})
 
 	assert.Nil(t, visit)
 	assert.NotNil(t, err)
 }
 
-func Test_Visit_NewVisit_EmptySessionID(t *testing.T) {
+func TestVisit_NewVisit_EmptySessionID(t *testing.T) {
 	visitID := uuid.New().Generate()
 
-	visit, err := NewVisit(visitID, time.Now().Unix(), [16]byte{}, "", map[string]string{}, []string{})
+	visit, err := NewVisit(visitID, time.Now().Unix(), [16]byte{}, "", Hash{})
 
 	assert.Nil(t, visit)
 	assert.NotNil(t, err)
 }
 
-func Test_Visit_Data_Copy(t *testing.T) {
-	data := map[string]string{"A": "B"}
+func TestVisit_Data_Copy(t *testing.T) {
+	fields := Hash{"A": "B"}
 
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
-	visit, err := NewVisit(visitID, time.Now().Unix(), sessionID, "", data, []string{})
+	visit, err := NewVisit(visitID, time.Now().Unix(), sessionID, "", fields)
 
-	data["B"] = "C"
-	assert.NotEqual(t, data, visit.Data())
-	assert.Nil(t, err)
-}
-
-func Test_Visit_Warnings_Copy(t *testing.T) {
-	warnings := []string{"test"}
-
-	visitID := uuid.New().Generate()
-	sessionID := uuid.New().Generate()
-	visit, err := NewVisit(visitID, time.Now().Unix(), sessionID, "", map[string]string{}, warnings)
-
-	warnings = append(warnings, "another data")
-	assert.NotEqual(t, warnings, visit.Warnings())
+	fields["B"] = "C"
+	assert.NotEqual(t, fields, visit.Fields())
 	assert.Nil(t, err)
 }

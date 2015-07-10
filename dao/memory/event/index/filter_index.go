@@ -53,13 +53,13 @@ func (index *FilterIndex) FindAllByVisit(visit *entities.Visit) (result []*entit
 		return result, errors.New("visit must be not nil")
 	}
 
-	data := visit.Data()
+	fields := visit.Fields()
 
 	foundEvents := map[*entities.Event]uint{}
 
 	index.RLock()
 
-	for key, value := range data {
+	for key, value := range fields {
 		if _, ok := index.events[key][value]; !ok {
 			continue
 		}

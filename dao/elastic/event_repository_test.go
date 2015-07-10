@@ -11,18 +11,18 @@ import (
 	"time"
 )
 
-func Test_EventRepository_Interface(t *testing.T) {
+func TestEventRepository_Interface(t *testing.T) {
 	func(event dao.EventRepositoryInterface) {}(&EventRepository{})
 }
 
-func Test_EventRepository_NewEventRepository_EmptyClient(t *testing.T) {
+func TestEventRepository_NewEventRepository_EmptyClient(t *testing.T) {
 	repository, err := NewEventRepository(nil, uuid.New())
 
 	assert.Nil(t, repository)
 	assert.NotNil(t, err)
 }
 
-func Test_EventRepository_NewEventRepository_EmptyUUIDProvider(t *testing.T) {
+func TestEventRepository_NewEventRepository_EmptyUUIDProvider(t *testing.T) {
 	client, _ := driver.NewClient()
 	repository, err := NewEventRepository(client, nil)
 
@@ -30,16 +30,15 @@ func Test_EventRepository_NewEventRepository_EmptyUUIDProvider(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_EventRepository_FindAll_Empty(t *testing.T) {
+func TestEventRepository_FindAll(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
-
 	foundEvents, err := repository.FindAll()
 
 	assert.Nil(t, err)
 	assert.Len(t, foundEvents, 0)
 }
 
-func Test_EventRepository_FindAllByVisit_Empty(t *testing.T) {
+func TestEventRepository_FindAllByVisit_Empty(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
 	foundEvents, err := repository.FindAllByVisit(nil)
@@ -48,16 +47,16 @@ func Test_EventRepository_FindAllByVisit_Empty(t *testing.T) {
 	assert.Empty(t, foundEvents)
 }
 
-func Test_EventRepository_FindAllByVisit_RealVisit(t *testing.T) {
+func TestEventRepository_FindAllByVisit_RealVisit(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
-	eventA := eventRepository_GenerateEvent(map[string]string{"A": "A"})
-	eventB := eventRepository_GenerateEvent(map[string]string{"B": "B"})
-	eventC := eventRepository_GenerateEvent(map[string]string{"A": "B"})
-	eventD := eventRepository_GenerateEvent(map[string]string{})
-	eventE, _ := entities.NewEvent(uuid.New().Generate(), false, map[string]string{}, map[string]string{"Z": "Z"})
+	eventA := eventRepository_GenerateEvent(entities.Hash{"A": "A"})
+	eventB := eventRepository_GenerateEvent(entities.Hash{"B": "B"})
+	eventC := eventRepository_GenerateEvent(entities.Hash{"A": "B"})
+	eventD := eventRepository_GenerateEvent(entities.Hash{})
+	eventE, _ := entities.NewEvent(uuid.New().Generate(), false, entities.Hash{}, entities.Hash{"Z": "Z"})
 
-	visit := eventRepository_GenerateVisit(map[string]string{"A": "A", "B": "B"})
+	visit := eventRepository_GenerateVisit(entities.Hash{"A": "A", "B": "B"})
 
 	events := []*entities.Event{eventA, eventB, eventD}
 
@@ -73,10 +72,10 @@ func Test_EventRepository_FindAllByVisit_RealVisit(t *testing.T) {
 	eventRepository_EventSlicesEqual(t, events, foundEvents)
 }
 
-func Test_EventRepository_FindAllByVisit_NoEventsForVisit(t *testing.T) {
+func TestEventRepository_FindAllByVisit_NoEventsForVisit(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
-	visit := eventRepository_GenerateVisit(map[string]string{"A": "A", "B": "B"})
+	visit := eventRepository_GenerateVisit(entities.Hash{"A": "A", "B": "B"})
 
 	foundEvents, err := repository.FindAllByVisit(visit)
 
@@ -84,11 +83,11 @@ func Test_EventRepository_FindAllByVisit_NoEventsForVisit(t *testing.T) {
 	assert.Empty(t, foundEvents)
 }
 
-func Test_EventRepository_FindAll_WithData(t *testing.T) {
+func TestEventRepository_FindAll_WithData(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
-	eventA := eventRepository_GenerateEvent(map[string]string{})
-	eventB := eventRepository_GenerateEvent(map[string]string{})
+	eventA := eventRepository_GenerateEvent(entities.Hash{})
+	eventB := eventRepository_GenerateEvent(entities.Hash{})
 	events := []*entities.Event{eventA, eventB}
 
 	repository.Insert(eventA)
@@ -100,7 +99,7 @@ func Test_EventRepository_FindAll_WithData(t *testing.T) {
 	eventRepository_EventSlicesEqual(t, events, foundEvents)
 }
 
-func Test_EventRepository_FindByID_Empty(t *testing.T) {
+func TestEventRepository_FindByID_Empty(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
 	foundEvent, err := repository.FindByID([16]byte{})
@@ -109,7 +108,7 @@ func Test_EventRepository_FindByID_Empty(t *testing.T) {
 	assert.Nil(t, foundEvent)
 }
 
-func Test_EventRepository_FindByID_NotFound(t *testing.T) {
+func TestEventRepository_FindByID_NotFound(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
 	foundEvent, err := repository.FindByID(uuid.New().Generate())
@@ -118,10 +117,10 @@ func Test_EventRepository_FindByID_NotFound(t *testing.T) {
 	assert.Nil(t, foundEvent)
 }
 
-func Test_EventRepository_FindByID_RealID(t *testing.T) {
+func TestEventRepository_FindByID_RealID(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
-	eventA := eventRepository_GenerateEvent(map[string]string{})
+	eventA := eventRepository_GenerateEvent(entities.Hash{})
 	events := []*entities.Event{eventA}
 
 	repository.Insert(eventA)
@@ -132,7 +131,7 @@ func Test_EventRepository_FindByID_RealID(t *testing.T) {
 	eventRepository_EventSlicesEqual(t, events, []*entities.Event{foundEvent})
 }
 
-func Test_EventRepository_Insert_Empty(t *testing.T) {
+func TestEventRepository_Insert_Empty(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
 	err := repository.Insert(nil)
@@ -140,10 +139,10 @@ func Test_EventRepository_Insert_Empty(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_EventRepository_Insert_Real(t *testing.T) {
+func TestEventRepository_Insert_Real(t *testing.T) {
 	client, repository := eventRepository_CreateRepository()
 
-	eventA := eventRepository_GenerateEvent(map[string]string{})
+	eventA := eventRepository_GenerateEvent(entities.Hash{})
 
 	err := repository.Insert(eventA)
 
@@ -165,7 +164,7 @@ func Test_EventRepository_Insert_Real(t *testing.T) {
 	assert.Equal(t, eventA, foundEvent)
 }
 
-func Test_EventRepository_Update_Nil(t *testing.T) {
+func TestEventRepository_Update_Nil(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
 
 	err := repository.Update(nil)
@@ -173,11 +172,11 @@ func Test_EventRepository_Update_Nil(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func Test_EventRepository_Update_Real(t *testing.T) {
+func TestEventRepository_Update_Real(t *testing.T) {
 	client, repository := eventRepository_CreateRepository()
 
-	eventA := eventRepository_GenerateEvent(map[string]string{"A": "A"})
-	eventB, _ := entities.NewEvent(eventA.EventID(), false, eventA.Data(), map[string]string{"B": "B"})
+	eventA := eventRepository_GenerateEvent(entities.Hash{"A": "A"})
+	eventB, _ := entities.NewEvent(eventA.EventID(), false, eventA.Fields(), entities.Hash{"B": "B"})
 
 	_ = repository.Insert(eventA)
 
@@ -204,7 +203,7 @@ func Test_EventRepository_Update_Real(t *testing.T) {
 func eventRepository_CreateRepository() (*driver.Client, *EventRepository) {
 	client, _ := driver.NewClient()
 	repository, _ := NewEventRepository(client, uuid.New())
-	repository.indexName = "tracker-test"
+	repository.indexName = "test-tracker"
 
 	_, _ = client.DeleteIndex(repository.indexName).Do()
 	_, _ = client.CreateIndex(repository.indexName).Do()
@@ -228,20 +227,19 @@ func eventRepository_EventSlicesEqual(t *testing.T, first, second []*entities.Ev
 		}
 
 		if !found {
-
 			t.Errorf("Events slices non equal")
 		}
 	}
 }
 
-func eventRepository_GenerateEvent(filters map[string]string) *entities.Event {
-	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{"data": "here"}, filters)
+func eventRepository_GenerateEvent(filters entities.Hash) *entities.Event {
+	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, entities.Hash{"data": "here"}, filters)
 
 	return eventA
 }
 
-func eventRepository_GenerateVisit(data map[string]string) *entities.Visit {
-	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data, []string{})
+func eventRepository_GenerateVisit(data entities.Hash) *entities.Visit {
+	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data)
 
 	return visit
 }

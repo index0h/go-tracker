@@ -34,7 +34,7 @@ Visit index
                     "index": "not_analyzed",
                     "type": "string"
                 },
-                "dataList": {
+                "fields": {
                     "include_in_parent": true,
                     "type": "nested",
                     "properties": {
@@ -58,7 +58,7 @@ Visit index
                 }
             }
         },
-        "event_log": {
+        "flash": {
             "properties": {
                 "_source": {
                     "enabled": false
@@ -85,7 +85,7 @@ Visit index
                     "index": "not_analyzed",
                     "type": "string"
                 },
-                "visitDataList": {
+                "visitFields": {
                     "include_in_parent": true,
                     "type": "nested",
                     "properties": {
@@ -99,30 +99,20 @@ Visit index
                         }
                     }
                 },
-                "eventList": {
+                "eventFields": {
                     "include_in_parent": true,
                     "type": "nested",
                     "properties": {
-                        "eventId": {
+                        "key": {
                             "index": "not_analyzed",
                             "type": "string"
                         },
-                        "dataList": {
-                            "include_in_parent": true,
-                            "type": "nested",
-                            "properties": {
-                                "key": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
-                                },
-                                "value": {
-                                    "index": "not_analyzed",
-                                    "type": "string"
-                                }
-                            }
+                        "value": {
+                            "index": "not_analyzed",
+                            "type": "string"
                         }
                     }
-                },
+                }
             }
         }
     }
@@ -158,7 +148,7 @@ Event index
                 "enabled": {
                     "type": "boolean"
                 },
-                "dataList": {
+                "fields": {
                     "include_in_parent": true,
                     "type": "nested",
                     "properties": {
@@ -172,7 +162,7 @@ Event index
                         }
                     }
                 },
-                "filterList": {
+                "filters": {
                     "include_in_parent": true,
                     "type": "nested",
                     "properties": {
