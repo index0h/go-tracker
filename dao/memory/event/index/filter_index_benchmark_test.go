@@ -48,9 +48,9 @@ func filterIndexGenerateVisits(countVisits uint, countData uint) []*entities.Vis
 	result := make([]*entities.Visit, countVisits)
 
 	for i := uint(0); i < countVisits; i++ {
-		data := filterIndexGenerateKeyValue(countData)
+		fileds := filterIndexGenerateKeyValue(countData)
 
-		result[i], _ = entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data)
+		result[i], _ = entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", fileds)
 	}
 
 	return result
@@ -62,14 +62,14 @@ func filterIndexGenerateEvents(count uint, countData uint) []*entities.Event {
 	for i := uint(0); i < count; i++ {
 		filters := filterIndexGenerateKeyValue(countData)
 
-		result[i], _ = entities.NewEvent(uuid.New().Generate(), true, map[string]string{}, filters)
+		result[i], _ = entities.NewEvent(uuid.New().Generate(), true, entities.Hash{}, filters)
 	}
 
 	return result
 }
 
-func filterIndexGenerateKeyValue(count uint) (result map[string]string) {
-	result = make(map[string]string, count)
+func filterIndexGenerateKeyValue(count uint) (result entities.Hash) {
+	result = make(entities.Hash, count)
 
 	for i := uint(0); i < count; i++ {
 		result[filterIndexGenerateString()] = filterIndexGenerateString()

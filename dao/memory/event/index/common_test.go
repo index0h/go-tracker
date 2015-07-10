@@ -29,7 +29,7 @@ func commonEventSlicesEqual(t *testing.T, first, second []*entities.Event) {
 }
 
 func commonGenerateNotFilteredEvent() *entities.Event {
-	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{}, map[string]string{})
+	eventA, _ := entities.NewEvent(uuid.New().Generate(), true, entities.Hash{}, entities.Hash{})
 
 	return eventA
 }

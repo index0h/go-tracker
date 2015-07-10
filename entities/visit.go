@@ -49,7 +49,7 @@ func (visit *Visit) ClientID() string {
 	return visit.clientID
 }
 
-// Get visit data
+// Get visit fields
 func (visit *Visit) Fields() Hash {
 	return visit.fields.Copy()
 }

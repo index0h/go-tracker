@@ -139,7 +139,7 @@ func Test_MapIndex_Delete_EventByPointer(t *testing.T) {
 
 func Test_MapIndex_Delete_EventByUUID(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
-	eventB, _ := entities.NewEvent(eventA.EventID(), true, map[string]string{}, map[string]string{})
+	eventB, _ := entities.NewEvent(eventA.EventID(), true, entities.Hash{}, entities.Hash{})
 
 	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)
@@ -194,7 +194,7 @@ func Test_MapIndex_Update_NotEqualUUID(t *testing.T) {
 
 func Test_MapIndex_Update(t *testing.T) {
 	eventA := commonGenerateNotFilteredEvent()
-	eventB, _ := entities.NewEvent(eventA.EventID(), false, map[string]string{}, map[string]string{})
+	eventB, _ := entities.NewEvent(eventA.EventID(), false, entities.Hash{}, entities.Hash{})
 
 	testIndex := NewMapIndex()
 	testIndex.Insert(eventA)

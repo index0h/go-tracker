@@ -238,8 +238,8 @@ func eventRepository_GenerateEvent(filters entities.Hash) *entities.Event {
 	return eventA
 }
 
-func eventRepository_GenerateVisit(data entities.Hash) *entities.Visit {
-	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data)
+func eventRepository_GenerateVisit(fields entities.Hash) *entities.Visit {
+	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", fields)
 
 	return visit
 }

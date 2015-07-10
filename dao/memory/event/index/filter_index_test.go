@@ -9,8 +9,8 @@ import (
 )
 
 func Test_FilterIndex_Refresh_Two(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A1", "B": "B", "C": "C1"})
-	eventB := filterIndexGenerateEvent(map[string]string{"B": "B", "C": "C2", "D": "D"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A1", "B": "B", "C": "C1"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"B": "B", "C": "C2", "D": "D"})
 
 	pushEvents := []*entities.Event{eventA, eventB}
 
@@ -38,8 +38,8 @@ func Test_FilterIndex_Refresh_Two(t *testing.T) {
 }
 
 func Test_FilterIndex_Refresh_RemoveEvents(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A1"})
-	eventB := filterIndexGenerateEvent(map[string]string{"A": "A2"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A1"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"A": "A2"})
 
 	events := []*entities.Event{eventA, eventB}
 
@@ -52,7 +52,7 @@ func Test_FilterIndex_Refresh_RemoveEvents(t *testing.T) {
 }
 
 func Test_FilterIndex_Refresh_Disabled(t *testing.T) {
-	event, _ := entities.NewEvent(uuid.New().Generate(), false, map[string]string{}, map[string]string{"A": "A"})
+	event, _ := entities.NewEvent(uuid.New().Generate(), false, entities.Hash{}, entities.Hash{"A": "A"})
 
 	events := []*entities.Event{event}
 
@@ -76,7 +76,7 @@ func Test_FilterIndex_FindAllByVisit_Empty(t *testing.T) {
 func TestFilterIndexFindAllByNotFoundVisit(t *testing.T) {
 	testIndex := NewFilterIndex()
 
-	visit := filterIndexGenerateVisit(map[string]string{"A": "A"})
+	visit := filterIndexGenerateVisit(entities.Hash{"A": "A"})
 
 	event, err := testIndex.FindAllByVisit(visit)
 
@@ -85,11 +85,11 @@ func TestFilterIndexFindAllByNotFoundVisit(t *testing.T) {
 }
 
 func Test_FilterIndex_FindAllByVisit_WithData(t *testing.T) {
-	eventA1 := filterIndexGenerateEvent(map[string]string{"A": "A1"})
-	eventA2 := filterIndexGenerateEvent(map[string]string{"A": "A2"})
-	eventB := filterIndexGenerateEvent(map[string]string{"B": "B"})
-	eventA1B := filterIndexGenerateEvent(map[string]string{"A": "A1", "B": "B"})
-	eventA2B := filterIndexGenerateEvent(map[string]string{"A": "A2", "B": "B"})
+	eventA1 := filterIndexGenerateEvent(entities.Hash{"A": "A1"})
+	eventA2 := filterIndexGenerateEvent(entities.Hash{"A": "A2"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"B": "B"})
+	eventA1B := filterIndexGenerateEvent(entities.Hash{"A": "A1", "B": "B"})
+	eventA2B := filterIndexGenerateEvent(entities.Hash{"A": "A2", "B": "B"})
 
 	listA1 := []*entities.Event{eventA1}
 	listA2 := []*entities.Event{eventA2}
@@ -106,11 +106,11 @@ func Test_FilterIndex_FindAllByVisit_WithData(t *testing.T) {
 	testIndex.Insert(eventA2B)
 
 	combinations := []filterIndexFixture{
-		filterIndexFixture{fields: map[string]string{"A": "A1"}, events: listA1},
-		filterIndexFixture{fields: map[string]string{"A": "A2"}, events: listA2},
-		filterIndexFixture{fields: map[string]string{"B": "B"}, events: listB},
-		filterIndexFixture{fields: map[string]string{"A": "A1", "B": "B"}, events: listA1B},
-		filterIndexFixture{fields: map[string]string{"A": "A2", "B": "B"}, events: listA2B},
+		filterIndexFixture{fields: entities.Hash{"A": "A1"}, events: listA1},
+		filterIndexFixture{fields: entities.Hash{"A": "A2"}, events: listA2},
+		filterIndexFixture{fields: entities.Hash{"B": "B"}, events: listB},
+		filterIndexFixture{fields: entities.Hash{"A": "A1", "B": "B"}, events: listA1B},
+		filterIndexFixture{fields: entities.Hash{"A": "A2", "B": "B"}, events: listA2B},
 	}
 
 	for _, fixture := range combinations {
@@ -129,8 +129,8 @@ func Test_FilterIndex_Insert_Empty(t *testing.T) {
 }
 
 func Test_FilterIndex_Insert_TwoEvents(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A1"})
-	eventB := filterIndexGenerateEvent(map[string]string{"A": "A2"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A1"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"A": "A2"})
 
 	testIndex := NewFilterIndex()
 	testIndex.Insert(eventA)
@@ -148,8 +148,8 @@ func Test_FilterIndex_Insert_TwoEvents(t *testing.T) {
 }
 
 func Test_FilterIndex_Insert_Duplicates(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A1"})
-	eventB := filterIndexGenerateEvent(map[string]string{"A": "A2"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A1"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"A": "A2"})
 
 	testIndex := NewFilterIndex()
 	testIndex.Insert(eventA)
@@ -175,7 +175,7 @@ func Test_FilterIndex_Delete_Empty(t *testing.T) {
 }
 
 func Test_FilterIndex_Delete_EventByPointer(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
 
 	testIndex := NewFilterIndex()
 	testIndex.Insert(eventA)
@@ -186,9 +186,9 @@ func Test_FilterIndex_Delete_EventByPointer(t *testing.T) {
 }
 
 func Test_FilterIndex_Delete_SameKeyValue(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
-	eventB := filterIndexGenerateEvent(map[string]string{"A": "A"})
-	eventC := filterIndexGenerateEvent(map[string]string{"A": "B"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"A": "A"})
+	eventC := filterIndexGenerateEvent(entities.Hash{"A": "B"})
 
 	testIndex := NewFilterIndex()
 	testIndex.Insert(eventA)
@@ -201,7 +201,7 @@ func Test_FilterIndex_Delete_SameKeyValue(t *testing.T) {
 }
 
 func Test_FilterIndex_Update_EmptyFrom(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
 
 	testIndex := NewFilterIndex()
 
@@ -209,7 +209,7 @@ func Test_FilterIndex_Update_EmptyFrom(t *testing.T) {
 }
 
 func Test_FilterIndex_Update_EmptyTo(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
 
 	testIndex := NewFilterIndex()
 
@@ -217,7 +217,7 @@ func Test_FilterIndex_Update_EmptyTo(t *testing.T) {
 }
 
 func Test_FilterIndex_Update_Equal(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
 
 	testIndex := NewFilterIndex()
 
@@ -225,8 +225,8 @@ func Test_FilterIndex_Update_Equal(t *testing.T) {
 }
 
 func Test_FilterIndex_Update_NotEqualUUID(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
-	eventB := filterIndexGenerateEvent(map[string]string{"B": "B"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
+	eventB := filterIndexGenerateEvent(entities.Hash{"B": "B"})
 
 	testIndex := NewFilterIndex()
 
@@ -234,8 +234,8 @@ func Test_FilterIndex_Update_NotEqualUUID(t *testing.T) {
 }
 
 func Test_FilterIndex_Update(t *testing.T) {
-	eventA := filterIndexGenerateEvent(map[string]string{"A": "A"})
-	eventB, _ := entities.NewEvent(eventA.EventID(), false, map[string]string{}, map[string]string{"B": "B"})
+	eventA := filterIndexGenerateEvent(entities.Hash{"A": "A"})
+	eventB, _ := entities.NewEvent(eventA.EventID(), false, entities.Hash{}, entities.Hash{"B": "B"})
 
 	testIndex := NewFilterIndex()
 	testIndex.Insert(eventA)
@@ -257,18 +257,18 @@ func Test_FilterIndex_Update(t *testing.T) {
 	assert.Empty(t, testIndex.events["A"])
 }
 
-func filterIndexGenerateEvent(filters map[string]string) *entities.Event {
-	event, _ := entities.NewEvent(uuid.New().Generate(), true, map[string]string{}, filters)
+func filterIndexGenerateEvent(filters entities.Hash) *entities.Event {
+	event, _ := entities.NewEvent(uuid.New().Generate(), true, entities.Hash{}, filters)
 
 	return event
 }
 
-func filterIndexGenerateVisit(data map[string]string) *entities.Visit {
-	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", data)
+func filterIndexGenerateVisit(fields entities.Hash) *entities.Visit {
+	visit, _ := entities.NewVisit(uuid.New().Generate(), int64(0), uuid.New().Generate(), "", fields)
 	return visit
 }
 
 type filterIndexFixture struct {
 	events []*entities.Event
-	fields map[string]string
+	fields entities.Hash
 }

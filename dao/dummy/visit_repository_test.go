@@ -64,10 +64,10 @@ func TestVisitRepository_Insert(t *testing.T) {
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "clientID"
-	data := map[string]string{"data": "here"}
+	fileds := entities.Hash{"data": "here"}
 	timestamp := int64(15)
 
-	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, data)
+	visit, _ := entities.NewVisit(visitID, timestamp, sessionID, clientID, fileds)
 
 	err := checkVisitRepository.Insert(visit)
 
