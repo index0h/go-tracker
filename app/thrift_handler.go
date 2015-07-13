@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/index0h/go-tracker/app/tracker"
 	"errors"
+	"github.com/index0h/go-tracker/app/tracker"
 	"github.com/index0h/go-tracker/components"
 	"github.com/index0h/go-tracker/dao"
 	"log"
