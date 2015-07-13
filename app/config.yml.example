@@ -16,8 +16,6 @@ visit_manager:
     nested:
       type: elasticsearch
       client: default
-      uuid: default
-      logger: default
 
 event_manager:
   repository:
@@ -25,13 +23,11 @@ event_manager:
     nested:
       type: elasticsearch
       client: default
-      uuid: default
 
 flash_manager:
   repository:
     type: elasticsearch
     client: default
-    uuid: default
 
 tracker_manager:
   processors:
