@@ -8,7 +8,7 @@ import (
 	"github.com/index0h/go-tracker/entities"
 )
 
-type Repository struct {
+type EventRepository struct {
 	filteredEvents *index.FilterIndex
 	alwaysEvents   *index.ListIndex
 	allEvents      *index.MapIndex
@@ -16,12 +16,12 @@ type Repository struct {
 	nested dao.EventRepositoryInterface
 }
 
-func NewEventRepository(nested dao.EventRepositoryInterface) (result *Repository, err error) {
+func NewEventRepository(nested dao.EventRepositoryInterface) (result *EventRepository, err error) {
 	if nested == nil {
 		return nil, errors.New("Empty nested is not allowed")
 	}
 
-	result = &Repository{
+	result = &EventRepository{
 		filteredEvents: index.NewFilterIndex(),
 		alwaysEvents:   index.NewListIndex(),
 		allEvents:      index.NewMapIndex(),
@@ -33,7 +33,7 @@ func NewEventRepository(nested dao.EventRepositoryInterface) (result *Repository
 	return result, err
 }
 
-func (repository *Repository) Refresh() error {
+func (repository *EventRepository) Refresh() error {
 	foundEvents, err := repository.nested.FindAll()
 	if err != nil {
 		return err
@@ -64,11 +64,11 @@ func (repository *Repository) Refresh() error {
 	return nil
 }
 
-func (repository *Repository) FindAll() ([]*entities.Event, error) {
+func (repository *EventRepository) FindAll() ([]*entities.Event, error) {
 	return repository.nested.FindAll()
 }
 
-func (repository *Repository) FindAllByVisit(visit *entities.Visit) (result []*entities.Event, err error) {
+func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) (result []*entities.Event, err error) {
 	if visit == nil {
 		return result, errors.New("visit must be not nil")
 	}
@@ -82,7 +82,7 @@ func (repository *Repository) FindAllByVisit(visit *entities.Visit) (result []*e
 	return result, err
 }
 
-func (repository *Repository) FindByID(eventID [16]byte) (result *entities.Event, err error) {
+func (repository *EventRepository) FindByID(eventID [16]byte) (result *entities.Event, err error) {
 	if eventID == [16]byte{} {
 		return result, errors.New("Empty eventID is not allowed")
 	}
@@ -109,7 +109,7 @@ func (repository *Repository) FindByID(eventID [16]byte) (result *entities.Event
 	return result, err
 }
 
-func (repository *Repository) Insert(event *entities.Event) (err error) {
+func (repository *EventRepository) Insert(event *entities.Event) (err error) {
 	if event == nil {
 		return errors.New("event must be not nil")
 	}
@@ -137,7 +137,7 @@ func (repository *Repository) Insert(event *entities.Event) (err error) {
 	return err
 }
 
-func (repository *Repository) Update(event *entities.Event) (err error) {
+func (repository *EventRepository) Update(event *entities.Event) (err error) {
 	if event == nil {
 		return errors.New("eventFrom must be not nil")
 	}

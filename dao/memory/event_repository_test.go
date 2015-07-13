@@ -10,7 +10,7 @@ import (
 )
 
 func TestEventRepository_Interface(t *testing.T) {
-	func(event dao.EventRepositoryInterface) {}(&Repository{})
+	func(event dao.EventRepositoryInterface) {}(&EventRepository{})
 }
 
 func TestEventRepository_NewEventRepository(t *testing.T) {

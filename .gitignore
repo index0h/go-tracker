@@ -75,3 +75,8 @@ _testmain.go
 *.prof
 
 profile.cov
+
+### application
+
+app/app
+app/config.yml

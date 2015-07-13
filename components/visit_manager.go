@@ -25,7 +25,7 @@ func NewVisitManager(
 }
 
 // Track the visit
-func (manager *VisitManager) Track(
+func (manager *VisitManager) Insert(
 	sessionID [16]byte,
 	clientID string,
 	fields entities.Hash,

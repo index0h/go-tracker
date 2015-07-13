@@ -18,7 +18,7 @@ func TestVisitManager_Track_Empty(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, err := checkManager.Track([16]byte{}, "", entities.Hash{})
+	visit, err := checkManager.Insert([16]byte{}, "", entities.Hash{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())
@@ -39,7 +39,7 @@ func TestVisitManager_Track_SessionID(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, err := checkManager.Track(sessionID, "", entities.Hash{})
+	visit, err := checkManager.Insert(sessionID, "", entities.Hash{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())
@@ -60,7 +60,7 @@ func TestVisitManager_Track_ClientID(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, err := checkManager.Track([16]byte{}, clientID, entities.Hash{})
+	visit, err := checkManager.Insert([16]byte{}, clientID, entities.Hash{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())
@@ -81,7 +81,7 @@ func TestVisitManager_Track_VerifyTrue(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, err := checkManager.Track(sessionID, clientID, entities.Hash{})
+	visit, err := checkManager.Insert(sessionID, clientID, entities.Hash{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())
@@ -104,7 +104,7 @@ func TestVisitManager_Track_VerifyFalse(t *testing.T) {
 
 	checkManager := NewVisitManager(repository, uuidProvider, logger)
 
-	visit, err := checkManager.Track(sessionID, clientID, entities.Hash{})
+	visit, err := checkManager.Insert(sessionID, clientID, entities.Hash{})
 
 	assert.NotNil(t, visit)
 	assert.NotNil(t, visit.VisitID())

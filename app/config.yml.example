@@ -1,0 +1,39 @@
+elasticsearch:
+  default:
+    hosts:
+      - "http://localhost:9200"
+    max_retries: 10
+
+thrift:
+  addr: "localhost:9090"
+  protocol: binary
+  buffer_size: 8192
+
+visit_manager:
+  repository:
+    type: memory
+    max_entities: 1000
+    nested:
+      type: elasticsearch
+      client: default
+      uuid: default
+      logger: default
+
+event_manager:
+  repository:
+    type: memory
+    nested:
+      type: elasticsearch
+      client: default
+      uuid: default
+
+flash_manager:
+  repository:
+    type: elasticsearch
+    client: default
+    uuid: default
+
+tracker_manager:
+  processors:
+    dummy:
+      priority: 0
