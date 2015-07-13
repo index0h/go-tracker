@@ -1,7 +1,7 @@
 package main
 
 import (
-	thriftGenerated "./tracker"
+	thriftGenerated "github.com/index0h/go-tracker/app/tracker"
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/index0h/go-tracker/components"
 	"github.com/index0h/go-tracker/dao"
