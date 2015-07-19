@@ -30,40 +30,28 @@ func NewFlashRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (
 	return &FlashRepository{typeName: "event_flash", indexPrefix: "tracker-", client: client, uuid: uuid}, nil
 }
 
-func (repository *FlashRepository) FindAll() (result []entities.Flash, err error) {
-	panic("IMPLEMENT ME")
-
-	return result, err
-}
-
-func (repository *FlashRepository) FindAllByVisit(visit *entities.Visit) (result []entities.Flash, err error) {
-	panic("IMPLEMENT ME")
-
-	if visit == nil {
-		return result, errors.New("visit must be not nil")
-	}
-
-	return result, err
-}
-
 func (repository *FlashRepository) FindByID(eventID [16]byte) (result *entities.Flash, err error) {
 	panic("IMPLEMENT ME")
+}
 
-	if eventID == [16]byte{} {
-		return result, errors.New("Empty eventID is not allowed")
-	}
+func (repository *FlashRepository) FindAll(limit int64, offset int64) (result []*entities.Flash, err error) {
+	panic("IMPLEMENT ME")
+}
 
-	return result, err
+func (repository *FlashRepository) FindAllByVisitID(visitID [16]byte) (result []*entities.Flash, err error) {
+	panic("IMPLEMENT ME")
+}
+
+func (repository *FlashRepository) FindAllByEventID(
+	visitID [16]byte,
+	limit int64,
+	offset int64,
+) (result []*entities.Flash, err error) {
+	panic("IMPLEMENT ME")
 }
 
 func (repository *FlashRepository) Insert(event *entities.Flash) (err error) {
-	panic("IMPLEMENT ME")
-
-	if event == nil {
-		return errors.New("event must be not nil")
-	}
-
-	return err
+	return nil //panic("IMPLEMENT ME")
 }
 
 func (repository *FlashRepository) find(term driver.Query, limit, offset uint) ([]*entities.Flash, error) {

@@ -837,3 +837,152 @@ func (p *Flash) String() string {
 	}
 	return fmt.Sprintf("Flash(%+v)", *p)
 }
+
+type TrackResponse struct {
+	Visit   *Visit   `thrift:"visit,1" json:"visit"`
+	Flashes []*Flash `thrift:"flashes,2" json:"flashes"`
+}
+
+func NewTrackResponse() *TrackResponse {
+	return &TrackResponse{}
+}
+
+var TrackResponse_Visit_DEFAULT *Visit
+
+func (p *TrackResponse) GetVisit() *Visit {
+	if !p.IsSetVisit() {
+		return TrackResponse_Visit_DEFAULT
+	}
+	return p.Visit
+}
+
+func (p *TrackResponse) GetFlashes() []*Flash {
+	return p.Flashes
+}
+func (p *TrackResponse) IsSetVisit() bool {
+	return p.Visit != nil
+}
+
+func (p *TrackResponse) Read(iprot thrift.TProtocol) error {
+	if _, err := iprot.ReadStructBegin(); err != nil {
+		return fmt.Errorf("%T read error: %s", p, err)
+	}
+	for {
+		_, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if err != nil {
+			return fmt.Errorf("%T field %d read error: %s", p, fieldId, err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if err := p.ReadField1(iprot); err != nil {
+				return err
+			}
+		case 2:
+			if err := p.ReadField2(iprot); err != nil {
+				return err
+			}
+		default:
+			if err := iprot.Skip(fieldTypeId); err != nil {
+				return err
+			}
+		}
+		if err := iprot.ReadFieldEnd(); err != nil {
+			return err
+		}
+	}
+	if err := iprot.ReadStructEnd(); err != nil {
+		return fmt.Errorf("%T read struct end error: %s", p, err)
+	}
+	return nil
+}
+
+func (p *TrackResponse) ReadField1(iprot thrift.TProtocol) error {
+	p.Visit = &Visit{}
+	if err := p.Visit.Read(iprot); err != nil {
+		return fmt.Errorf("%T error reading struct: %s", p.Visit, err)
+	}
+	return nil
+}
+
+func (p *TrackResponse) ReadField2(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return fmt.Errorf("error reading list begin: %s", err)
+	}
+	tSlice := make([]*Flash, 0, size)
+	p.Flashes = tSlice
+	for i := 0; i < size; i++ {
+		_elem10 := &Flash{}
+		if err := _elem10.Read(iprot); err != nil {
+			return fmt.Errorf("%T error reading struct: %s", _elem10, err)
+		}
+		p.Flashes = append(p.Flashes, _elem10)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return fmt.Errorf("error reading list end: %s", err)
+	}
+	return nil
+}
+
+func (p *TrackResponse) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("TrackResponse"); err != nil {
+		return fmt.Errorf("%T write struct begin error: %s", p, err)
+	}
+	if err := p.writeField1(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField2(oprot); err != nil {
+		return err
+	}
+	if err := oprot.WriteFieldStop(); err != nil {
+		return fmt.Errorf("write field stop error: %s", err)
+	}
+	if err := oprot.WriteStructEnd(); err != nil {
+		return fmt.Errorf("write struct stop error: %s", err)
+	}
+	return nil
+}
+
+func (p *TrackResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err := oprot.WriteFieldBegin("visit", thrift.STRUCT, 1); err != nil {
+		return fmt.Errorf("%T write field begin error 1:visit: %s", p, err)
+	}
+	if err := p.Visit.Write(oprot); err != nil {
+		return fmt.Errorf("%T error writing struct: %s", p.Visit, err)
+	}
+	if err := oprot.WriteFieldEnd(); err != nil {
+		return fmt.Errorf("%T write field end error 1:visit: %s", p, err)
+	}
+	return err
+}
+
+func (p *TrackResponse) writeField2(oprot thrift.TProtocol) (err error) {
+	if err := oprot.WriteFieldBegin("flashes", thrift.LIST, 2); err != nil {
+		return fmt.Errorf("%T write field begin error 2:flashes: %s", p, err)
+	}
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Flashes)); err != nil {
+		return fmt.Errorf("error writing list begin: %s", err)
+	}
+	for _, v := range p.Flashes {
+		if err := v.Write(oprot); err != nil {
+			return fmt.Errorf("%T error writing struct: %s", v, err)
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return fmt.Errorf("error writing list end: %s", err)
+	}
+	if err := oprot.WriteFieldEnd(); err != nil {
+		return fmt.Errorf("%T write field end error 2:flashes: %s", p, err)
+	}
+	return err
+}
+
+func (p *TrackResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("TrackResponse(%+v)", *p)
+}

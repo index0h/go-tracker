@@ -30,6 +30,10 @@ func (uuid *UUID) ToString(uuidBytes [16]byte) string {
 
 // Converts uuid from string to bytes
 func (uuid *UUID) ToBytes(uuidString string) [16]byte {
+	if uuidString == "" {
+		return [16]byte{}
+	}
+
 	uuidResult, err := satoriUUID.FromString(uuidString)
 
 	if err != nil {

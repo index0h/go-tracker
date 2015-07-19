@@ -32,7 +32,7 @@ func TestEventRepository_NewEventRepository_EmptyUUIDProvider(t *testing.T) {
 
 func TestEventRepository_FindAll(t *testing.T) {
 	_, repository := eventRepository_CreateRepository()
-	foundEvents, err := repository.FindAll()
+	foundEvents, err := repository.FindAll(0, 0)
 
 	assert.Nil(t, err)
 	assert.Len(t, foundEvents, 0)
@@ -93,7 +93,7 @@ func TestEventRepository_FindAll_WithData(t *testing.T) {
 	repository.Insert(eventA)
 	repository.Insert(eventB)
 
-	foundEvents, err := repository.FindAll()
+	foundEvents, err := repository.FindAll(0, 0)
 
 	assert.Nil(t, err)
 	eventRepository_EventSlicesEqual(t, events, foundEvents)

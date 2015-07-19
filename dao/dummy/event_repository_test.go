@@ -16,7 +16,7 @@ func TestEventRepository_Interface(t *testing.T) {
 func TestEventRepository_FindAll(t *testing.T) {
 	checkRepository := EventRepository{}
 
-	result, err := checkRepository.FindAll()
+	result, err := checkRepository.FindAll(0, 0)
 
 	assert.Empty(t, result)
 	assert.Nil(t, err)

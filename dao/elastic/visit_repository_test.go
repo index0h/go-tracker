@@ -29,44 +29,6 @@ func TestVisitRepository_NewVisitRepository_EmptyUUIDProvider(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func TestVisitRepository_FindClientID(t *testing.T) {
-	_, repository := visitRepository_CreateRepository()
-	visitID := uuid.New().Generate()
-	sessionID := uuid.New().Generate()
-	clientID := "test_FindClientID"
-
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
-
-	_ = repository.Insert(visit)
-
-	foundClientID, err := repository.FindClientID(sessionID)
-	assert.Nil(t, err)
-	assert.Equal(t, clientID, foundClientID)
-}
-
-func TestVisitRepository_FindClientID_Empty(t *testing.T) {
-	_, repository := visitRepository_CreateRepository()
-
-	foundClientID, err := repository.FindClientID([16]byte{})
-	assert.NotNil(t, err)
-	assert.Empty(t, foundClientID)
-}
-
-func TestVisitRepository_FindClientID_WrongSessionID(t *testing.T) {
-	_, repository := visitRepository_CreateRepository()
-	visitID := uuid.New().Generate()
-	sessionID := uuid.New().Generate()
-	clientID := "test_FindClientID"
-
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
-
-	_ = repository.Insert(visit)
-
-	foundClientID, err := repository.FindClientID(uuid.New().Generate())
-	assert.Nil(t, err)
-	assert.Empty(t, foundClientID)
-}
-
 func TestVisitRepository_Verify(t *testing.T) {
 	_, repository := visitRepository_CreateRepository()
 	visitID := uuid.New().Generate()

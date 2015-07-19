@@ -9,27 +9,23 @@ thrift:
   protocol: binary
   buffer_size: 8192
 
-visit_manager:
-  repository:
-    type: memory
-    max_entities: 1000
-    nested:
-      type: elasticsearch
-      client: default
-
-event_manager:
-  repository:
-    type: memory
-    nested:
-      type: elasticsearch
-      client: default
-
-flash_manager:
-  repository:
+visit_repository:
+  type: memory
+  max_entities: 1000
+  nested:
     type: elasticsearch
     client: default
 
-tracker_manager:
-  processors:
-    dummy:
-      priority: 0
+event_repository:
+  type: memory
+  nested:
+    type: elasticsearch
+    client: default
+
+flash_repository:
+  type: elasticsearch
+  client: default
+
+processors:
+  dummy:
+    priority: 0

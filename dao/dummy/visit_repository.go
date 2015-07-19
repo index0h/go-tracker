@@ -8,13 +8,49 @@ import (
 
 type VisitRepository struct{}
 
-// Find clientID by sessionID
-func (repository *VisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
-	if sessionID == [16]byte{} {
-		return clientID, errors.New("Empty sessioID is not allowed")
+func (repository *VisitRepository) FindByID(visitID [16]byte) (*entities.Visit, error) {
+	if visitID == [16]byte{} {
+		return nil, errors.New("Empty visitID is not allowed")
 	}
 
-	return clientID, err
+	return nil, nil
+}
+
+func (repository *VisitRepository) FindAll(limit int64, offset int64) (result []*entities.Visit, err error) {
+	return result, err
+}
+
+func (repository *VisitRepository) FindAllBySessionID(
+	sessionID [16]byte,
+	limit int64,
+	offset int64,
+) (result []*entities.Visit, err error) {
+	if sessionID == [16]byte{} {
+		return result, errors.New("Empty sessionID is not allowed")
+	}
+
+	return result, err
+}
+
+func (repository *VisitRepository) FindAllByClientID(
+	clientID string,
+	limit int64,
+	offset int64,
+) (result []*entities.Visit, err error) {
+	if clientID == "" {
+		return result, errors.New("Empty clientID is not allowed")
+	}
+
+	return result, err
+}
+
+// Save visit
+func (repository *VisitRepository) Insert(visit *entities.Visit) error {
+	if visit == nil {
+		return errors.New("Empty visit is not allowed")
+	}
+
+	return nil
 }
 
 // Verify method MUST check that sessionID is not registered by another not empty clientID
@@ -28,13 +64,4 @@ func (repository *VisitRepository) Verify(sessionID [16]byte, clientID string) (
 	}
 
 	return true, err
-}
-
-// Save visit
-func (repository *VisitRepository) Insert(visit *entities.Visit) error {
-	if visit == nil {
-		return errors.New("Empty visit is not allowed")
-	}
-
-	return nil
 }

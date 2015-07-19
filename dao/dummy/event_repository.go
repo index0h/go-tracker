@@ -8,7 +8,7 @@ import (
 
 type EventRepository struct{}
 
-func (repository *EventRepository) FindAll() (result []*entities.Event, err error) {
+func (repository *EventRepository) FindAll(limit int64, offset int64) (result []*entities.Event, err error) {
 	return result, err
 }
 

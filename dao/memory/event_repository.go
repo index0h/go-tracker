@@ -34,7 +34,7 @@ func NewEventRepository(nested dao.EventRepositoryInterface) (result *EventRepos
 }
 
 func (repository *EventRepository) Refresh() error {
-	foundEvents, err := repository.nested.FindAll()
+	foundEvents, err := repository.nested.FindAll(0, 0)
 	if err != nil {
 		return err
 	}
@@ -64,8 +64,8 @@ func (repository *EventRepository) Refresh() error {
 	return nil
 }
 
-func (repository *EventRepository) FindAll() ([]*entities.Event, error) {
-	return repository.nested.FindAll()
+func (repository *EventRepository) FindAll(limit int64, offset int64) ([]*entities.Event, error) {
+	return repository.nested.FindAll(limit, offset)
 }
 
 func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) (result []*entities.Event, err error) {

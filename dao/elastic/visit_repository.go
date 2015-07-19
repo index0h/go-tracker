@@ -30,21 +30,58 @@ func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (
 	return &VisitRepository{typeName: "visit", indexPrefix: "tracker-", client: client, uuid: uuid}, nil
 }
 
-// Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
-func (repository *VisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
+func (repository *VisitRepository) FindByID(visitID [16]byte) (*entities.Visit, error) {
+	if visitID == [16]byte{} {
+		return nil, errors.New("Empty visitID is not allowed")
+	}
+
+	search, err := repository.client.Get().
+		Index("twitter").
+		Type("tweet").
+		Id("1").
+		Do()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !search.Found {
+		return nil, nil
+	}
+
+	return repository.byteToVisit(*search.Source)
+}
+
+func (repository *VisitRepository) FindAll(limit int64, offset int64) ([]*entities.Visit, error) {
+	return repository.find(nil, uint(limit), uint(offset))
+}
+
+func (repository *VisitRepository) FindAllBySessionID(
+	sessionID [16]byte,
+	limit int64,
+	offset int64,
+) (result []*entities.Visit, err error) {
 	if sessionID == [16]byte{} {
-		return clientID, errors.New("Empty sessionID is not allowed")
+		return result, errors.New("Empty sessionID is not allowed")
 	}
 
 	termQuery := driver.NewTermQuery("sessionId", repository.uuid.ToString(sessionID))
 
-	visit, err := repository.find(&termQuery, 0, 1)
+	return repository.find(&termQuery, uint(limit), uint(offset))
+}
 
-	if (err != nil) || (len(visit) == 0) {
-		return clientID, err
+func (repository *VisitRepository) FindAllByClientID(
+	clientID string,
+	limit int64,
+	offset int64,
+) (result []*entities.Visit, err error) {
+	if clientID == "" {
+		return result, errors.New("Empty clientID is not allowed")
 	}
 
-	return visit[0].ClientID(), err
+	termQuery := driver.NewTermQuery("clientID", clientID)
+
+	return repository.find(&termQuery, uint(limit), uint(offset))
 }
 
 // Verify method MUST check that sessionID is not registered by another not empty clientID

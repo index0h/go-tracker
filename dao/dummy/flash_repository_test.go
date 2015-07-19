@@ -16,29 +16,10 @@ func TestFlashRepository_Interface(t *testing.T) {
 func TestFlashRepository_FindAll(t *testing.T) {
 	checkRepository := FlashRepository{}
 
-	result, err := checkRepository.FindAll()
+	result, err := checkRepository.FindAll(0, 0)
 
 	assert.Empty(t, result)
 	assert.Nil(t, err)
-}
-
-func TestFlashRepository_FindAllByVisit(t *testing.T) {
-	visit := &entities.Visit{}
-	checkFlashRepository := FlashRepository{}
-
-	result, err := checkFlashRepository.FindAllByVisit(visit)
-
-	assert.Empty(t, result)
-	assert.Nil(t, err)
-}
-
-func TestFlashRepository_FindAllByVisit_Empty(t *testing.T) {
-	checkFlashRepository := FlashRepository{}
-
-	result, err := checkFlashRepository.FindAllByVisit(nil)
-
-	assert.Empty(t, result)
-	assert.NotNil(t, err)
 }
 
 func TestFlashRepository_FindByID(t *testing.T) {

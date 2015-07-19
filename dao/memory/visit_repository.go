@@ -26,29 +26,55 @@ func NewVisitRepository(nested dao.VisitRepositoryInterface, maxEntries int) (*V
 	}, nil
 }
 
-// Find clientID by sessionID. If it's not present in cache - will try to find by nested repository and cache result
-func (repository *VisitRepository) FindClientID(sessionID [16]byte) (clientID string, err error) {
+func (repository *VisitRepository) FindByID(visitID [16]byte) (result *entities.Visit, err error) {
+	if visitID == [16]byte{} {
+		return result, errors.New("Empty visitID is not allowed")
+	}
+
+	return repository.nested.FindByID(visitID)
+}
+
+func (repository *VisitRepository) FindAll(limit int64, offset int64) (result []*entities.Visit, err error) {
+	return repository.nested.FindAll(limit, offset)
+}
+
+func (repository *VisitRepository) FindAllBySessionID(
+	sessionID [16]byte,
+	limit int64,
+	offset int64,
+) (result []*entities.Visit, err error) {
 	if sessionID == [16]byte{} {
-		return clientID, errors.New("Empty sessioID is not allowed")
+		return result, errors.New("Empty sessionID is not allowed")
 	}
 
-	if rawFound, ok := repository.sessionToClient.Get(sessionID); ok {
-		clientID, _ = rawFound.(string)
+	return repository.nested.FindAllBySessionID(sessionID, limit, offset)
+}
 
-		return clientID, nil
+func (repository *VisitRepository) FindAllByClientID(
+	clientID string,
+	limit int64,
+	offset int64,
+) (result []*entities.Visit, err error) {
+	if clientID == "" {
+		return result, errors.New("Empty clientID is not allowed")
 	}
 
-	clientID, err = repository.nested.FindClientID(sessionID)
+	return repository.nested.FindAllByClientID(clientID, limit, offset)
+}
 
-	if err == nil {
-		repository.sessionToClient.Add(sessionID, clientID)
-
-		if clientID != "" {
-			repository.clientToSession.Add(clientID, sessionID)
-		}
+// Save visit to cache and run nested save
+func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
+	if visit == nil {
+		return errors.New("visit must be not nil")
 	}
 
-	return clientID, err
+	repository.sessionToClient.Add(visit.SessionID(), visit.ClientID())
+
+	if visit.ClientID() != "" {
+		repository.clientToSession.Add(visit.ClientID(), visit.SessionID())
+	}
+
+	return repository.nested.Insert(visit)
 }
 
 // Verify method MUST check that sessionID is not registered by another not empty clientID
@@ -105,19 +131,4 @@ func (repository *VisitRepository) Verify(sessionID [16]byte, clientID string) (
 	repository.clientToSession.Add(clientID, sessionID)
 
 	return true, nil
-}
-
-// Save visit to cache and run nested save
-func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
-	if visit == nil {
-		return errors.New("visit must be not nil")
-	}
-
-	repository.sessionToClient.Add(visit.SessionID(), visit.ClientID())
-
-	if visit.ClientID() != "" {
-		repository.clientToSession.Add(visit.ClientID(), visit.SessionID())
-	}
-
-	return repository.nested.Insert(visit)
 }

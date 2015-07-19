@@ -13,24 +13,6 @@ func TestVisitRepository_Interface(t *testing.T) {
 	func(event dao.VisitRepositoryInterface) {}(&VisitRepository{})
 }
 
-func TestVisitRepository_FindClientID(t *testing.T) {
-	checkVisitRepository := VisitRepository{}
-
-	clientID, err := checkVisitRepository.FindClientID(uuid.New().Generate())
-
-	assert.Empty(t, clientID)
-	assert.Nil(t, err)
-}
-
-func TestVisitRepository_FindClientID_Empty(t *testing.T) {
-	checkVisitRepository := VisitRepository{}
-
-	clientID, err := checkVisitRepository.FindClientID([16]byte{})
-
-	assert.Empty(t, clientID)
-	assert.NotNil(t, err)
-}
-
 func TestVisitRepository_Verify(t *testing.T) {
 	checkVisitRepository := VisitRepository{}
 

@@ -12,6 +12,7 @@ import (
 	uuidDriver "github.com/index0h/go-tracker/dao/uuid"
 	elasticClient "github.com/olivere/elastic"
 	"github.com/spf13/viper"
+	//log "github.com/Sirupsen/logrus"
 	"log"
 	"os"
 )
@@ -28,60 +29,48 @@ func main() {
 	server.Serve()
 }
 
-func getVisitManager() *components.VisitManager {
-	var repository dao.VisitRepositoryInterface
-
-	switch getConfig().GetString("visit_manager.repository.type") {
+func getVisitRepository() dao.VisitRepositoryInterface {
+	switch getConfig().GetString("visit_repository.type") {
 	case "dummy":
-		repository = getVisitRepositoryDummy()
+		return getVisitRepositoryDummy()
 	case "elasticsearch":
-		repository = getVisitRepositoryElastic("visit_manager.repository")
+		return getVisitRepositoryElastic("visit_repository")
 	case "memory":
-		repository = getVisitRepositoryMemory("visit_manager.repository")
+		return getVisitRepositoryMemory("visit_repository")
 	default:
 		panic("Invalid visit repository type")
 	}
-
-	return components.NewVisitManager(repository, getUUID(), getLogger())
 }
 
-func getEventManager() *components.EventManager {
-	var repository dao.EventRepositoryInterface
-
-	switch getConfig().GetString("event_manager.repository.type") {
+func getEventRepository() dao.EventRepositoryInterface {
+	switch getConfig().GetString("event_repository.type") {
 	case "dummy":
-		repository = getEventRepositoryDummy()
+		return getEventRepositoryDummy()
 	case "elasticsearch":
-		repository = getEventRepositoryElastic("event_manager.repository")
+		return getEventRepositoryElastic("event_repository")
 	case "memory":
-		repository = getEventRepositoryMemory("event_manager.repository")
+		return getEventRepositoryMemory("event_repository")
 	default:
 		panic("Invalid event repository type")
 	}
-
-	return components.NewEventManager(repository, getUUID(), getLogger())
 }
 
-func getFlashManager() *components.FlashManager {
-	var repository dao.FlashRepositoryInterface
-
-	switch getConfig().GetString("flash_manager.repository.type") {
+func getFlashRepository() dao.FlashRepositoryInterface {
+	switch getConfig().GetString("flash_repository.type") {
 	case "dummy":
-		repository = getFlashRepositoryDummy()
+		return getFlashRepositoryDummy()
 	case "elasticsearch":
-		repository = getFlashRepositoryElastic("flash_manager.repository")
+		return getFlashRepositoryElastic("flash_repository")
 	default:
 		panic("Invalid flash repository type")
 	}
-
-	return components.NewFlashManager(repository, getUUID(), getLogger())
 }
 
 func getTrackerManager() *components.TrackerManager {
 	return components.NewTrackerManager(
-		getVisitManager(),
-		getEventManager(),
-		getFlashManager(),
+		getVisitRepository(),
+		getEventRepository(),
+		getFlashRepository(),
 		getProcessors(),
 		getUUID(),
 		getLogger(),
@@ -229,6 +218,8 @@ func getEventRepositoryMemory(configPath string) *memory.EventRepository {
 		panic(err.Error())
 	}
 
+	repository.Refresh()
+
 	return repository
 }
 
@@ -248,13 +239,13 @@ func getFlashRepositoryElastic(configPath string) *elastic.FlashRepository {
 }
 
 func getProcessors() []dao.ProcessorInterface {
-	config := getConfig().GetStringMapString("tracker_manager.processors")
+	config := getConfig().GetStringMapString("processors")
 
 	result := make([]dao.ProcessorInterface, len(config))
 
 	var i = 0
 	for processorType := range config {
-		priority := getConfig().GetInt("tracker_manager.processors." + processorType + ".priority")
+		priority := getConfig().GetInt("processors." + processorType + ".priority")
 
 		switch processorType {
 		case "dummy":
@@ -268,14 +259,7 @@ func getProcessors() []dao.ProcessorInterface {
 }
 
 func getThriftHandler() *ThriftHandler {
-	return &ThriftHandler{
-		visitManager:   getVisitManager(),
-		eventManager:   getEventManager(),
-		flashManager:   getFlashManager(),
-		trackerManager: getTrackerManager(),
-		uuid:           getUUID(),
-		logger:         getLogger(),
-	}
+	return &ThriftHandler{trackerManager: getTrackerManager()}
 }
 
 func getThriftProcessor() thrift.TProcessor {
@@ -292,9 +276,7 @@ func getThriftTransport() *thrift.TServerSocket {
 }
 
 func getThriftTransportFactory() thrift.TTransportFactory {
-	transportFactory := thrift.NewTBufferedTransportFactory(getConfig().GetInt("thrift.buffer_size"))
-
-	return thrift.NewTFramedTransportFactory(transportFactory)
+	return thrift.NewTBufferedTransportFactory(getConfig().GetInt("thrift.buffer_size"))
 }
 
 func getThriftProtocolFactory() thrift.TProtocolFactory {

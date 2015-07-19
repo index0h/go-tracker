@@ -28,8 +28,8 @@ func NewEventRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (
 	return &EventRepository{indexName: "tracker", typeName: "event", client: client, uuid: uuid}, nil
 }
 
-func (repository *EventRepository) FindAll() ([]*entities.Event, error) {
-	return repository.find(nil, 0, 0)
+func (repository *EventRepository) FindAll(limit int64, offset int64) ([]*entities.Event, error) {
+	return repository.find(nil, uint(limit), uint(offset))
 }
 
 func (repository *EventRepository) FindAllByVisit(visit *entities.Visit) ([]*entities.Event, error) {

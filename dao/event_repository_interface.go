@@ -4,7 +4,7 @@ import "github.com/index0h/go-tracker/entities"
 
 type EventRepositoryInterface interface {
 	//
-	FindAll() (result []*entities.Event, err error)
+	FindAll(limit int64, offset int64) (result []*entities.Event, err error)
 
 	//
 	FindAllByVisit(*entities.Visit) (result []*entities.Event, err error)

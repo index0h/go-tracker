@@ -19,7 +19,7 @@ type TrackerService interface {
 	//  - SessionID
 	//  - ClientID
 	//  - Fields
-	Track(sessionID string, clientID string, fields map[string]string) (r []*Flash, err error)
+	Track(sessionID string, clientID string, fields map[string]string) (r *TrackResponse, err error)
 	// Parameters:
 	//  - VisitID
 	FindVisitByID(visitID string) (r *Visit, err error)
@@ -45,11 +45,13 @@ type TrackerService interface {
 	//  - Offset
 	FindEventAll(limit int64, offset int64) (r []*Event, err error)
 	// Parameters:
-	//  - Event
-	InsertEvent(event *Event) (err error)
+	//  - Enabled
+	//  - Fields
+	//  - Filters
+	InsertEvent(enabled bool, fields map[string]string, filters map[string]string) (r *Event, err error)
 	// Parameters:
 	//  - Event
-	UpdateEvent(event *Event) (err error)
+	UpdateEvent(event *Event) (r *Event, err error)
 	// Parameters:
 	//  - FlashID
 	FindFlashByID(flashID string) (r *Flash, err error)
@@ -59,9 +61,7 @@ type TrackerService interface {
 	FindFlashAll(limit int64, offset int64) (r []*Flash, err error)
 	// Parameters:
 	//  - VisitID
-	//  - Limit
-	//  - Offset
-	FindFlashAllByVisitID(visitID string, limit int64, offset int64) (r []*Flash, err error)
+	FindFlashAllByVisitID(visitID string) (r []*Flash, err error)
 	// Parameters:
 	//  - EventID
 	//  - Limit
@@ -99,7 +99,7 @@ func NewTrackerServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol
 //  - SessionID
 //  - ClientID
 //  - Fields
-func (p *TrackerServiceClient) Track(sessionID string, clientID string, fields map[string]string) (r []*Flash, err error) {
+func (p *TrackerServiceClient) Track(sessionID string, clientID string, fields map[string]string) (r *TrackResponse, err error) {
 	if err = p.sendTrack(sessionID, clientID, fields); err != nil {
 		return
 	}
@@ -130,7 +130,7 @@ func (p *TrackerServiceClient) sendTrack(sessionID string, clientID string, fiel
 	return oprot.Flush()
 }
 
-func (p *TrackerServiceClient) recvTrack() (value []*Flash, err error) {
+func (p *TrackerServiceClient) recvTrack() (value *TrackResponse, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -141,16 +141,16 @@ func (p *TrackerServiceClient) recvTrack() (value []*Flash, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error10 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error11 error
-		error11, err = error10.Read(iprot)
+		error11 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error12 error
+		error12, err = error11.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error11
+		err = error12
 		return
 	}
 	if p.SeqId != seqId {
@@ -210,16 +210,16 @@ func (p *TrackerServiceClient) recvFindVisitByID() (value *Visit, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error12 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error13 error
-		error13, err = error12.Read(iprot)
+		error13 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error14 error
+		error14, err = error13.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error13
+		err = error14
 		return
 	}
 	if p.SeqId != seqId {
@@ -281,16 +281,16 @@ func (p *TrackerServiceClient) recvFindVisitAll() (value []*Visit, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error14 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error15 error
-		error15, err = error14.Read(iprot)
+		error15 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error16 error
+		error16, err = error15.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error15
+		err = error16
 		return
 	}
 	if p.SeqId != seqId {
@@ -354,16 +354,16 @@ func (p *TrackerServiceClient) recvFindVisitAllBySessionID() (value []*Visit, er
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error16 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error17 error
-		error17, err = error16.Read(iprot)
+		error17 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error18 error
+		error18, err = error17.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error17
+		err = error18
 		return
 	}
 	if p.SeqId != seqId {
@@ -427,16 +427,16 @@ func (p *TrackerServiceClient) recvFindVisitAllByClientID() (value []*Visit, err
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error18 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error19 error
-		error19, err = error18.Read(iprot)
+		error19 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error20 error
+		error20, err = error19.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error19
+		err = error20
 		return
 	}
 	if p.SeqId != seqId {
@@ -496,16 +496,16 @@ func (p *TrackerServiceClient) recvFindEventByID() (value *Event, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error20 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error21 error
-		error21, err = error20.Read(iprot)
+		error21 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error22 error
+		error22, err = error21.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error21
+		err = error22
 		return
 	}
 	if p.SeqId != seqId {
@@ -567,16 +567,16 @@ func (p *TrackerServiceClient) recvFindEventAll() (value []*Event, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error22 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error23 error
-		error23, err = error22.Read(iprot)
+		error23 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error24 error
+		error24, err = error23.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error23
+		err = error24
 		return
 	}
 	if p.SeqId != seqId {
@@ -595,15 +595,17 @@ func (p *TrackerServiceClient) recvFindEventAll() (value []*Event, err error) {
 }
 
 // Parameters:
-//  - Event
-func (p *TrackerServiceClient) InsertEvent(event *Event) (err error) {
-	if err = p.sendInsertEvent(event); err != nil {
+//  - Enabled
+//  - Fields
+//  - Filters
+func (p *TrackerServiceClient) InsertEvent(enabled bool, fields map[string]string, filters map[string]string) (r *Event, err error) {
+	if err = p.sendInsertEvent(enabled, fields, filters); err != nil {
 		return
 	}
 	return p.recvInsertEvent()
 }
 
-func (p *TrackerServiceClient) sendInsertEvent(event *Event) (err error) {
+func (p *TrackerServiceClient) sendInsertEvent(enabled bool, fields map[string]string, filters map[string]string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -614,7 +616,9 @@ func (p *TrackerServiceClient) sendInsertEvent(event *Event) (err error) {
 		return
 	}
 	args := InsertEventArgs{
-		Event: event,
+		Enabled: enabled,
+		Fields:  fields,
+		Filters: filters,
 	}
 	if err = args.Write(oprot); err != nil {
 		return
@@ -625,7 +629,7 @@ func (p *TrackerServiceClient) sendInsertEvent(event *Event) (err error) {
 	return oprot.Flush()
 }
 
-func (p *TrackerServiceClient) recvInsertEvent() (err error) {
+func (p *TrackerServiceClient) recvInsertEvent() (value *Event, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -636,16 +640,16 @@ func (p *TrackerServiceClient) recvInsertEvent() (err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error24 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error25 error
-		error25, err = error24.Read(iprot)
+		error25 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error26 error
+		error26, err = error25.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error25
+		err = error26
 		return
 	}
 	if p.SeqId != seqId {
@@ -659,12 +663,13 @@ func (p *TrackerServiceClient) recvInsertEvent() (err error) {
 	if err = iprot.ReadMessageEnd(); err != nil {
 		return
 	}
+	value = result.GetSuccess()
 	return
 }
 
 // Parameters:
 //  - Event
-func (p *TrackerServiceClient) UpdateEvent(event *Event) (err error) {
+func (p *TrackerServiceClient) UpdateEvent(event *Event) (r *Event, err error) {
 	if err = p.sendUpdateEvent(event); err != nil {
 		return
 	}
@@ -693,7 +698,7 @@ func (p *TrackerServiceClient) sendUpdateEvent(event *Event) (err error) {
 	return oprot.Flush()
 }
 
-func (p *TrackerServiceClient) recvUpdateEvent() (err error) {
+func (p *TrackerServiceClient) recvUpdateEvent() (value *Event, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -704,16 +709,16 @@ func (p *TrackerServiceClient) recvUpdateEvent() (err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error26 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error27 error
-		error27, err = error26.Read(iprot)
+		error27 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error28 error
+		error28, err = error27.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error27
+		err = error28
 		return
 	}
 	if p.SeqId != seqId {
@@ -727,6 +732,7 @@ func (p *TrackerServiceClient) recvUpdateEvent() (err error) {
 	if err = iprot.ReadMessageEnd(); err != nil {
 		return
 	}
+	value = result.GetSuccess()
 	return
 }
 
@@ -772,16 +778,16 @@ func (p *TrackerServiceClient) recvFindFlashByID() (value *Flash, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error28 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error29 error
-		error29, err = error28.Read(iprot)
+		error29 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error30 error
+		error30, err = error29.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error29
+		err = error30
 		return
 	}
 	if p.SeqId != seqId {
@@ -843,16 +849,16 @@ func (p *TrackerServiceClient) recvFindFlashAll() (value []*Flash, err error) {
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error30 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error31 error
-		error31, err = error30.Read(iprot)
+		error31 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error32 error
+		error32, err = error31.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error31
+		err = error32
 		return
 	}
 	if p.SeqId != seqId {
@@ -872,16 +878,14 @@ func (p *TrackerServiceClient) recvFindFlashAll() (value []*Flash, err error) {
 
 // Parameters:
 //  - VisitID
-//  - Limit
-//  - Offset
-func (p *TrackerServiceClient) FindFlashAllByVisitID(visitID string, limit int64, offset int64) (r []*Flash, err error) {
-	if err = p.sendFindFlashAllByVisitID(visitID, limit, offset); err != nil {
+func (p *TrackerServiceClient) FindFlashAllByVisitID(visitID string) (r []*Flash, err error) {
+	if err = p.sendFindFlashAllByVisitID(visitID); err != nil {
 		return
 	}
 	return p.recvFindFlashAllByVisitID()
 }
 
-func (p *TrackerServiceClient) sendFindFlashAllByVisitID(visitID string, limit int64, offset int64) (err error) {
+func (p *TrackerServiceClient) sendFindFlashAllByVisitID(visitID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -893,8 +897,6 @@ func (p *TrackerServiceClient) sendFindFlashAllByVisitID(visitID string, limit i
 	}
 	args := FindFlashAllByVisitIDArgs{
 		VisitID: visitID,
-		Limit:   limit,
-		Offset:  offset,
 	}
 	if err = args.Write(oprot); err != nil {
 		return
@@ -916,16 +918,16 @@ func (p *TrackerServiceClient) recvFindFlashAllByVisitID() (value []*Flash, err 
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error32 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error33 error
-		error33, err = error32.Read(iprot)
+		error33 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error34 error
+		error34, err = error33.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error33
+		err = error34
 		return
 	}
 	if p.SeqId != seqId {
@@ -989,16 +991,16 @@ func (p *TrackerServiceClient) recvFindFlashAllByEventID() (value []*Flash, err 
 		return
 	}
 	if mTypeId == thrift.EXCEPTION {
-		error34 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
-		var error35 error
-		error35, err = error34.Read(iprot)
+		error35 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+		var error36 error
+		error36, err = error35.Read(iprot)
 		if err != nil {
 			return
 		}
 		if err = iprot.ReadMessageEnd(); err != nil {
 			return
 		}
-		err = error35
+		err = error36
 		return
 	}
 	if p.SeqId != seqId {
@@ -1036,21 +1038,21 @@ func (p *TrackerServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFun
 
 func NewTrackerServiceProcessor(handler TrackerService) *TrackerServiceProcessor {
 
-	self36 := &TrackerServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self36.processorMap["track"] = &trackerServiceProcessorTrack{handler: handler}
-	self36.processorMap["findVisitByID"] = &trackerServiceProcessorFindVisitByID{handler: handler}
-	self36.processorMap["findVisitAll"] = &trackerServiceProcessorFindVisitAll{handler: handler}
-	self36.processorMap["findVisitAllBySessionID"] = &trackerServiceProcessorFindVisitAllBySessionID{handler: handler}
-	self36.processorMap["findVisitAllByClientID"] = &trackerServiceProcessorFindVisitAllByClientID{handler: handler}
-	self36.processorMap["findEventByID"] = &trackerServiceProcessorFindEventByID{handler: handler}
-	self36.processorMap["findEventAll"] = &trackerServiceProcessorFindEventAll{handler: handler}
-	self36.processorMap["insertEvent"] = &trackerServiceProcessorInsertEvent{handler: handler}
-	self36.processorMap["updateEvent"] = &trackerServiceProcessorUpdateEvent{handler: handler}
-	self36.processorMap["findFlashByID"] = &trackerServiceProcessorFindFlashByID{handler: handler}
-	self36.processorMap["findFlashAll"] = &trackerServiceProcessorFindFlashAll{handler: handler}
-	self36.processorMap["findFlashAllByVisitID"] = &trackerServiceProcessorFindFlashAllByVisitID{handler: handler}
-	self36.processorMap["findFlashAllByEventID"] = &trackerServiceProcessorFindFlashAllByEventID{handler: handler}
-	return self36
+	self37 := &TrackerServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
+	self37.processorMap["track"] = &trackerServiceProcessorTrack{handler: handler}
+	self37.processorMap["findVisitByID"] = &trackerServiceProcessorFindVisitByID{handler: handler}
+	self37.processorMap["findVisitAll"] = &trackerServiceProcessorFindVisitAll{handler: handler}
+	self37.processorMap["findVisitAllBySessionID"] = &trackerServiceProcessorFindVisitAllBySessionID{handler: handler}
+	self37.processorMap["findVisitAllByClientID"] = &trackerServiceProcessorFindVisitAllByClientID{handler: handler}
+	self37.processorMap["findEventByID"] = &trackerServiceProcessorFindEventByID{handler: handler}
+	self37.processorMap["findEventAll"] = &trackerServiceProcessorFindEventAll{handler: handler}
+	self37.processorMap["insertEvent"] = &trackerServiceProcessorInsertEvent{handler: handler}
+	self37.processorMap["updateEvent"] = &trackerServiceProcessorUpdateEvent{handler: handler}
+	self37.processorMap["findFlashByID"] = &trackerServiceProcessorFindFlashByID{handler: handler}
+	self37.processorMap["findFlashAll"] = &trackerServiceProcessorFindFlashAll{handler: handler}
+	self37.processorMap["findFlashAllByVisitID"] = &trackerServiceProcessorFindFlashAllByVisitID{handler: handler}
+	self37.processorMap["findFlashAllByEventID"] = &trackerServiceProcessorFindFlashAllByEventID{handler: handler}
+	return self37
 }
 
 func (p *TrackerServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -1063,12 +1065,12 @@ func (p *TrackerServiceProcessor) Process(iprot, oprot thrift.TProtocol) (succes
 	}
 	iprot.Skip(thrift.STRUCT)
 	iprot.ReadMessageEnd()
-	x37 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function "+name)
+	x38 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function "+name)
 	oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-	x37.Write(oprot)
+	x38.Write(oprot)
 	oprot.WriteMessageEnd()
 	oprot.Flush()
-	return false, x37
+	return false, x38
 
 }
 
@@ -1090,7 +1092,7 @@ func (p *trackerServiceProcessorTrack) Process(seqId int32, iprot, oprot thrift.
 
 	iprot.ReadMessageEnd()
 	result := TrackResult{}
-	var retval []*Flash
+	var retval *TrackResponse
 	var err2 error
 	if retval, err2 = p.handler.Track(args.SessionID, args.ClientID, args.Fields); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing track: "+err2.Error())
@@ -1426,14 +1428,17 @@ func (p *trackerServiceProcessorInsertEvent) Process(seqId int32, iprot, oprot t
 
 	iprot.ReadMessageEnd()
 	result := InsertEventResult{}
+	var retval *Event
 	var err2 error
-	if err2 = p.handler.InsertEvent(args.Event); err2 != nil {
+	if retval, err2 = p.handler.InsertEvent(args.Enabled, args.Fields, args.Filters); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing insertEvent: "+err2.Error())
 		oprot.WriteMessageBegin("insertEvent", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
 		return true, err2
+	} else {
+		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("insertEvent", thrift.REPLY, seqId); err2 != nil {
 		err = err2
@@ -1471,14 +1476,17 @@ func (p *trackerServiceProcessorUpdateEvent) Process(seqId int32, iprot, oprot t
 
 	iprot.ReadMessageEnd()
 	result := UpdateEventResult{}
+	var retval *Event
 	var err2 error
-	if err2 = p.handler.UpdateEvent(args.Event); err2 != nil {
+	if retval, err2 = p.handler.UpdateEvent(args.Event); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing updateEvent: "+err2.Error())
 		oprot.WriteMessageBegin("updateEvent", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
 		return true, err2
+	} else {
+		result.Success = retval
 	}
 	if err2 = oprot.WriteMessageBegin("updateEvent", thrift.REPLY, seqId); err2 != nil {
 		err = err2
@@ -1614,7 +1622,7 @@ func (p *trackerServiceProcessorFindFlashAllByVisitID) Process(seqId int32, ipro
 	result := FindFlashAllByVisitIDResult{}
 	var retval []*Flash
 	var err2 error
-	if retval, err2 = p.handler.FindFlashAllByVisitID(args.VisitID, args.Limit, args.Offset); err2 != nil {
+	if retval, err2 = p.handler.FindFlashAllByVisitID(args.VisitID); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findFlashAllByVisitID: "+err2.Error())
 		oprot.WriteMessageBegin("findFlashAllByVisitID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
@@ -1779,19 +1787,19 @@ func (p *TrackArgs) ReadField3(iprot thrift.TProtocol) error {
 	tMap := make(map[string]string, size)
 	p.Fields = tMap
 	for i := 0; i < size; i++ {
-		var _key38 string
+		var _key39 string
 		if v, err := iprot.ReadString(); err != nil {
 			return fmt.Errorf("error reading field 0: %s", err)
 		} else {
-			_key38 = v
+			_key39 = v
 		}
-		var _val39 string
+		var _val40 string
 		if v, err := iprot.ReadString(); err != nil {
 			return fmt.Errorf("error reading field 0: %s", err)
 		} else {
-			_val39 = v
+			_val40 = v
 		}
-		p.Fields[_key38] = _val39
+		p.Fields[_key39] = _val40
 	}
 	if err := iprot.ReadMapEnd(); err != nil {
 		return fmt.Errorf("error reading map end: %s", err)
@@ -1879,16 +1887,19 @@ func (p *TrackArgs) String() string {
 }
 
 type TrackResult struct {
-	Success []*Flash `thrift:"success,0" json:"success"`
+	Success *TrackResponse `thrift:"success,0" json:"success"`
 }
 
 func NewTrackResult() *TrackResult {
 	return &TrackResult{}
 }
 
-var TrackResult_Success_DEFAULT []*Flash
+var TrackResult_Success_DEFAULT *TrackResponse
 
-func (p *TrackResult) GetSuccess() []*Flash {
+func (p *TrackResult) GetSuccess() *TrackResponse {
+	if !p.IsSetSuccess() {
+		return TrackResult_Success_DEFAULT
+	}
 	return p.Success
 }
 func (p *TrackResult) IsSetSuccess() bool {
@@ -1928,21 +1939,9 @@ func (p *TrackResult) Read(iprot thrift.TProtocol) error {
 }
 
 func (p *TrackResult) ReadField0(iprot thrift.TProtocol) error {
-	_, size, err := iprot.ReadListBegin()
-	if err != nil {
-		return fmt.Errorf("error reading list begin: %s", err)
-	}
-	tSlice := make([]*Flash, 0, size)
-	p.Success = tSlice
-	for i := 0; i < size; i++ {
-		_elem40 := &Flash{}
-		if err := _elem40.Read(iprot); err != nil {
-			return fmt.Errorf("%T error reading struct: %s", _elem40, err)
-		}
-		p.Success = append(p.Success, _elem40)
-	}
-	if err := iprot.ReadListEnd(); err != nil {
-		return fmt.Errorf("error reading list end: %s", err)
+	p.Success = &TrackResponse{}
+	if err := p.Success.Read(iprot); err != nil {
+		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
 	}
 	return nil
 }
@@ -1965,19 +1964,11 @@ func (p *TrackResult) Write(oprot thrift.TProtocol) error {
 
 func (p *TrackResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
-		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
+		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
 		}
-		if err := oprot.WriteListBegin(thrift.STRUCT, len(p.Success)); err != nil {
-			return fmt.Errorf("error writing list begin: %s", err)
-		}
-		for _, v := range p.Success {
-			if err := v.Write(oprot); err != nil {
-				return fmt.Errorf("%T error writing struct: %s", v, err)
-			}
-		}
-		if err := oprot.WriteListEnd(); err != nil {
-			return fmt.Errorf("error writing list end: %s", err)
+		if err := p.Success.Write(oprot); err != nil {
+			return fmt.Errorf("%T error writing struct: %s", p.Success, err)
 		}
 		if err := oprot.WriteFieldEnd(); err != nil {
 			return fmt.Errorf("%T write field end error 0:success: %s", p, err)
@@ -3382,25 +3373,26 @@ func (p *FindEventAllResult) String() string {
 }
 
 type InsertEventArgs struct {
-	Event *Event `thrift:"event,1" json:"event"`
+	Enabled bool              `thrift:"enabled,1" json:"enabled"`
+	Fields  map[string]string `thrift:"fields,2" json:"fields"`
+	Filters map[string]string `thrift:"filters,3" json:"filters"`
 }
 
 func NewInsertEventArgs() *InsertEventArgs {
 	return &InsertEventArgs{}
 }
 
-var InsertEventArgs_Event_DEFAULT *Event
-
-func (p *InsertEventArgs) GetEvent() *Event {
-	if !p.IsSetEvent() {
-		return InsertEventArgs_Event_DEFAULT
-	}
-	return p.Event
-}
-func (p *InsertEventArgs) IsSetEvent() bool {
-	return p.Event != nil
+func (p *InsertEventArgs) GetEnabled() bool {
+	return p.Enabled
 }
 
+func (p *InsertEventArgs) GetFields() map[string]string {
+	return p.Fields
+}
+
+func (p *InsertEventArgs) GetFilters() map[string]string {
+	return p.Filters
+}
 func (p *InsertEventArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
@@ -3416,6 +3408,14 @@ func (p *InsertEventArgs) Read(iprot thrift.TProtocol) error {
 		switch fieldId {
 		case 1:
 			if err := p.ReadField1(iprot); err != nil {
+				return err
+			}
+		case 2:
+			if err := p.ReadField2(iprot); err != nil {
+				return err
+			}
+		case 3:
+			if err := p.ReadField3(iprot); err != nil {
 				return err
 			}
 		default:
@@ -3434,9 +3434,66 @@ func (p *InsertEventArgs) Read(iprot thrift.TProtocol) error {
 }
 
 func (p *InsertEventArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Event = &Event{}
-	if err := p.Event.Read(iprot); err != nil {
-		return fmt.Errorf("%T error reading struct: %s", p.Event, err)
+	if v, err := iprot.ReadBool(); err != nil {
+		return fmt.Errorf("error reading field 1: %s", err)
+	} else {
+		p.Enabled = v
+	}
+	return nil
+}
+
+func (p *InsertEventArgs) ReadField2(iprot thrift.TProtocol) error {
+	_, _, size, err := iprot.ReadMapBegin()
+	if err != nil {
+		return fmt.Errorf("error reading map begin: %s", err)
+	}
+	tMap := make(map[string]string, size)
+	p.Fields = tMap
+	for i := 0; i < size; i++ {
+		var _key45 string
+		if v, err := iprot.ReadString(); err != nil {
+			return fmt.Errorf("error reading field 0: %s", err)
+		} else {
+			_key45 = v
+		}
+		var _val46 string
+		if v, err := iprot.ReadString(); err != nil {
+			return fmt.Errorf("error reading field 0: %s", err)
+		} else {
+			_val46 = v
+		}
+		p.Fields[_key45] = _val46
+	}
+	if err := iprot.ReadMapEnd(); err != nil {
+		return fmt.Errorf("error reading map end: %s", err)
+	}
+	return nil
+}
+
+func (p *InsertEventArgs) ReadField3(iprot thrift.TProtocol) error {
+	_, _, size, err := iprot.ReadMapBegin()
+	if err != nil {
+		return fmt.Errorf("error reading map begin: %s", err)
+	}
+	tMap := make(map[string]string, size)
+	p.Filters = tMap
+	for i := 0; i < size; i++ {
+		var _key47 string
+		if v, err := iprot.ReadString(); err != nil {
+			return fmt.Errorf("error reading field 0: %s", err)
+		} else {
+			_key47 = v
+		}
+		var _val48 string
+		if v, err := iprot.ReadString(); err != nil {
+			return fmt.Errorf("error reading field 0: %s", err)
+		} else {
+			_val48 = v
+		}
+		p.Filters[_key47] = _val48
+	}
+	if err := iprot.ReadMapEnd(); err != nil {
+		return fmt.Errorf("error reading map end: %s", err)
 	}
 	return nil
 }
@@ -3446,6 +3503,12 @@ func (p *InsertEventArgs) Write(oprot thrift.TProtocol) error {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField2(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField3(oprot); err != nil {
 		return err
 	}
 	if err := oprot.WriteFieldStop(); err != nil {
@@ -3458,14 +3521,62 @@ func (p *InsertEventArgs) Write(oprot thrift.TProtocol) error {
 }
 
 func (p *InsertEventArgs) writeField1(oprot thrift.TProtocol) (err error) {
-	if err := oprot.WriteFieldBegin("event", thrift.STRUCT, 1); err != nil {
-		return fmt.Errorf("%T write field begin error 1:event: %s", p, err)
+	if err := oprot.WriteFieldBegin("enabled", thrift.BOOL, 1); err != nil {
+		return fmt.Errorf("%T write field begin error 1:enabled: %s", p, err)
 	}
-	if err := p.Event.Write(oprot); err != nil {
-		return fmt.Errorf("%T error writing struct: %s", p.Event, err)
+	if err := oprot.WriteBool(bool(p.Enabled)); err != nil {
+		return fmt.Errorf("%T.enabled (1) field write error: %s", p, err)
 	}
 	if err := oprot.WriteFieldEnd(); err != nil {
-		return fmt.Errorf("%T write field end error 1:event: %s", p, err)
+		return fmt.Errorf("%T write field end error 1:enabled: %s", p, err)
+	}
+	return err
+}
+
+func (p *InsertEventArgs) writeField2(oprot thrift.TProtocol) (err error) {
+	if err := oprot.WriteFieldBegin("fields", thrift.MAP, 2); err != nil {
+		return fmt.Errorf("%T write field begin error 2:fields: %s", p, err)
+	}
+	if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Fields)); err != nil {
+		return fmt.Errorf("error writing map begin: %s", err)
+	}
+	for k, v := range p.Fields {
+		if err := oprot.WriteString(string(k)); err != nil {
+			return fmt.Errorf("%T. (0) field write error: %s", p, err)
+		}
+		if err := oprot.WriteString(string(v)); err != nil {
+			return fmt.Errorf("%T. (0) field write error: %s", p, err)
+		}
+	}
+	if err := oprot.WriteMapEnd(); err != nil {
+		return fmt.Errorf("error writing map end: %s", err)
+	}
+	if err := oprot.WriteFieldEnd(); err != nil {
+		return fmt.Errorf("%T write field end error 2:fields: %s", p, err)
+	}
+	return err
+}
+
+func (p *InsertEventArgs) writeField3(oprot thrift.TProtocol) (err error) {
+	if err := oprot.WriteFieldBegin("filters", thrift.MAP, 3); err != nil {
+		return fmt.Errorf("%T write field begin error 3:filters: %s", p, err)
+	}
+	if err := oprot.WriteMapBegin(thrift.STRING, thrift.STRING, len(p.Filters)); err != nil {
+		return fmt.Errorf("error writing map begin: %s", err)
+	}
+	for k, v := range p.Filters {
+		if err := oprot.WriteString(string(k)); err != nil {
+			return fmt.Errorf("%T. (0) field write error: %s", p, err)
+		}
+		if err := oprot.WriteString(string(v)); err != nil {
+			return fmt.Errorf("%T. (0) field write error: %s", p, err)
+		}
+	}
+	if err := oprot.WriteMapEnd(); err != nil {
+		return fmt.Errorf("error writing map end: %s", err)
+	}
+	if err := oprot.WriteFieldEnd(); err != nil {
+		return fmt.Errorf("%T write field end error 3:filters: %s", p, err)
 	}
 	return err
 }
@@ -3478,10 +3589,23 @@ func (p *InsertEventArgs) String() string {
 }
 
 type InsertEventResult struct {
+	Success *Event `thrift:"success,0" json:"success"`
 }
 
 func NewInsertEventResult() *InsertEventResult {
 	return &InsertEventResult{}
+}
+
+var InsertEventResult_Success_DEFAULT *Event
+
+func (p *InsertEventResult) GetSuccess() *Event {
+	if !p.IsSetSuccess() {
+		return InsertEventResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *InsertEventResult) IsSetSuccess() bool {
+	return p.Success != nil
 }
 
 func (p *InsertEventResult) Read(iprot thrift.TProtocol) error {
@@ -3496,8 +3620,15 @@ func (p *InsertEventResult) Read(iprot thrift.TProtocol) error {
 		if fieldTypeId == thrift.STOP {
 			break
 		}
-		if err := iprot.Skip(fieldTypeId); err != nil {
-			return err
+		switch fieldId {
+		case 0:
+			if err := p.ReadField0(iprot); err != nil {
+				return err
+			}
+		default:
+			if err := iprot.Skip(fieldTypeId); err != nil {
+				return err
+			}
 		}
 		if err := iprot.ReadFieldEnd(); err != nil {
 			return err
@@ -3509,9 +3640,20 @@ func (p *InsertEventResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *InsertEventResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = &Event{}
+	if err := p.Success.Read(iprot); err != nil {
+		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
+	}
+	return nil
+}
+
 func (p *InsertEventResult) Write(oprot thrift.TProtocol) error {
 	if err := oprot.WriteStructBegin("insertEvent_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
+	}
+	if err := p.writeField0(oprot); err != nil {
+		return err
 	}
 	if err := oprot.WriteFieldStop(); err != nil {
 		return fmt.Errorf("write field stop error: %s", err)
@@ -3520,6 +3662,21 @@ func (p *InsertEventResult) Write(oprot thrift.TProtocol) error {
 		return fmt.Errorf("write struct stop error: %s", err)
 	}
 	return nil
+}
+
+func (p *InsertEventResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return fmt.Errorf("%T error writing struct: %s", p.Success, err)
+		}
+		if err := oprot.WriteFieldEnd(); err != nil {
+			return fmt.Errorf("%T write field end error 0:success: %s", p, err)
+		}
+	}
+	return err
 }
 
 func (p *InsertEventResult) String() string {
@@ -3626,10 +3783,23 @@ func (p *UpdateEventArgs) String() string {
 }
 
 type UpdateEventResult struct {
+	Success *Event `thrift:"success,0" json:"success"`
 }
 
 func NewUpdateEventResult() *UpdateEventResult {
 	return &UpdateEventResult{}
+}
+
+var UpdateEventResult_Success_DEFAULT *Event
+
+func (p *UpdateEventResult) GetSuccess() *Event {
+	if !p.IsSetSuccess() {
+		return UpdateEventResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *UpdateEventResult) IsSetSuccess() bool {
+	return p.Success != nil
 }
 
 func (p *UpdateEventResult) Read(iprot thrift.TProtocol) error {
@@ -3644,8 +3814,15 @@ func (p *UpdateEventResult) Read(iprot thrift.TProtocol) error {
 		if fieldTypeId == thrift.STOP {
 			break
 		}
-		if err := iprot.Skip(fieldTypeId); err != nil {
-			return err
+		switch fieldId {
+		case 0:
+			if err := p.ReadField0(iprot); err != nil {
+				return err
+			}
+		default:
+			if err := iprot.Skip(fieldTypeId); err != nil {
+				return err
+			}
 		}
 		if err := iprot.ReadFieldEnd(); err != nil {
 			return err
@@ -3657,9 +3834,20 @@ func (p *UpdateEventResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *UpdateEventResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = &Event{}
+	if err := p.Success.Read(iprot); err != nil {
+		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
+	}
+	return nil
+}
+
 func (p *UpdateEventResult) Write(oprot thrift.TProtocol) error {
 	if err := oprot.WriteStructBegin("updateEvent_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
+	}
+	if err := p.writeField0(oprot); err != nil {
+		return err
 	}
 	if err := oprot.WriteFieldStop(); err != nil {
 		return fmt.Errorf("write field stop error: %s", err)
@@ -3668,6 +3856,21 @@ func (p *UpdateEventResult) Write(oprot thrift.TProtocol) error {
 		return fmt.Errorf("write struct stop error: %s", err)
 	}
 	return nil
+}
+
+func (p *UpdateEventResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return fmt.Errorf("%T error writing struct: %s", p.Success, err)
+		}
+		if err := oprot.WriteFieldEnd(); err != nil {
+			return fmt.Errorf("%T write field end error 0:success: %s", p, err)
+		}
+	}
+	return err
 }
 
 func (p *UpdateEventResult) String() string {
@@ -4042,11 +4245,11 @@ func (p *FindFlashAllResult) ReadField0(iprot thrift.TProtocol) error {
 	tSlice := make([]*Flash, 0, size)
 	p.Success = tSlice
 	for i := 0; i < size; i++ {
-		_elem45 := &Flash{}
-		if err := _elem45.Read(iprot); err != nil {
-			return fmt.Errorf("%T error reading struct: %s", _elem45, err)
+		_elem49 := &Flash{}
+		if err := _elem49.Read(iprot); err != nil {
+			return fmt.Errorf("%T error reading struct: %s", _elem49, err)
 		}
-		p.Success = append(p.Success, _elem45)
+		p.Success = append(p.Success, _elem49)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return fmt.Errorf("error reading list end: %s", err)
@@ -4102,8 +4305,6 @@ func (p *FindFlashAllResult) String() string {
 
 type FindFlashAllByVisitIDArgs struct {
 	VisitID string `thrift:"visitID,1" json:"visitID"`
-	Limit   int64  `thrift:"limit,2" json:"limit"`
-	Offset  int64  `thrift:"offset,3" json:"offset"`
 }
 
 func NewFindFlashAllByVisitIDArgs() *FindFlashAllByVisitIDArgs {
@@ -4112,14 +4313,6 @@ func NewFindFlashAllByVisitIDArgs() *FindFlashAllByVisitIDArgs {
 
 func (p *FindFlashAllByVisitIDArgs) GetVisitID() string {
 	return p.VisitID
-}
-
-func (p *FindFlashAllByVisitIDArgs) GetLimit() int64 {
-	return p.Limit
-}
-
-func (p *FindFlashAllByVisitIDArgs) GetOffset() int64 {
-	return p.Offset
 }
 func (p *FindFlashAllByVisitIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
@@ -4136,14 +4329,6 @@ func (p *FindFlashAllByVisitIDArgs) Read(iprot thrift.TProtocol) error {
 		switch fieldId {
 		case 1:
 			if err := p.ReadField1(iprot); err != nil {
-				return err
-			}
-		case 2:
-			if err := p.ReadField2(iprot); err != nil {
-				return err
-			}
-		case 3:
-			if err := p.ReadField3(iprot); err != nil {
 				return err
 			}
 		default:
@@ -4170,35 +4355,11 @@ func (p *FindFlashAllByVisitIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindFlashAllByVisitIDArgs) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
-		return fmt.Errorf("error reading field 2: %s", err)
-	} else {
-		p.Limit = v
-	}
-	return nil
-}
-
-func (p *FindFlashAllByVisitIDArgs) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
-		return fmt.Errorf("error reading field 3: %s", err)
-	} else {
-		p.Offset = v
-	}
-	return nil
-}
-
 func (p *FindFlashAllByVisitIDArgs) Write(oprot thrift.TProtocol) error {
 	if err := oprot.WriteStructBegin("findFlashAllByVisitID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
-		return err
-	}
-	if err := p.writeField2(oprot); err != nil {
-		return err
-	}
-	if err := p.writeField3(oprot); err != nil {
 		return err
 	}
 	if err := oprot.WriteFieldStop(); err != nil {
@@ -4219,32 +4380,6 @@ func (p *FindFlashAllByVisitIDArgs) writeField1(oprot thrift.TProtocol) (err err
 	}
 	if err := oprot.WriteFieldEnd(); err != nil {
 		return fmt.Errorf("%T write field end error 1:visitID: %s", p, err)
-	}
-	return err
-}
-
-func (p *FindFlashAllByVisitIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
-	if err := oprot.WriteFieldBegin("limit", thrift.I64, 2); err != nil {
-		return fmt.Errorf("%T write field begin error 2:limit: %s", p, err)
-	}
-	if err := oprot.WriteI64(int64(p.Limit)); err != nil {
-		return fmt.Errorf("%T.limit (2) field write error: %s", p, err)
-	}
-	if err := oprot.WriteFieldEnd(); err != nil {
-		return fmt.Errorf("%T write field end error 2:limit: %s", p, err)
-	}
-	return err
-}
-
-func (p *FindFlashAllByVisitIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
-	if err := oprot.WriteFieldBegin("offset", thrift.I64, 3); err != nil {
-		return fmt.Errorf("%T write field begin error 3:offset: %s", p, err)
-	}
-	if err := oprot.WriteI64(int64(p.Offset)); err != nil {
-		return fmt.Errorf("%T.offset (3) field write error: %s", p, err)
-	}
-	if err := oprot.WriteFieldEnd(); err != nil {
-		return fmt.Errorf("%T write field end error 3:offset: %s", p, err)
 	}
 	return err
 }
@@ -4313,11 +4448,11 @@ func (p *FindFlashAllByVisitIDResult) ReadField0(iprot thrift.TProtocol) error {
 	tSlice := make([]*Flash, 0, size)
 	p.Success = tSlice
 	for i := 0; i < size; i++ {
-		_elem46 := &Flash{}
-		if err := _elem46.Read(iprot); err != nil {
-			return fmt.Errorf("%T error reading struct: %s", _elem46, err)
+		_elem50 := &Flash{}
+		if err := _elem50.Read(iprot); err != nil {
+			return fmt.Errorf("%T error reading struct: %s", _elem50, err)
 		}
-		p.Success = append(p.Success, _elem46)
+		p.Success = append(p.Success, _elem50)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return fmt.Errorf("error reading list end: %s", err)
@@ -4584,11 +4719,11 @@ func (p *FindFlashAllByEventIDResult) ReadField0(iprot thrift.TProtocol) error {
 	tSlice := make([]*Flash, 0, size)
 	p.Success = tSlice
 	for i := 0; i < size; i++ {
-		_elem47 := &Flash{}
-		if err := _elem47.Read(iprot); err != nil {
-			return fmt.Errorf("%T error reading struct: %s", _elem47, err)
+		_elem51 := &Flash{}
+		if err := _elem51.Read(iprot); err != nil {
+			return fmt.Errorf("%T error reading struct: %s", _elem51, err)
 		}
-		p.Success = append(p.Success, _elem47)
+		p.Success = append(p.Success, _elem51)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return fmt.Errorf("error reading list end: %s", err)
