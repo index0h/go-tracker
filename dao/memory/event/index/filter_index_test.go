@@ -106,11 +106,11 @@ func Test_FilterIndex_FindAllByVisit_WithData(t *testing.T) {
 	testIndex.Insert(eventA2B)
 
 	combinations := []filterIndexFixture{
-		filterIndexFixture{fields: entities.Hash{"A": "A1"}, events: listA1},
-		filterIndexFixture{fields: entities.Hash{"A": "A2"}, events: listA2},
-		filterIndexFixture{fields: entities.Hash{"B": "B"}, events: listB},
-		filterIndexFixture{fields: entities.Hash{"A": "A1", "B": "B"}, events: listA1B},
-		filterIndexFixture{fields: entities.Hash{"A": "A2", "B": "B"}, events: listA2B},
+		{fields: entities.Hash{"A": "A1"}, events: listA1},
+		{fields: entities.Hash{"A": "A2"}, events: listA2},
+		{fields: entities.Hash{"B": "B"}, events: listB},
+		{fields: entities.Hash{"A": "A1", "B": "B"}, events: listA1B},
+		{fields: entities.Hash{"A": "A2", "B": "B"}, events: listA2B},
 	}
 
 	for _, fixture := range combinations {
