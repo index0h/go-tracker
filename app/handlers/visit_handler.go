@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/index0h/go-tracker/app/thrift/tracker"
+	"github.com/index0h/go-tracker/app/generated"
 	"github.com/index0h/go-tracker/components"
 	"github.com/index0h/go-tracker/dao"
 	"github.com/index0h/go-tracker/entities"

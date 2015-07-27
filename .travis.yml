@@ -25,4 +25,4 @@ after_success:
   - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.cov -service=travis-ci
   - cd $HOME/gopath/src/github.com/index0h/go-tracker
   - gofmt -e -l ./
-  - golint ./... | grep -v 'app/thrift/tracker/' | grep -v 'comment'
+  - golint ./... | grep -v 'app/generated/' | grep -v 'comment'
