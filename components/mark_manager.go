@@ -14,7 +14,7 @@ type MarkManager struct {
 	logger     *log.Logger
 }
 
-func MarkManager(
+func NewMarkManager(
 	repository dao.MarkRepositoryInterface,
 	uuid dao.UUIDProviderInterface,
 	logger *log.Logger,
