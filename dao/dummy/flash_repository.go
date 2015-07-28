@@ -8,6 +8,10 @@ import (
 
 type FlashRepository struct{}
 
+func NewFlashRepository() *FlashRepository {
+	return &FlashRepository{}
+}
+
 func (repository *FlashRepository) FindByID(eventID [16]byte) (result *entities.Flash, err error) {
 	if eventID == [16]byte{} {
 		return result, errors.New("Empty eventID is not allowed")

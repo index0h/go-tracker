@@ -17,21 +17,21 @@ var _ = bytes.Equal
 type VisitService interface {
 	// Parameters:
 	//  - VisitID
-	FindByID(visitID string) (r *Visit, err error)
+	FindVisitByID(visitID string) (r *Visit, err error)
 	// Parameters:
 	//  - Limit
 	//  - Offset
-	FindAll(limit int64, offset int64) (r []*Visit, err error)
+	FindVisitAll(limit int64, offset int64) (r []*Visit, err error)
 	// Parameters:
 	//  - SessionID
 	//  - Limit
 	//  - Offset
-	FindAllBySessionID(sessionID string, limit int64, offset int64) (r []*Visit, err error)
+	FindVisitAllBySessionID(sessionID string, limit int64, offset int64) (r []*Visit, err error)
 	// Parameters:
 	//  - ClientID
 	//  - Limit
 	//  - Offset
-	FindAllByClientID(clientID string, limit int64, offset int64) (r []*Visit, err error)
+	FindVisitAllByClientID(clientID string, limit int64, offset int64) (r []*Visit, err error)
 }
 
 type VisitServiceClient struct {
@@ -62,24 +62,24 @@ func NewVisitServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, 
 
 // Parameters:
 //  - VisitID
-func (p *VisitServiceClient) FindByID(visitID string) (r *Visit, err error) {
-	if err = p.sendFindByID(visitID); err != nil {
+func (p *VisitServiceClient) FindVisitByID(visitID string) (r *Visit, err error) {
+	if err = p.sendFindVisitByID(visitID); err != nil {
 		return
 	}
-	return p.recvFindByID()
+	return p.recvFindVisitByID()
 }
 
-func (p *VisitServiceClient) sendFindByID(visitID string) (err error) {
+func (p *VisitServiceClient) sendFindVisitByID(visitID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findByID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findVisitByID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindByIDArgs{
+	args := FindVisitByIDArgs{
 		VisitID: visitID,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -91,7 +91,7 @@ func (p *VisitServiceClient) sendFindByID(visitID string) (err error) {
 	return oprot.Flush()
 }
 
-func (p *VisitServiceClient) recvFindByID() (value *Visit, err error) {
+func (p *VisitServiceClient) recvFindVisitByID() (value *Visit, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -115,10 +115,10 @@ func (p *VisitServiceClient) recvFindByID() (value *Visit, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findByID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findVisitByID failed: out of sequence response")
 		return
 	}
-	result := FindByIDResult{}
+	result := FindVisitByIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -132,24 +132,24 @@ func (p *VisitServiceClient) recvFindByID() (value *Visit, err error) {
 // Parameters:
 //  - Limit
 //  - Offset
-func (p *VisitServiceClient) FindAll(limit int64, offset int64) (r []*Visit, err error) {
-	if err = p.sendFindAll(limit, offset); err != nil {
+func (p *VisitServiceClient) FindVisitAll(limit int64, offset int64) (r []*Visit, err error) {
+	if err = p.sendFindVisitAll(limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAll()
+	return p.recvFindVisitAll()
 }
 
-func (p *VisitServiceClient) sendFindAll(limit int64, offset int64) (err error) {
+func (p *VisitServiceClient) sendFindVisitAll(limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAll", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findVisitAll", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllArgs{
+	args := FindVisitAllArgs{
 		Limit:  limit,
 		Offset: offset,
 	}
@@ -162,7 +162,7 @@ func (p *VisitServiceClient) sendFindAll(limit int64, offset int64) (err error) 
 	return oprot.Flush()
 }
 
-func (p *VisitServiceClient) recvFindAll() (value []*Visit, err error) {
+func (p *VisitServiceClient) recvFindVisitAll() (value []*Visit, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -186,10 +186,10 @@ func (p *VisitServiceClient) recvFindAll() (value []*Visit, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAll failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findVisitAll failed: out of sequence response")
 		return
 	}
-	result := FindAllResult{}
+	result := FindVisitAllResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -204,24 +204,24 @@ func (p *VisitServiceClient) recvFindAll() (value []*Visit, err error) {
 //  - SessionID
 //  - Limit
 //  - Offset
-func (p *VisitServiceClient) FindAllBySessionID(sessionID string, limit int64, offset int64) (r []*Visit, err error) {
-	if err = p.sendFindAllBySessionID(sessionID, limit, offset); err != nil {
+func (p *VisitServiceClient) FindVisitAllBySessionID(sessionID string, limit int64, offset int64) (r []*Visit, err error) {
+	if err = p.sendFindVisitAllBySessionID(sessionID, limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAllBySessionID()
+	return p.recvFindVisitAllBySessionID()
 }
 
-func (p *VisitServiceClient) sendFindAllBySessionID(sessionID string, limit int64, offset int64) (err error) {
+func (p *VisitServiceClient) sendFindVisitAllBySessionID(sessionID string, limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAllBySessionID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findVisitAllBySessionID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllBySessionIDArgs{
+	args := FindVisitAllBySessionIDArgs{
 		SessionID: sessionID,
 		Limit:     limit,
 		Offset:    offset,
@@ -235,7 +235,7 @@ func (p *VisitServiceClient) sendFindAllBySessionID(sessionID string, limit int6
 	return oprot.Flush()
 }
 
-func (p *VisitServiceClient) recvFindAllBySessionID() (value []*Visit, err error) {
+func (p *VisitServiceClient) recvFindVisitAllBySessionID() (value []*Visit, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -259,10 +259,10 @@ func (p *VisitServiceClient) recvFindAllBySessionID() (value []*Visit, err error
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAllBySessionID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findVisitAllBySessionID failed: out of sequence response")
 		return
 	}
-	result := FindAllBySessionIDResult{}
+	result := FindVisitAllBySessionIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -277,24 +277,24 @@ func (p *VisitServiceClient) recvFindAllBySessionID() (value []*Visit, err error
 //  - ClientID
 //  - Limit
 //  - Offset
-func (p *VisitServiceClient) FindAllByClientID(clientID string, limit int64, offset int64) (r []*Visit, err error) {
-	if err = p.sendFindAllByClientID(clientID, limit, offset); err != nil {
+func (p *VisitServiceClient) FindVisitAllByClientID(clientID string, limit int64, offset int64) (r []*Visit, err error) {
+	if err = p.sendFindVisitAllByClientID(clientID, limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAllByClientID()
+	return p.recvFindVisitAllByClientID()
 }
 
-func (p *VisitServiceClient) sendFindAllByClientID(clientID string, limit int64, offset int64) (err error) {
+func (p *VisitServiceClient) sendFindVisitAllByClientID(clientID string, limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAllByClientID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findVisitAllByClientID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllByClientIDArgs{
+	args := FindVisitAllByClientIDArgs{
 		ClientID: clientID,
 		Limit:    limit,
 		Offset:   offset,
@@ -308,7 +308,7 @@ func (p *VisitServiceClient) sendFindAllByClientID(clientID string, limit int64,
 	return oprot.Flush()
 }
 
-func (p *VisitServiceClient) recvFindAllByClientID() (value []*Visit, err error) {
+func (p *VisitServiceClient) recvFindVisitAllByClientID() (value []*Visit, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -332,10 +332,10 @@ func (p *VisitServiceClient) recvFindAllByClientID() (value []*Visit, err error)
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAllByClientID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findVisitAllByClientID failed: out of sequence response")
 		return
 	}
-	result := FindAllByClientIDResult{}
+	result := FindVisitAllByClientIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -367,10 +367,10 @@ func (p *VisitServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunct
 func NewVisitServiceProcessor(handler VisitService) *VisitServiceProcessor {
 
 	self24 := &VisitServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self24.processorMap["findByID"] = &visitServiceProcessorFindByID{handler: handler}
-	self24.processorMap["findAll"] = &visitServiceProcessorFindAll{handler: handler}
-	self24.processorMap["findAllBySessionID"] = &visitServiceProcessorFindAllBySessionID{handler: handler}
-	self24.processorMap["findAllByClientID"] = &visitServiceProcessorFindAllByClientID{handler: handler}
+	self24.processorMap["findVisitByID"] = &visitServiceProcessorFindVisitByID{handler: handler}
+	self24.processorMap["findVisitAll"] = &visitServiceProcessorFindVisitAll{handler: handler}
+	self24.processorMap["findVisitAllBySessionID"] = &visitServiceProcessorFindVisitAllBySessionID{handler: handler}
+	self24.processorMap["findVisitAllByClientID"] = &visitServiceProcessorFindVisitAllByClientID{handler: handler}
 	return self24
 }
 
@@ -393,16 +393,16 @@ func (p *VisitServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success 
 
 }
 
-type visitServiceProcessorFindByID struct {
+type visitServiceProcessorFindVisitByID struct {
 	handler VisitService
 }
 
-func (p *visitServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindByIDArgs{}
+func (p *visitServiceProcessorFindVisitByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindVisitByIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findVisitByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -410,12 +410,12 @@ func (p *visitServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindByIDResult{}
+	result := FindVisitByIDResult{}
 	var retval *Visit
 	var err2 error
-	if retval, err2 = p.handler.FindByID(args.VisitID); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findByID: "+err2.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindVisitByID(args.VisitID); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findVisitByID: "+err2.Error())
+		oprot.WriteMessageBegin("findVisitByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -423,7 +423,7 @@ func (p *visitServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findByID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findVisitByID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -441,16 +441,16 @@ func (p *visitServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	return true, err
 }
 
-type visitServiceProcessorFindAll struct {
+type visitServiceProcessorFindVisitAll struct {
 	handler VisitService
 }
 
-func (p *visitServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllArgs{}
+func (p *visitServiceProcessorFindVisitAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindVisitAllArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findVisitAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -458,12 +458,12 @@ func (p *visitServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllResult{}
+	result := FindVisitAllResult{}
 	var retval []*Visit
 	var err2 error
-	if retval, err2 = p.handler.FindAll(args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAll: "+err2.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindVisitAll(args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findVisitAll: "+err2.Error())
+		oprot.WriteMessageBegin("findVisitAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -471,7 +471,7 @@ func (p *visitServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAll", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findVisitAll", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -489,16 +489,16 @@ func (p *visitServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	return true, err
 }
 
-type visitServiceProcessorFindAllBySessionID struct {
+type visitServiceProcessorFindVisitAllBySessionID struct {
 	handler VisitService
 }
 
-func (p *visitServiceProcessorFindAllBySessionID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllBySessionIDArgs{}
+func (p *visitServiceProcessorFindVisitAllBySessionID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindVisitAllBySessionIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAllBySessionID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findVisitAllBySessionID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -506,12 +506,12 @@ func (p *visitServiceProcessorFindAllBySessionID) Process(seqId int32, iprot, op
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllBySessionIDResult{}
+	result := FindVisitAllBySessionIDResult{}
 	var retval []*Visit
 	var err2 error
-	if retval, err2 = p.handler.FindAllBySessionID(args.SessionID, args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAllBySessionID: "+err2.Error())
-		oprot.WriteMessageBegin("findAllBySessionID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindVisitAllBySessionID(args.SessionID, args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findVisitAllBySessionID: "+err2.Error())
+		oprot.WriteMessageBegin("findVisitAllBySessionID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -519,7 +519,7 @@ func (p *visitServiceProcessorFindAllBySessionID) Process(seqId int32, iprot, op
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAllBySessionID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findVisitAllBySessionID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -537,16 +537,16 @@ func (p *visitServiceProcessorFindAllBySessionID) Process(seqId int32, iprot, op
 	return true, err
 }
 
-type visitServiceProcessorFindAllByClientID struct {
+type visitServiceProcessorFindVisitAllByClientID struct {
 	handler VisitService
 }
 
-func (p *visitServiceProcessorFindAllByClientID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllByClientIDArgs{}
+func (p *visitServiceProcessorFindVisitAllByClientID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindVisitAllByClientIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAllByClientID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findVisitAllByClientID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -554,12 +554,12 @@ func (p *visitServiceProcessorFindAllByClientID) Process(seqId int32, iprot, opr
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllByClientIDResult{}
+	result := FindVisitAllByClientIDResult{}
 	var retval []*Visit
 	var err2 error
-	if retval, err2 = p.handler.FindAllByClientID(args.ClientID, args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAllByClientID: "+err2.Error())
-		oprot.WriteMessageBegin("findAllByClientID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindVisitAllByClientID(args.ClientID, args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findVisitAllByClientID: "+err2.Error())
+		oprot.WriteMessageBegin("findVisitAllByClientID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -567,7 +567,7 @@ func (p *visitServiceProcessorFindAllByClientID) Process(seqId int32, iprot, opr
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAllByClientID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findVisitAllByClientID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -587,18 +587,18 @@ func (p *visitServiceProcessorFindAllByClientID) Process(seqId int32, iprot, opr
 
 // HELPER FUNCTIONS AND STRUCTURES
 
-type FindByIDArgs struct {
+type FindVisitByIDArgs struct {
 	VisitID string `thrift:"visitID,1" json:"visitID"`
 }
 
-func NewFindByIDArgs() *FindByIDArgs {
-	return &FindByIDArgs{}
+func NewFindVisitByIDArgs() *FindVisitByIDArgs {
+	return &FindVisitByIDArgs{}
 }
 
-func (p *FindByIDArgs) GetVisitID() string {
+func (p *FindVisitByIDArgs) GetVisitID() string {
 	return p.VisitID
 }
-func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitByIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -630,7 +630,7 @@ func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindVisitByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -639,8 +639,8 @@ func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_args"); err != nil {
+func (p *FindVisitByIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitByID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -655,7 +655,7 @@ func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("visitID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:visitID: %s", p, err)
 	}
@@ -668,34 +668,34 @@ func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDArgs) String() string {
+func (p *FindVisitByIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindVisitByIDArgs(%+v)", *p)
 }
 
-type FindByIDResult struct {
+type FindVisitByIDResult struct {
 	Success *Visit `thrift:"success,0" json:"success"`
 }
 
-func NewFindByIDResult() *FindByIDResult {
-	return &FindByIDResult{}
+func NewFindVisitByIDResult() *FindVisitByIDResult {
+	return &FindVisitByIDResult{}
 }
 
-var FindByIDResult_Success_DEFAULT *Visit
+var FindVisitByIDResult_Success_DEFAULT *Visit
 
-func (p *FindByIDResult) GetSuccess() *Visit {
+func (p *FindVisitByIDResult) GetSuccess() *Visit {
 	if !p.IsSetSuccess() {
-		return FindByIDResult_Success_DEFAULT
+		return FindVisitByIDResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *FindByIDResult) IsSetSuccess() bool {
+func (p *FindVisitByIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitByIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -727,7 +727,7 @@ func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindVisitByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Visit{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -735,8 +735,8 @@ func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_result"); err != nil {
+func (p *FindVisitByIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitByID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -751,7 +751,7 @@ func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -766,30 +766,30 @@ func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDResult) String() string {
+func (p *FindVisitByIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDResult(%+v)", *p)
+	return fmt.Sprintf("FindVisitByIDResult(%+v)", *p)
 }
 
-type FindAllArgs struct {
+type FindVisitAllArgs struct {
 	Limit  int64 `thrift:"limit,1" json:"limit"`
 	Offset int64 `thrift:"offset,2" json:"offset"`
 }
 
-func NewFindAllArgs() *FindAllArgs {
-	return &FindAllArgs{}
+func NewFindVisitAllArgs() *FindVisitAllArgs {
+	return &FindVisitAllArgs{}
 }
 
-func (p *FindAllArgs) GetLimit() int64 {
+func (p *FindVisitAllArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllArgs) GetOffset() int64 {
+func (p *FindVisitAllArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitAllArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -825,7 +825,7 @@ func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindVisitAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -834,7 +834,7 @@ func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindVisitAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -843,8 +843,8 @@ func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_args"); err != nil {
+func (p *FindVisitAllArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitAll_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -862,7 +862,7 @@ func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:limit: %s", p, err)
 	}
@@ -875,7 +875,7 @@ func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:offset: %s", p, err)
 	}
@@ -888,31 +888,31 @@ func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) String() string {
+func (p *FindVisitAllArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllArgs(%+v)", *p)
+	return fmt.Sprintf("FindVisitAllArgs(%+v)", *p)
 }
 
-type FindAllResult struct {
+type FindVisitAllResult struct {
 	Success []*Visit `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllResult() *FindAllResult {
-	return &FindAllResult{}
+func NewFindVisitAllResult() *FindVisitAllResult {
+	return &FindVisitAllResult{}
 }
 
-var FindAllResult_Success_DEFAULT []*Visit
+var FindVisitAllResult_Success_DEFAULT []*Visit
 
-func (p *FindAllResult) GetSuccess() []*Visit {
+func (p *FindVisitAllResult) GetSuccess() []*Visit {
 	return p.Success
 }
-func (p *FindAllResult) IsSetSuccess() bool {
+func (p *FindVisitAllResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitAllResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -944,7 +944,7 @@ func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindVisitAllResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -964,8 +964,8 @@ func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_result"); err != nil {
+func (p *FindVisitAllResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitAll_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -980,7 +980,7 @@ func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1003,35 +1003,35 @@ func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllResult) String() string {
+func (p *FindVisitAllResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllResult(%+v)", *p)
+	return fmt.Sprintf("FindVisitAllResult(%+v)", *p)
 }
 
-type FindAllBySessionIDArgs struct {
+type FindVisitAllBySessionIDArgs struct {
 	SessionID string `thrift:"sessionID,1" json:"sessionID"`
 	Limit     int64  `thrift:"limit,2" json:"limit"`
 	Offset    int64  `thrift:"offset,3" json:"offset"`
 }
 
-func NewFindAllBySessionIDArgs() *FindAllBySessionIDArgs {
-	return &FindAllBySessionIDArgs{}
+func NewFindVisitAllBySessionIDArgs() *FindVisitAllBySessionIDArgs {
+	return &FindVisitAllBySessionIDArgs{}
 }
 
-func (p *FindAllBySessionIDArgs) GetSessionID() string {
+func (p *FindVisitAllBySessionIDArgs) GetSessionID() string {
 	return p.SessionID
 }
 
-func (p *FindAllBySessionIDArgs) GetLimit() int64 {
+func (p *FindVisitAllBySessionIDArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllBySessionIDArgs) GetOffset() int64 {
+func (p *FindVisitAllBySessionIDArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllBySessionIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitAllBySessionIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1071,7 +1071,7 @@ func (p *FindAllBySessionIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindVisitAllBySessionIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -1080,7 +1080,7 @@ func (p *FindAllBySessionIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindVisitAllBySessionIDArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -1089,7 +1089,7 @@ func (p *FindAllBySessionIDArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDArgs) ReadField3(iprot thrift.TProtocol) error {
+func (p *FindVisitAllBySessionIDArgs) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 3: %s", err)
 	} else {
@@ -1098,8 +1098,8 @@ func (p *FindAllBySessionIDArgs) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllBySessionID_args"); err != nil {
+func (p *FindVisitAllBySessionIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitAllBySessionID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1120,7 +1120,7 @@ func (p *FindAllBySessionIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllBySessionIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("sessionID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:sessionID: %s", p, err)
 	}
@@ -1133,7 +1133,7 @@ func (p *FindAllBySessionIDArgs) writeField1(oprot thrift.TProtocol) (err error)
 	return err
 }
 
-func (p *FindAllBySessionIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllBySessionIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:limit: %s", p, err)
 	}
@@ -1146,7 +1146,7 @@ func (p *FindAllBySessionIDArgs) writeField2(oprot thrift.TProtocol) (err error)
 	return err
 }
 
-func (p *FindAllBySessionIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllBySessionIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 3); err != nil {
 		return fmt.Errorf("%T write field begin error 3:offset: %s", p, err)
 	}
@@ -1159,31 +1159,31 @@ func (p *FindAllBySessionIDArgs) writeField3(oprot thrift.TProtocol) (err error)
 	return err
 }
 
-func (p *FindAllBySessionIDArgs) String() string {
+func (p *FindVisitAllBySessionIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllBySessionIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindVisitAllBySessionIDArgs(%+v)", *p)
 }
 
-type FindAllBySessionIDResult struct {
+type FindVisitAllBySessionIDResult struct {
 	Success []*Visit `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllBySessionIDResult() *FindAllBySessionIDResult {
-	return &FindAllBySessionIDResult{}
+func NewFindVisitAllBySessionIDResult() *FindVisitAllBySessionIDResult {
+	return &FindVisitAllBySessionIDResult{}
 }
 
-var FindAllBySessionIDResult_Success_DEFAULT []*Visit
+var FindVisitAllBySessionIDResult_Success_DEFAULT []*Visit
 
-func (p *FindAllBySessionIDResult) GetSuccess() []*Visit {
+func (p *FindVisitAllBySessionIDResult) GetSuccess() []*Visit {
 	return p.Success
 }
-func (p *FindAllBySessionIDResult) IsSetSuccess() bool {
+func (p *FindVisitAllBySessionIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllBySessionIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitAllBySessionIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1215,7 +1215,7 @@ func (p *FindAllBySessionIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindVisitAllBySessionIDResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -1235,8 +1235,8 @@ func (p *FindAllBySessionIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllBySessionID_result"); err != nil {
+func (p *FindVisitAllBySessionIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitAllBySessionID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1251,7 +1251,7 @@ func (p *FindAllBySessionIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllBySessionIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllBySessionIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1274,35 +1274,35 @@ func (p *FindAllBySessionIDResult) writeField0(oprot thrift.TProtocol) (err erro
 	return err
 }
 
-func (p *FindAllBySessionIDResult) String() string {
+func (p *FindVisitAllBySessionIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllBySessionIDResult(%+v)", *p)
+	return fmt.Sprintf("FindVisitAllBySessionIDResult(%+v)", *p)
 }
 
-type FindAllByClientIDArgs struct {
+type FindVisitAllByClientIDArgs struct {
 	ClientID string `thrift:"clientID,1" json:"clientID"`
 	Limit    int64  `thrift:"limit,2" json:"limit"`
 	Offset   int64  `thrift:"offset,3" json:"offset"`
 }
 
-func NewFindAllByClientIDArgs() *FindAllByClientIDArgs {
-	return &FindAllByClientIDArgs{}
+func NewFindVisitAllByClientIDArgs() *FindVisitAllByClientIDArgs {
+	return &FindVisitAllByClientIDArgs{}
 }
 
-func (p *FindAllByClientIDArgs) GetClientID() string {
+func (p *FindVisitAllByClientIDArgs) GetClientID() string {
 	return p.ClientID
 }
 
-func (p *FindAllByClientIDArgs) GetLimit() int64 {
+func (p *FindVisitAllByClientIDArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllByClientIDArgs) GetOffset() int64 {
+func (p *FindVisitAllByClientIDArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllByClientIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitAllByClientIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1342,7 +1342,7 @@ func (p *FindAllByClientIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindVisitAllByClientIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -1351,7 +1351,7 @@ func (p *FindAllByClientIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindVisitAllByClientIDArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -1360,7 +1360,7 @@ func (p *FindAllByClientIDArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDArgs) ReadField3(iprot thrift.TProtocol) error {
+func (p *FindVisitAllByClientIDArgs) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 3: %s", err)
 	} else {
@@ -1369,8 +1369,8 @@ func (p *FindAllByClientIDArgs) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllByClientID_args"); err != nil {
+func (p *FindVisitAllByClientIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitAllByClientID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1391,7 +1391,7 @@ func (p *FindAllByClientIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllByClientIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("clientID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:clientID: %s", p, err)
 	}
@@ -1404,7 +1404,7 @@ func (p *FindAllByClientIDArgs) writeField1(oprot thrift.TProtocol) (err error) 
 	return err
 }
 
-func (p *FindAllByClientIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllByClientIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:limit: %s", p, err)
 	}
@@ -1417,7 +1417,7 @@ func (p *FindAllByClientIDArgs) writeField2(oprot thrift.TProtocol) (err error) 
 	return err
 }
 
-func (p *FindAllByClientIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllByClientIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 3); err != nil {
 		return fmt.Errorf("%T write field begin error 3:offset: %s", p, err)
 	}
@@ -1430,31 +1430,31 @@ func (p *FindAllByClientIDArgs) writeField3(oprot thrift.TProtocol) (err error) 
 	return err
 }
 
-func (p *FindAllByClientIDArgs) String() string {
+func (p *FindVisitAllByClientIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllByClientIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindVisitAllByClientIDArgs(%+v)", *p)
 }
 
-type FindAllByClientIDResult struct {
+type FindVisitAllByClientIDResult struct {
 	Success []*Visit `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllByClientIDResult() *FindAllByClientIDResult {
-	return &FindAllByClientIDResult{}
+func NewFindVisitAllByClientIDResult() *FindVisitAllByClientIDResult {
+	return &FindVisitAllByClientIDResult{}
 }
 
-var FindAllByClientIDResult_Success_DEFAULT []*Visit
+var FindVisitAllByClientIDResult_Success_DEFAULT []*Visit
 
-func (p *FindAllByClientIDResult) GetSuccess() []*Visit {
+func (p *FindVisitAllByClientIDResult) GetSuccess() []*Visit {
 	return p.Success
 }
-func (p *FindAllByClientIDResult) IsSetSuccess() bool {
+func (p *FindVisitAllByClientIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllByClientIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindVisitAllByClientIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1486,7 +1486,7 @@ func (p *FindAllByClientIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindVisitAllByClientIDResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -1506,8 +1506,8 @@ func (p *FindAllByClientIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllByClientID_result"); err != nil {
+func (p *FindVisitAllByClientIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findVisitAllByClientID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1522,7 +1522,7 @@ func (p *FindAllByClientIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByClientIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindVisitAllByClientIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1545,9 +1545,9 @@ func (p *FindAllByClientIDResult) writeField0(oprot thrift.TProtocol) (err error
 	return err
 }
 
-func (p *FindAllByClientIDResult) String() string {
+func (p *FindVisitAllByClientIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllByClientIDResult(%+v)", *p)
+	return fmt.Sprintf("FindVisitAllByClientIDResult(%+v)", *p)
 }

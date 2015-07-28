@@ -17,19 +17,19 @@ var _ = bytes.Equal
 type EventService interface {
 	// Parameters:
 	//  - EventID
-	FindByID(eventID string) (r *Event, err error)
+	FindEventByID(eventID string) (r *Event, err error)
 	// Parameters:
 	//  - Limit
 	//  - Offset
-	FindAll(limit int64, offset int64) (r []*Event, err error)
+	FindEventAll(limit int64, offset int64) (r []*Event, err error)
 	// Parameters:
 	//  - Enabled
 	//  - Fields
 	//  - Filters
-	Insert(enabled bool, fields map[string]string, filters map[string]string) (r *Event, err error)
+	InsertEvent(enabled bool, fields map[string]string, filters map[string]string) (r *Event, err error)
 	// Parameters:
 	//  - Event
-	Update(event *Event) (r *Event, err error)
+	UpdateEvent(event *Event) (r *Event, err error)
 }
 
 type EventServiceClient struct {
@@ -60,24 +60,24 @@ func NewEventServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, 
 
 // Parameters:
 //  - EventID
-func (p *EventServiceClient) FindByID(eventID string) (r *Event, err error) {
-	if err = p.sendFindByID(eventID); err != nil {
+func (p *EventServiceClient) FindEventByID(eventID string) (r *Event, err error) {
+	if err = p.sendFindEventByID(eventID); err != nil {
 		return
 	}
-	return p.recvFindByID()
+	return p.recvFindEventByID()
 }
 
-func (p *EventServiceClient) sendFindByID(eventID string) (err error) {
+func (p *EventServiceClient) sendFindEventByID(eventID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findByID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findEventByID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindByIDArgs{
+	args := FindEventByIDArgs{
 		EventID: eventID,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -89,7 +89,7 @@ func (p *EventServiceClient) sendFindByID(eventID string) (err error) {
 	return oprot.Flush()
 }
 
-func (p *EventServiceClient) recvFindByID() (value *Event, err error) {
+func (p *EventServiceClient) recvFindEventByID() (value *Event, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -113,10 +113,10 @@ func (p *EventServiceClient) recvFindByID() (value *Event, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findByID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findEventByID failed: out of sequence response")
 		return
 	}
-	result := FindByIDResult{}
+	result := FindEventByIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -130,24 +130,24 @@ func (p *EventServiceClient) recvFindByID() (value *Event, err error) {
 // Parameters:
 //  - Limit
 //  - Offset
-func (p *EventServiceClient) FindAll(limit int64, offset int64) (r []*Event, err error) {
-	if err = p.sendFindAll(limit, offset); err != nil {
+func (p *EventServiceClient) FindEventAll(limit int64, offset int64) (r []*Event, err error) {
+	if err = p.sendFindEventAll(limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAll()
+	return p.recvFindEventAll()
 }
 
-func (p *EventServiceClient) sendFindAll(limit int64, offset int64) (err error) {
+func (p *EventServiceClient) sendFindEventAll(limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAll", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findEventAll", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllArgs{
+	args := FindEventAllArgs{
 		Limit:  limit,
 		Offset: offset,
 	}
@@ -160,7 +160,7 @@ func (p *EventServiceClient) sendFindAll(limit int64, offset int64) (err error) 
 	return oprot.Flush()
 }
 
-func (p *EventServiceClient) recvFindAll() (value []*Event, err error) {
+func (p *EventServiceClient) recvFindEventAll() (value []*Event, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -184,10 +184,10 @@ func (p *EventServiceClient) recvFindAll() (value []*Event, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAll failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findEventAll failed: out of sequence response")
 		return
 	}
-	result := FindAllResult{}
+	result := FindEventAllResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -202,24 +202,24 @@ func (p *EventServiceClient) recvFindAll() (value []*Event, err error) {
 //  - Enabled
 //  - Fields
 //  - Filters
-func (p *EventServiceClient) Insert(enabled bool, fields map[string]string, filters map[string]string) (r *Event, err error) {
-	if err = p.sendInsert(enabled, fields, filters); err != nil {
+func (p *EventServiceClient) InsertEvent(enabled bool, fields map[string]string, filters map[string]string) (r *Event, err error) {
+	if err = p.sendInsertEvent(enabled, fields, filters); err != nil {
 		return
 	}
-	return p.recvInsert()
+	return p.recvInsertEvent()
 }
 
-func (p *EventServiceClient) sendInsert(enabled bool, fields map[string]string, filters map[string]string) (err error) {
+func (p *EventServiceClient) sendInsertEvent(enabled bool, fields map[string]string, filters map[string]string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("insert", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("insertEvent", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := InsertArgs{
+	args := InsertEventArgs{
 		Enabled: enabled,
 		Fields:  fields,
 		Filters: filters,
@@ -233,7 +233,7 @@ func (p *EventServiceClient) sendInsert(enabled bool, fields map[string]string, 
 	return oprot.Flush()
 }
 
-func (p *EventServiceClient) recvInsert() (value *Event, err error) {
+func (p *EventServiceClient) recvInsertEvent() (value *Event, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -257,10 +257,10 @@ func (p *EventServiceClient) recvInsert() (value *Event, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "insert failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "insertEvent failed: out of sequence response")
 		return
 	}
-	result := InsertResult{}
+	result := InsertEventResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -273,24 +273,24 @@ func (p *EventServiceClient) recvInsert() (value *Event, err error) {
 
 // Parameters:
 //  - Event
-func (p *EventServiceClient) Update(event *Event) (r *Event, err error) {
-	if err = p.sendUpdate(event); err != nil {
+func (p *EventServiceClient) UpdateEvent(event *Event) (r *Event, err error) {
+	if err = p.sendUpdateEvent(event); err != nil {
 		return
 	}
-	return p.recvUpdate()
+	return p.recvUpdateEvent()
 }
 
-func (p *EventServiceClient) sendUpdate(event *Event) (err error) {
+func (p *EventServiceClient) sendUpdateEvent(event *Event) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("update", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("updateEvent", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := UpdateArgs{
+	args := UpdateEventArgs{
 		Event: event,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -302,7 +302,7 @@ func (p *EventServiceClient) sendUpdate(event *Event) (err error) {
 	return oprot.Flush()
 }
 
-func (p *EventServiceClient) recvUpdate() (value *Event, err error) {
+func (p *EventServiceClient) recvUpdateEvent() (value *Event, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -326,10 +326,10 @@ func (p *EventServiceClient) recvUpdate() (value *Event, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "update failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "updateEvent failed: out of sequence response")
 		return
 	}
-	result := UpdateResult{}
+	result := UpdateEventResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -361,10 +361,10 @@ func (p *EventServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunct
 func NewEventServiceProcessor(handler EventService) *EventServiceProcessor {
 
 	self46 := &EventServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self46.processorMap["findByID"] = &eventServiceProcessorFindByID{handler: handler}
-	self46.processorMap["findAll"] = &eventServiceProcessorFindAll{handler: handler}
-	self46.processorMap["insert"] = &eventServiceProcessorInsert{handler: handler}
-	self46.processorMap["update"] = &eventServiceProcessorUpdate{handler: handler}
+	self46.processorMap["findEventByID"] = &eventServiceProcessorFindEventByID{handler: handler}
+	self46.processorMap["findEventAll"] = &eventServiceProcessorFindEventAll{handler: handler}
+	self46.processorMap["insertEvent"] = &eventServiceProcessorInsertEvent{handler: handler}
+	self46.processorMap["updateEvent"] = &eventServiceProcessorUpdateEvent{handler: handler}
 	return self46
 }
 
@@ -387,16 +387,16 @@ func (p *EventServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success 
 
 }
 
-type eventServiceProcessorFindByID struct {
+type eventServiceProcessorFindEventByID struct {
 	handler EventService
 }
 
-func (p *eventServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindByIDArgs{}
+func (p *eventServiceProcessorFindEventByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindEventByIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findEventByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -404,12 +404,12 @@ func (p *eventServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindByIDResult{}
+	result := FindEventByIDResult{}
 	var retval *Event
 	var err2 error
-	if retval, err2 = p.handler.FindByID(args.EventID); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findByID: "+err2.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindEventByID(args.EventID); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findEventByID: "+err2.Error())
+		oprot.WriteMessageBegin("findEventByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -417,7 +417,7 @@ func (p *eventServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findByID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findEventByID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -435,16 +435,16 @@ func (p *eventServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	return true, err
 }
 
-type eventServiceProcessorFindAll struct {
+type eventServiceProcessorFindEventAll struct {
 	handler EventService
 }
 
-func (p *eventServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllArgs{}
+func (p *eventServiceProcessorFindEventAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindEventAllArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findEventAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -452,12 +452,12 @@ func (p *eventServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllResult{}
+	result := FindEventAllResult{}
 	var retval []*Event
 	var err2 error
-	if retval, err2 = p.handler.FindAll(args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAll: "+err2.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindEventAll(args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findEventAll: "+err2.Error())
+		oprot.WriteMessageBegin("findEventAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -465,7 +465,7 @@ func (p *eventServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAll", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findEventAll", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -483,16 +483,16 @@ func (p *eventServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	return true, err
 }
 
-type eventServiceProcessorInsert struct {
+type eventServiceProcessorInsertEvent struct {
 	handler EventService
 }
 
-func (p *eventServiceProcessorInsert) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := InsertArgs{}
+func (p *eventServiceProcessorInsertEvent) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := InsertEventArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("insert", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("insertEvent", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -500,12 +500,12 @@ func (p *eventServiceProcessorInsert) Process(seqId int32, iprot, oprot thrift.T
 	}
 
 	iprot.ReadMessageEnd()
-	result := InsertResult{}
+	result := InsertEventResult{}
 	var retval *Event
 	var err2 error
-	if retval, err2 = p.handler.Insert(args.Enabled, args.Fields, args.Filters); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing insert: "+err2.Error())
-		oprot.WriteMessageBegin("insert", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.InsertEvent(args.Enabled, args.Fields, args.Filters); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing insertEvent: "+err2.Error())
+		oprot.WriteMessageBegin("insertEvent", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -513,7 +513,7 @@ func (p *eventServiceProcessorInsert) Process(seqId int32, iprot, oprot thrift.T
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("insert", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("insertEvent", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -531,16 +531,16 @@ func (p *eventServiceProcessorInsert) Process(seqId int32, iprot, oprot thrift.T
 	return true, err
 }
 
-type eventServiceProcessorUpdate struct {
+type eventServiceProcessorUpdateEvent struct {
 	handler EventService
 }
 
-func (p *eventServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := UpdateArgs{}
+func (p *eventServiceProcessorUpdateEvent) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := UpdateEventArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("update", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("updateEvent", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -548,12 +548,12 @@ func (p *eventServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.T
 	}
 
 	iprot.ReadMessageEnd()
-	result := UpdateResult{}
+	result := UpdateEventResult{}
 	var retval *Event
 	var err2 error
-	if retval, err2 = p.handler.Update(args.Event); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing update: "+err2.Error())
-		oprot.WriteMessageBegin("update", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.UpdateEvent(args.Event); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing updateEvent: "+err2.Error())
+		oprot.WriteMessageBegin("updateEvent", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -561,7 +561,7 @@ func (p *eventServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.T
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("update", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("updateEvent", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -581,18 +581,18 @@ func (p *eventServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.T
 
 // HELPER FUNCTIONS AND STRUCTURES
 
-type FindByIDArgs struct {
+type FindEventByIDArgs struct {
 	EventID string `thrift:"eventID,1" json:"eventID"`
 }
 
-func NewFindByIDArgs() *FindByIDArgs {
-	return &FindByIDArgs{}
+func NewFindEventByIDArgs() *FindEventByIDArgs {
+	return &FindEventByIDArgs{}
 }
 
-func (p *FindByIDArgs) GetEventID() string {
+func (p *FindEventByIDArgs) GetEventID() string {
 	return p.EventID
 }
-func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindEventByIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -624,7 +624,7 @@ func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindEventByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -633,8 +633,8 @@ func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_args"); err != nil {
+func (p *FindEventByIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findEventByID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -649,7 +649,7 @@ func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindEventByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("eventID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:eventID: %s", p, err)
 	}
@@ -662,34 +662,34 @@ func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDArgs) String() string {
+func (p *FindEventByIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindEventByIDArgs(%+v)", *p)
 }
 
-type FindByIDResult struct {
+type FindEventByIDResult struct {
 	Success *Event `thrift:"success,0" json:"success"`
 }
 
-func NewFindByIDResult() *FindByIDResult {
-	return &FindByIDResult{}
+func NewFindEventByIDResult() *FindEventByIDResult {
+	return &FindEventByIDResult{}
 }
 
-var FindByIDResult_Success_DEFAULT *Event
+var FindEventByIDResult_Success_DEFAULT *Event
 
-func (p *FindByIDResult) GetSuccess() *Event {
+func (p *FindEventByIDResult) GetSuccess() *Event {
 	if !p.IsSetSuccess() {
-		return FindByIDResult_Success_DEFAULT
+		return FindEventByIDResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *FindByIDResult) IsSetSuccess() bool {
+func (p *FindEventByIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindEventByIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -721,7 +721,7 @@ func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindEventByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Event{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -729,8 +729,8 @@ func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_result"); err != nil {
+func (p *FindEventByIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findEventByID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -745,7 +745,7 @@ func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindEventByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -760,30 +760,30 @@ func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDResult) String() string {
+func (p *FindEventByIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDResult(%+v)", *p)
+	return fmt.Sprintf("FindEventByIDResult(%+v)", *p)
 }
 
-type FindAllArgs struct {
+type FindEventAllArgs struct {
 	Limit  int64 `thrift:"limit,1" json:"limit"`
 	Offset int64 `thrift:"offset,2" json:"offset"`
 }
 
-func NewFindAllArgs() *FindAllArgs {
-	return &FindAllArgs{}
+func NewFindEventAllArgs() *FindEventAllArgs {
+	return &FindEventAllArgs{}
 }
 
-func (p *FindAllArgs) GetLimit() int64 {
+func (p *FindEventAllArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllArgs) GetOffset() int64 {
+func (p *FindEventAllArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindEventAllArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -819,7 +819,7 @@ func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindEventAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -828,7 +828,7 @@ func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindEventAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -837,8 +837,8 @@ func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_args"); err != nil {
+func (p *FindEventAllArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findEventAll_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -856,7 +856,7 @@ func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindEventAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:limit: %s", p, err)
 	}
@@ -869,7 +869,7 @@ func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindEventAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:offset: %s", p, err)
 	}
@@ -882,31 +882,31 @@ func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) String() string {
+func (p *FindEventAllArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllArgs(%+v)", *p)
+	return fmt.Sprintf("FindEventAllArgs(%+v)", *p)
 }
 
-type FindAllResult struct {
+type FindEventAllResult struct {
 	Success []*Event `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllResult() *FindAllResult {
-	return &FindAllResult{}
+func NewFindEventAllResult() *FindEventAllResult {
+	return &FindEventAllResult{}
 }
 
-var FindAllResult_Success_DEFAULT []*Event
+var FindEventAllResult_Success_DEFAULT []*Event
 
-func (p *FindAllResult) GetSuccess() []*Event {
+func (p *FindEventAllResult) GetSuccess() []*Event {
 	return p.Success
 }
-func (p *FindAllResult) IsSetSuccess() bool {
+func (p *FindEventAllResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
+func (p *FindEventAllResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -938,7 +938,7 @@ func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindEventAllResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -958,8 +958,8 @@ func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_result"); err != nil {
+func (p *FindEventAllResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findEventAll_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -974,7 +974,7 @@ func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindEventAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -997,35 +997,35 @@ func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllResult) String() string {
+func (p *FindEventAllResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllResult(%+v)", *p)
+	return fmt.Sprintf("FindEventAllResult(%+v)", *p)
 }
 
-type InsertArgs struct {
+type InsertEventArgs struct {
 	Enabled bool              `thrift:"enabled,1" json:"enabled"`
 	Fields  map[string]string `thrift:"fields,2" json:"fields"`
 	Filters map[string]string `thrift:"filters,3" json:"filters"`
 }
 
-func NewInsertArgs() *InsertArgs {
-	return &InsertArgs{}
+func NewInsertEventArgs() *InsertEventArgs {
+	return &InsertEventArgs{}
 }
 
-func (p *InsertArgs) GetEnabled() bool {
+func (p *InsertEventArgs) GetEnabled() bool {
 	return p.Enabled
 }
 
-func (p *InsertArgs) GetFields() map[string]string {
+func (p *InsertEventArgs) GetFields() map[string]string {
 	return p.Fields
 }
 
-func (p *InsertArgs) GetFilters() map[string]string {
+func (p *InsertEventArgs) GetFilters() map[string]string {
 	return p.Filters
 }
-func (p *InsertArgs) Read(iprot thrift.TProtocol) error {
+func (p *InsertEventArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1065,7 +1065,7 @@ func (p *InsertArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *InsertEventArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadBool(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -1074,7 +1074,7 @@ func (p *InsertArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *InsertEventArgs) ReadField2(iprot thrift.TProtocol) error {
 	_, _, size, err := iprot.ReadMapBegin()
 	if err != nil {
 		return fmt.Errorf("error reading map begin: %s", err)
@@ -1102,7 +1102,7 @@ func (p *InsertArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertArgs) ReadField3(iprot thrift.TProtocol) error {
+func (p *InsertEventArgs) ReadField3(iprot thrift.TProtocol) error {
 	_, _, size, err := iprot.ReadMapBegin()
 	if err != nil {
 		return fmt.Errorf("error reading map begin: %s", err)
@@ -1130,8 +1130,8 @@ func (p *InsertArgs) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("insert_args"); err != nil {
+func (p *InsertEventArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("insertEvent_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1152,7 +1152,7 @@ func (p *InsertArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *InsertEventArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("enabled", thrift.BOOL, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:enabled: %s", p, err)
 	}
@@ -1165,7 +1165,7 @@ func (p *InsertArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *InsertArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *InsertEventArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("fields", thrift.MAP, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:fields: %s", p, err)
 	}
@@ -1189,7 +1189,7 @@ func (p *InsertArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *InsertArgs) writeField3(oprot thrift.TProtocol) (err error) {
+func (p *InsertEventArgs) writeField3(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("filters", thrift.MAP, 3); err != nil {
 		return fmt.Errorf("%T write field begin error 3:filters: %s", p, err)
 	}
@@ -1213,34 +1213,34 @@ func (p *InsertArgs) writeField3(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *InsertArgs) String() string {
+func (p *InsertEventArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("InsertArgs(%+v)", *p)
+	return fmt.Sprintf("InsertEventArgs(%+v)", *p)
 }
 
-type InsertResult struct {
+type InsertEventResult struct {
 	Success *Event `thrift:"success,0" json:"success"`
 }
 
-func NewInsertResult() *InsertResult {
-	return &InsertResult{}
+func NewInsertEventResult() *InsertEventResult {
+	return &InsertEventResult{}
 }
 
-var InsertResult_Success_DEFAULT *Event
+var InsertEventResult_Success_DEFAULT *Event
 
-func (p *InsertResult) GetSuccess() *Event {
+func (p *InsertEventResult) GetSuccess() *Event {
 	if !p.IsSetSuccess() {
-		return InsertResult_Success_DEFAULT
+		return InsertEventResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *InsertResult) IsSetSuccess() bool {
+func (p *InsertEventResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *InsertResult) Read(iprot thrift.TProtocol) error {
+func (p *InsertEventResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1272,7 +1272,7 @@ func (p *InsertResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *InsertEventResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Event{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -1280,8 +1280,8 @@ func (p *InsertResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("insert_result"); err != nil {
+func (p *InsertEventResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("insertEvent_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1296,7 +1296,7 @@ func (p *InsertResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *InsertResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *InsertEventResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1311,34 +1311,34 @@ func (p *InsertResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *InsertResult) String() string {
+func (p *InsertEventResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("InsertResult(%+v)", *p)
+	return fmt.Sprintf("InsertEventResult(%+v)", *p)
 }
 
-type UpdateArgs struct {
+type UpdateEventArgs struct {
 	Event *Event `thrift:"event,1" json:"event"`
 }
 
-func NewUpdateArgs() *UpdateArgs {
-	return &UpdateArgs{}
+func NewUpdateEventArgs() *UpdateEventArgs {
+	return &UpdateEventArgs{}
 }
 
-var UpdateArgs_Event_DEFAULT *Event
+var UpdateEventArgs_Event_DEFAULT *Event
 
-func (p *UpdateArgs) GetEvent() *Event {
+func (p *UpdateEventArgs) GetEvent() *Event {
 	if !p.IsSetEvent() {
-		return UpdateArgs_Event_DEFAULT
+		return UpdateEventArgs_Event_DEFAULT
 	}
 	return p.Event
 }
-func (p *UpdateArgs) IsSetEvent() bool {
+func (p *UpdateEventArgs) IsSetEvent() bool {
 	return p.Event != nil
 }
 
-func (p *UpdateArgs) Read(iprot thrift.TProtocol) error {
+func (p *UpdateEventArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1370,7 +1370,7 @@ func (p *UpdateArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *UpdateEventArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Event = &Event{}
 	if err := p.Event.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Event, err)
@@ -1378,8 +1378,8 @@ func (p *UpdateArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("update_args"); err != nil {
+func (p *UpdateEventArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("updateEvent_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1394,7 +1394,7 @@ func (p *UpdateArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *UpdateEventArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("event", thrift.STRUCT, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:event: %s", p, err)
 	}
@@ -1407,34 +1407,34 @@ func (p *UpdateArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *UpdateArgs) String() string {
+func (p *UpdateEventArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("UpdateArgs(%+v)", *p)
+	return fmt.Sprintf("UpdateEventArgs(%+v)", *p)
 }
 
-type UpdateResult struct {
+type UpdateEventResult struct {
 	Success *Event `thrift:"success,0" json:"success"`
 }
 
-func NewUpdateResult() *UpdateResult {
-	return &UpdateResult{}
+func NewUpdateEventResult() *UpdateEventResult {
+	return &UpdateEventResult{}
 }
 
-var UpdateResult_Success_DEFAULT *Event
+var UpdateEventResult_Success_DEFAULT *Event
 
-func (p *UpdateResult) GetSuccess() *Event {
+func (p *UpdateEventResult) GetSuccess() *Event {
 	if !p.IsSetSuccess() {
-		return UpdateResult_Success_DEFAULT
+		return UpdateEventResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *UpdateResult) IsSetSuccess() bool {
+func (p *UpdateEventResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *UpdateResult) Read(iprot thrift.TProtocol) error {
+func (p *UpdateEventResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1466,7 +1466,7 @@ func (p *UpdateResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *UpdateEventResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Event{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -1474,8 +1474,8 @@ func (p *UpdateResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("update_result"); err != nil {
+func (p *UpdateEventResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("updateEvent_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1490,7 +1490,7 @@ func (p *UpdateResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *UpdateEventResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1505,9 +1505,9 @@ func (p *UpdateResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *UpdateResult) String() string {
+func (p *UpdateEventResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("UpdateResult(%+v)", *p)
+	return fmt.Sprintf("UpdateEventResult(%+v)", *p)
 }

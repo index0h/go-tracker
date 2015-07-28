@@ -8,6 +8,10 @@ import (
 
 type EventRepository struct{}
 
+func NewEventRepository() *EventRepository {
+	return &EventRepository{}
+}
+
 func (repository *EventRepository) FindAll(limit int64, offset int64) (result []*entities.Event, err error) {
 	return result, err
 }

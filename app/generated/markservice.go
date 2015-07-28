@@ -17,17 +17,17 @@ var _ = bytes.Equal
 type MarkService interface {
 	// Parameters:
 	//  - MarkID
-	FindByID(markID string) (r *Mark, err error)
+	FindMarkByID(markID string) (r *Mark, err error)
 	// Parameters:
 	//  - ClientID
-	FindByClientID(clientID string) (r *Mark, err error)
+	FindMarkByClientID(clientID string) (r *Mark, err error)
 	// Parameters:
 	//  - Limit
 	//  - Offset
-	FindAll(limit int64, offset int64) (r []*Mark, err error)
+	FindMarkAll(limit int64, offset int64) (r []*Mark, err error)
 	// Parameters:
 	//  - Mark
-	Update(mark *Mark) (r *Mark, err error)
+	UpdateMark(mark *Mark) (r *Mark, err error)
 }
 
 type MarkServiceClient struct {
@@ -58,24 +58,24 @@ func NewMarkServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, o
 
 // Parameters:
 //  - MarkID
-func (p *MarkServiceClient) FindByID(markID string) (r *Mark, err error) {
-	if err = p.sendFindByID(markID); err != nil {
+func (p *MarkServiceClient) FindMarkByID(markID string) (r *Mark, err error) {
+	if err = p.sendFindMarkByID(markID); err != nil {
 		return
 	}
-	return p.recvFindByID()
+	return p.recvFindMarkByID()
 }
 
-func (p *MarkServiceClient) sendFindByID(markID string) (err error) {
+func (p *MarkServiceClient) sendFindMarkByID(markID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findByID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findMarkByID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindByIDArgs{
+	args := FindMarkByIDArgs{
 		MarkID: markID,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -87,7 +87,7 @@ func (p *MarkServiceClient) sendFindByID(markID string) (err error) {
 	return oprot.Flush()
 }
 
-func (p *MarkServiceClient) recvFindByID() (value *Mark, err error) {
+func (p *MarkServiceClient) recvFindMarkByID() (value *Mark, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -111,10 +111,10 @@ func (p *MarkServiceClient) recvFindByID() (value *Mark, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findByID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findMarkByID failed: out of sequence response")
 		return
 	}
-	result := FindByIDResult{}
+	result := FindMarkByIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -127,24 +127,24 @@ func (p *MarkServiceClient) recvFindByID() (value *Mark, err error) {
 
 // Parameters:
 //  - ClientID
-func (p *MarkServiceClient) FindByClientID(clientID string) (r *Mark, err error) {
-	if err = p.sendFindByClientID(clientID); err != nil {
+func (p *MarkServiceClient) FindMarkByClientID(clientID string) (r *Mark, err error) {
+	if err = p.sendFindMarkByClientID(clientID); err != nil {
 		return
 	}
-	return p.recvFindByClientID()
+	return p.recvFindMarkByClientID()
 }
 
-func (p *MarkServiceClient) sendFindByClientID(clientID string) (err error) {
+func (p *MarkServiceClient) sendFindMarkByClientID(clientID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findByClientID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findMarkByClientID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindByClientIDArgs{
+	args := FindMarkByClientIDArgs{
 		ClientID: clientID,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -156,7 +156,7 @@ func (p *MarkServiceClient) sendFindByClientID(clientID string) (err error) {
 	return oprot.Flush()
 }
 
-func (p *MarkServiceClient) recvFindByClientID() (value *Mark, err error) {
+func (p *MarkServiceClient) recvFindMarkByClientID() (value *Mark, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -180,10 +180,10 @@ func (p *MarkServiceClient) recvFindByClientID() (value *Mark, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findByClientID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findMarkByClientID failed: out of sequence response")
 		return
 	}
-	result := FindByClientIDResult{}
+	result := FindMarkByClientIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -197,24 +197,24 @@ func (p *MarkServiceClient) recvFindByClientID() (value *Mark, err error) {
 // Parameters:
 //  - Limit
 //  - Offset
-func (p *MarkServiceClient) FindAll(limit int64, offset int64) (r []*Mark, err error) {
-	if err = p.sendFindAll(limit, offset); err != nil {
+func (p *MarkServiceClient) FindMarkAll(limit int64, offset int64) (r []*Mark, err error) {
+	if err = p.sendFindMarkAll(limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAll()
+	return p.recvFindMarkAll()
 }
 
-func (p *MarkServiceClient) sendFindAll(limit int64, offset int64) (err error) {
+func (p *MarkServiceClient) sendFindMarkAll(limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAll", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findMarkAll", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllArgs{
+	args := FindMarkAllArgs{
 		Limit:  limit,
 		Offset: offset,
 	}
@@ -227,7 +227,7 @@ func (p *MarkServiceClient) sendFindAll(limit int64, offset int64) (err error) {
 	return oprot.Flush()
 }
 
-func (p *MarkServiceClient) recvFindAll() (value []*Mark, err error) {
+func (p *MarkServiceClient) recvFindMarkAll() (value []*Mark, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -251,10 +251,10 @@ func (p *MarkServiceClient) recvFindAll() (value []*Mark, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAll failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findMarkAll failed: out of sequence response")
 		return
 	}
-	result := FindAllResult{}
+	result := FindMarkAllResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -267,24 +267,24 @@ func (p *MarkServiceClient) recvFindAll() (value []*Mark, err error) {
 
 // Parameters:
 //  - Mark
-func (p *MarkServiceClient) Update(mark *Mark) (r *Mark, err error) {
-	if err = p.sendUpdate(mark); err != nil {
+func (p *MarkServiceClient) UpdateMark(mark *Mark) (r *Mark, err error) {
+	if err = p.sendUpdateMark(mark); err != nil {
 		return
 	}
-	return p.recvUpdate()
+	return p.recvUpdateMark()
 }
 
-func (p *MarkServiceClient) sendUpdate(mark *Mark) (err error) {
+func (p *MarkServiceClient) sendUpdateMark(mark *Mark) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("update", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("updateMark", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := UpdateArgs{
+	args := UpdateMarkArgs{
 		Mark: mark,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -296,7 +296,7 @@ func (p *MarkServiceClient) sendUpdate(mark *Mark) (err error) {
 	return oprot.Flush()
 }
 
-func (p *MarkServiceClient) recvUpdate() (value *Mark, err error) {
+func (p *MarkServiceClient) recvUpdateMark() (value *Mark, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -320,10 +320,10 @@ func (p *MarkServiceClient) recvUpdate() (value *Mark, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "update failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "updateMark failed: out of sequence response")
 		return
 	}
-	result := UpdateResult{}
+	result := UpdateMarkResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -355,10 +355,10 @@ func (p *MarkServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFuncti
 func NewMarkServiceProcessor(handler MarkService) *MarkServiceProcessor {
 
 	self117 := &MarkServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self117.processorMap["findByID"] = &markServiceProcessorFindByID{handler: handler}
-	self117.processorMap["findByClientID"] = &markServiceProcessorFindByClientID{handler: handler}
-	self117.processorMap["findAll"] = &markServiceProcessorFindAll{handler: handler}
-	self117.processorMap["update"] = &markServiceProcessorUpdate{handler: handler}
+	self117.processorMap["findMarkByID"] = &markServiceProcessorFindMarkByID{handler: handler}
+	self117.processorMap["findMarkByClientID"] = &markServiceProcessorFindMarkByClientID{handler: handler}
+	self117.processorMap["findMarkAll"] = &markServiceProcessorFindMarkAll{handler: handler}
+	self117.processorMap["updateMark"] = &markServiceProcessorUpdateMark{handler: handler}
 	return self117
 }
 
@@ -381,16 +381,16 @@ func (p *MarkServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success b
 
 }
 
-type markServiceProcessorFindByID struct {
+type markServiceProcessorFindMarkByID struct {
 	handler MarkService
 }
 
-func (p *markServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindByIDArgs{}
+func (p *markServiceProcessorFindMarkByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindMarkByIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findMarkByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -398,12 +398,12 @@ func (p *markServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindByIDResult{}
+	result := FindMarkByIDResult{}
 	var retval *Mark
 	var err2 error
-	if retval, err2 = p.handler.FindByID(args.MarkID); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findByID: "+err2.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindMarkByID(args.MarkID); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findMarkByID: "+err2.Error())
+		oprot.WriteMessageBegin("findMarkByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -411,7 +411,7 @@ func (p *markServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findByID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findMarkByID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -429,16 +429,16 @@ func (p *markServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.
 	return true, err
 }
 
-type markServiceProcessorFindByClientID struct {
+type markServiceProcessorFindMarkByClientID struct {
 	handler MarkService
 }
 
-func (p *markServiceProcessorFindByClientID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindByClientIDArgs{}
+func (p *markServiceProcessorFindMarkByClientID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindMarkByClientIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findByClientID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findMarkByClientID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -446,12 +446,12 @@ func (p *markServiceProcessorFindByClientID) Process(seqId int32, iprot, oprot t
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindByClientIDResult{}
+	result := FindMarkByClientIDResult{}
 	var retval *Mark
 	var err2 error
-	if retval, err2 = p.handler.FindByClientID(args.ClientID); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findByClientID: "+err2.Error())
-		oprot.WriteMessageBegin("findByClientID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindMarkByClientID(args.ClientID); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findMarkByClientID: "+err2.Error())
+		oprot.WriteMessageBegin("findMarkByClientID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -459,7 +459,7 @@ func (p *markServiceProcessorFindByClientID) Process(seqId int32, iprot, oprot t
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findByClientID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findMarkByClientID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -477,16 +477,16 @@ func (p *markServiceProcessorFindByClientID) Process(seqId int32, iprot, oprot t
 	return true, err
 }
 
-type markServiceProcessorFindAll struct {
+type markServiceProcessorFindMarkAll struct {
 	handler MarkService
 }
 
-func (p *markServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllArgs{}
+func (p *markServiceProcessorFindMarkAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindMarkAllArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findMarkAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -494,12 +494,12 @@ func (p *markServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.T
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllResult{}
+	result := FindMarkAllResult{}
 	var retval []*Mark
 	var err2 error
-	if retval, err2 = p.handler.FindAll(args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAll: "+err2.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindMarkAll(args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findMarkAll: "+err2.Error())
+		oprot.WriteMessageBegin("findMarkAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -507,7 +507,7 @@ func (p *markServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.T
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAll", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findMarkAll", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -525,16 +525,16 @@ func (p *markServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.T
 	return true, err
 }
 
-type markServiceProcessorUpdate struct {
+type markServiceProcessorUpdateMark struct {
 	handler MarkService
 }
 
-func (p *markServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := UpdateArgs{}
+func (p *markServiceProcessorUpdateMark) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := UpdateMarkArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("update", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("updateMark", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -542,12 +542,12 @@ func (p *markServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.TP
 	}
 
 	iprot.ReadMessageEnd()
-	result := UpdateResult{}
+	result := UpdateMarkResult{}
 	var retval *Mark
 	var err2 error
-	if retval, err2 = p.handler.Update(args.Mark); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing update: "+err2.Error())
-		oprot.WriteMessageBegin("update", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.UpdateMark(args.Mark); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing updateMark: "+err2.Error())
+		oprot.WriteMessageBegin("updateMark", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -555,7 +555,7 @@ func (p *markServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.TP
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("update", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("updateMark", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -575,18 +575,18 @@ func (p *markServiceProcessorUpdate) Process(seqId int32, iprot, oprot thrift.TP
 
 // HELPER FUNCTIONS AND STRUCTURES
 
-type FindByIDArgs struct {
+type FindMarkByIDArgs struct {
 	MarkID string `thrift:"markID,1" json:"markID"`
 }
 
-func NewFindByIDArgs() *FindByIDArgs {
-	return &FindByIDArgs{}
+func NewFindMarkByIDArgs() *FindMarkByIDArgs {
+	return &FindMarkByIDArgs{}
 }
 
-func (p *FindByIDArgs) GetMarkID() string {
+func (p *FindMarkByIDArgs) GetMarkID() string {
 	return p.MarkID
 }
-func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindMarkByIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -618,7 +618,7 @@ func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindMarkByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -627,8 +627,8 @@ func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_args"); err != nil {
+func (p *FindMarkByIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findMarkByID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -643,7 +643,7 @@ func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("markID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:markID: %s", p, err)
 	}
@@ -656,34 +656,34 @@ func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDArgs) String() string {
+func (p *FindMarkByIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindMarkByIDArgs(%+v)", *p)
 }
 
-type FindByIDResult struct {
+type FindMarkByIDResult struct {
 	Success *Mark `thrift:"success,0" json:"success"`
 }
 
-func NewFindByIDResult() *FindByIDResult {
-	return &FindByIDResult{}
+func NewFindMarkByIDResult() *FindMarkByIDResult {
+	return &FindMarkByIDResult{}
 }
 
-var FindByIDResult_Success_DEFAULT *Mark
+var FindMarkByIDResult_Success_DEFAULT *Mark
 
-func (p *FindByIDResult) GetSuccess() *Mark {
+func (p *FindMarkByIDResult) GetSuccess() *Mark {
 	if !p.IsSetSuccess() {
-		return FindByIDResult_Success_DEFAULT
+		return FindMarkByIDResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *FindByIDResult) IsSetSuccess() bool {
+func (p *FindMarkByIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindMarkByIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -715,7 +715,7 @@ func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindMarkByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Mark{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -723,8 +723,8 @@ func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_result"); err != nil {
+func (p *FindMarkByIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findMarkByID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -739,7 +739,7 @@ func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -754,25 +754,25 @@ func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDResult) String() string {
+func (p *FindMarkByIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDResult(%+v)", *p)
+	return fmt.Sprintf("FindMarkByIDResult(%+v)", *p)
 }
 
-type FindByClientIDArgs struct {
+type FindMarkByClientIDArgs struct {
 	ClientID string `thrift:"clientID,1" json:"clientID"`
 }
 
-func NewFindByClientIDArgs() *FindByClientIDArgs {
-	return &FindByClientIDArgs{}
+func NewFindMarkByClientIDArgs() *FindMarkByClientIDArgs {
+	return &FindMarkByClientIDArgs{}
 }
 
-func (p *FindByClientIDArgs) GetClientID() string {
+func (p *FindMarkByClientIDArgs) GetClientID() string {
 	return p.ClientID
 }
-func (p *FindByClientIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindMarkByClientIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -804,7 +804,7 @@ func (p *FindByClientIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByClientIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindMarkByClientIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -813,8 +813,8 @@ func (p *FindByClientIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByClientIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByClientID_args"); err != nil {
+func (p *FindMarkByClientIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findMarkByClientID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -829,7 +829,7 @@ func (p *FindByClientIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByClientIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkByClientIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("clientID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:clientID: %s", p, err)
 	}
@@ -842,34 +842,34 @@ func (p *FindByClientIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByClientIDArgs) String() string {
+func (p *FindMarkByClientIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByClientIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindMarkByClientIDArgs(%+v)", *p)
 }
 
-type FindByClientIDResult struct {
+type FindMarkByClientIDResult struct {
 	Success *Mark `thrift:"success,0" json:"success"`
 }
 
-func NewFindByClientIDResult() *FindByClientIDResult {
-	return &FindByClientIDResult{}
+func NewFindMarkByClientIDResult() *FindMarkByClientIDResult {
+	return &FindMarkByClientIDResult{}
 }
 
-var FindByClientIDResult_Success_DEFAULT *Mark
+var FindMarkByClientIDResult_Success_DEFAULT *Mark
 
-func (p *FindByClientIDResult) GetSuccess() *Mark {
+func (p *FindMarkByClientIDResult) GetSuccess() *Mark {
 	if !p.IsSetSuccess() {
-		return FindByClientIDResult_Success_DEFAULT
+		return FindMarkByClientIDResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *FindByClientIDResult) IsSetSuccess() bool {
+func (p *FindMarkByClientIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindByClientIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindMarkByClientIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -901,7 +901,7 @@ func (p *FindByClientIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByClientIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindMarkByClientIDResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Mark{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -909,8 +909,8 @@ func (p *FindByClientIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByClientIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByClientID_result"); err != nil {
+func (p *FindMarkByClientIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findMarkByClientID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -925,7 +925,7 @@ func (p *FindByClientIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByClientIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkByClientIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -940,30 +940,30 @@ func (p *FindByClientIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByClientIDResult) String() string {
+func (p *FindMarkByClientIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByClientIDResult(%+v)", *p)
+	return fmt.Sprintf("FindMarkByClientIDResult(%+v)", *p)
 }
 
-type FindAllArgs struct {
+type FindMarkAllArgs struct {
 	Limit  int64 `thrift:"limit,1" json:"limit"`
 	Offset int64 `thrift:"offset,2" json:"offset"`
 }
 
-func NewFindAllArgs() *FindAllArgs {
-	return &FindAllArgs{}
+func NewFindMarkAllArgs() *FindMarkAllArgs {
+	return &FindMarkAllArgs{}
 }
 
-func (p *FindAllArgs) GetLimit() int64 {
+func (p *FindMarkAllArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllArgs) GetOffset() int64 {
+func (p *FindMarkAllArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindMarkAllArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -999,7 +999,7 @@ func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindMarkAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -1008,7 +1008,7 @@ func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindMarkAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -1017,8 +1017,8 @@ func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_args"); err != nil {
+func (p *FindMarkAllArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findMarkAll_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1036,7 +1036,7 @@ func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:limit: %s", p, err)
 	}
@@ -1049,7 +1049,7 @@ func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:offset: %s", p, err)
 	}
@@ -1062,31 +1062,31 @@ func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) String() string {
+func (p *FindMarkAllArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllArgs(%+v)", *p)
+	return fmt.Sprintf("FindMarkAllArgs(%+v)", *p)
 }
 
-type FindAllResult struct {
+type FindMarkAllResult struct {
 	Success []*Mark `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllResult() *FindAllResult {
-	return &FindAllResult{}
+func NewFindMarkAllResult() *FindMarkAllResult {
+	return &FindMarkAllResult{}
 }
 
-var FindAllResult_Success_DEFAULT []*Mark
+var FindMarkAllResult_Success_DEFAULT []*Mark
 
-func (p *FindAllResult) GetSuccess() []*Mark {
+func (p *FindMarkAllResult) GetSuccess() []*Mark {
 	return p.Success
 }
-func (p *FindAllResult) IsSetSuccess() bool {
+func (p *FindMarkAllResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
+func (p *FindMarkAllResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1118,7 +1118,7 @@ func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindMarkAllResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -1138,8 +1138,8 @@ func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_result"); err != nil {
+func (p *FindMarkAllResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findMarkAll_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1154,7 +1154,7 @@ func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindMarkAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1177,34 +1177,34 @@ func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllResult) String() string {
+func (p *FindMarkAllResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllResult(%+v)", *p)
+	return fmt.Sprintf("FindMarkAllResult(%+v)", *p)
 }
 
-type UpdateArgs struct {
+type UpdateMarkArgs struct {
 	Mark *Mark `thrift:"mark,1" json:"mark"`
 }
 
-func NewUpdateArgs() *UpdateArgs {
-	return &UpdateArgs{}
+func NewUpdateMarkArgs() *UpdateMarkArgs {
+	return &UpdateMarkArgs{}
 }
 
-var UpdateArgs_Mark_DEFAULT *Mark
+var UpdateMarkArgs_Mark_DEFAULT *Mark
 
-func (p *UpdateArgs) GetMark() *Mark {
+func (p *UpdateMarkArgs) GetMark() *Mark {
 	if !p.IsSetMark() {
-		return UpdateArgs_Mark_DEFAULT
+		return UpdateMarkArgs_Mark_DEFAULT
 	}
 	return p.Mark
 }
-func (p *UpdateArgs) IsSetMark() bool {
+func (p *UpdateMarkArgs) IsSetMark() bool {
 	return p.Mark != nil
 }
 
-func (p *UpdateArgs) Read(iprot thrift.TProtocol) error {
+func (p *UpdateMarkArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1236,7 +1236,7 @@ func (p *UpdateArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *UpdateMarkArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Mark = &Mark{}
 	if err := p.Mark.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Mark, err)
@@ -1244,8 +1244,8 @@ func (p *UpdateArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("update_args"); err != nil {
+func (p *UpdateMarkArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("updateMark_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1260,7 +1260,7 @@ func (p *UpdateArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *UpdateMarkArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("mark", thrift.STRUCT, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:mark: %s", p, err)
 	}
@@ -1273,34 +1273,34 @@ func (p *UpdateArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *UpdateArgs) String() string {
+func (p *UpdateMarkArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("UpdateArgs(%+v)", *p)
+	return fmt.Sprintf("UpdateMarkArgs(%+v)", *p)
 }
 
-type UpdateResult struct {
+type UpdateMarkResult struct {
 	Success *Mark `thrift:"success,0" json:"success"`
 }
 
-func NewUpdateResult() *UpdateResult {
-	return &UpdateResult{}
+func NewUpdateMarkResult() *UpdateMarkResult {
+	return &UpdateMarkResult{}
 }
 
-var UpdateResult_Success_DEFAULT *Mark
+var UpdateMarkResult_Success_DEFAULT *Mark
 
-func (p *UpdateResult) GetSuccess() *Mark {
+func (p *UpdateMarkResult) GetSuccess() *Mark {
 	if !p.IsSetSuccess() {
-		return UpdateResult_Success_DEFAULT
+		return UpdateMarkResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *UpdateResult) IsSetSuccess() bool {
+func (p *UpdateMarkResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *UpdateResult) Read(iprot thrift.TProtocol) error {
+func (p *UpdateMarkResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1332,7 +1332,7 @@ func (p *UpdateResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *UpdateMarkResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Mark{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -1340,8 +1340,8 @@ func (p *UpdateResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("update_result"); err != nil {
+func (p *UpdateMarkResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("updateMark_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1356,7 +1356,7 @@ func (p *UpdateResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *UpdateResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *UpdateMarkResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1371,9 +1371,9 @@ func (p *UpdateResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *UpdateResult) String() string {
+func (p *UpdateMarkResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("UpdateResult(%+v)", *p)
+	return fmt.Sprintf("UpdateMarkResult(%+v)", *p)
 }

@@ -2,7 +2,7 @@ package marker
 
 import "github.com/index0h/go-tracker/entities"
 
-type MarkerRepositoryInterface interface {
+type RepositoryInterface interface {
 	FindByID(visitID [16]byte) (*entities.Visit, error)
 
 	FindAll(limit int64, offset int64) ([]*entities.Visit, error)

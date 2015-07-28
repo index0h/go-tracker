@@ -38,24 +38,24 @@ struct Mark {
 }
 
 service VisitService {
-    Visit findByID(1:string visitID),
-    list<Visit> findAll(1:i64 limit, 2:i64 offset),
-    list<Visit> findAllBySessionID(1:string sessionID, 2:i64 limit, 3:i64 offset),
-    list<Visit> findAllByClientID(1:string clientID, 2:i64 limit, 3:i64 offset),
+    Visit findVisitByID(1:string visitID),
+    list<Visit> findVisitAll(1:i64 limit, 2:i64 offset),
+    list<Visit> findVisitAllBySessionID(1:string sessionID, 2:i64 limit, 3:i64 offset),
+    list<Visit> findVisitAllByClientID(1:string clientID, 2:i64 limit, 3:i64 offset),
 }
 
 service EventService {
-    Event findByID(1:string eventID),
-    list<Event> findAll(1:i64 limit, 2:i64 offset),
-    Event insert(1: bool enabled, 2: map<string, string> fields, 3: map<string, string> filters),
-    Event update(1:Event event),
+    Event findEventByID(1:string eventID),
+    list<Event> findEventAll(1:i64 limit, 2:i64 offset),
+    Event insertEvent(1: bool enabled, 2: map<string, string> fields, 3: map<string, string> filters),
+    Event updateEvent(1:Event event),
 }
 
 service FlashService {
-    Flash findByID(1:string flashID),
-    list<Flash> findAll(1:i64 limit, 2:i64 offset),
-    list<Flash> findAllByVisitID(1:string visitID),
-    list<Flash> findAllByEventID(1:string eventID, 2:i64 limit, 3:i64 offset),
+    Flash findFlashByID(1:string flashID),
+    list<Flash> findFlashAll(1:i64 limit, 2:i64 offset),
+    list<Flash> findFlashAllByVisitID(1:string visitID),
+    list<Flash> findFlashAllByEventID(1:string eventID, 2:i64 limit, 3:i64 offset),
 }
 
 service TrackService {
@@ -63,8 +63,8 @@ service TrackService {
 }
 
 service MarkService {
-    Mark findByID(1:string markID),
-    Mark findByClientID(1:string clientID),
-    list<Mark> findAll(1:i64 limit, 2:i64 offset),
-    Mark update(1:Mark mark),
+    Mark findMarkByID(1:string markID),
+    Mark findMarkByClientID(1:string clientID),
+    list<Mark> findMarkAll(1:i64 limit, 2:i64 offset),
+    Mark updateMark(1:Mark mark),
 }

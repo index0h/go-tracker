@@ -22,11 +22,11 @@ func NewMarkManager(
 	return &MarkManager{repository: repository, uuid: uuid, logger: logger}
 }
 
-func (manager *MarkManager) FindAll() ([]*entities.Event, error) {
+func (manager *MarkManager) FindAll() ([]*entities.Mark, error) {
 	return manager.repository.FindAll(0, 0)
 }
 
-func (manager *MarkManager) FindByID(markID [16]byte) (result *entities.Event, err error) {
+func (manager *MarkManager) FindByID(markID [16]byte) (result *entities.Mark, err error) {
 	if markID == [16]byte{} {
 		return result, errors.New("Empty markID is not allowed")
 	}
@@ -34,7 +34,7 @@ func (manager *MarkManager) FindByID(markID [16]byte) (result *entities.Event, e
 	return manager.repository.FindByID(markID)
 }
 
-func (manager *MarkManager) ClientID(clientID string) (result *entities.Event, err error) {
+func (manager *MarkManager) ClientID(clientID string) (result *entities.Mark, err error) {
 	if clientID == "" {
 		return result, errors.New("Empty clientID is not allowed")
 	}

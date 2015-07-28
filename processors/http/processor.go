@@ -13,21 +13,21 @@ func init() {
 	regexTemplate = regexp.MustCompile(`^http\.(get|post)\..+`)
 }
 
-type Http struct {
+type HTTP struct {
 	priority       int
 	useEventFields bool
 	useVisitFields bool
 }
 
-func New(priority int, useEventFields bool, useVisitFields bool) *Http {
-	return &Http{priority: priority, useEventFields: useEventFields, useVisitFields: useVisitFields}
+func New(priority int, useEventFields bool, useVisitFields bool) *HTTP {
+	return &HTTP{priority: priority, useEventFields: useEventFields, useVisitFields: useVisitFields}
 }
 
-func (processor *Http) GetPriority() int {
+func (processor *HTTP) GetPriority() int {
 	return processor.priority
 }
 
-func (processor *Http) Process(
+func (processor *HTTP) Process(
 	flash *entities.Flash,
 	event *entities.Event,
 	visit *entities.Visit,
@@ -82,7 +82,7 @@ func (processor *Http) Process(
 	return flash
 }
 
-func (processor *Http) processMap(fields map[string]string) {
+func (processor *HTTP) processMap(fields map[string]string) {
 	var (
 		requestURL  *url.URL
 		queryValues url.Values

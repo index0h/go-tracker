@@ -23,8 +23,8 @@ func NewEventManager(
 	return &EventManager{repository: repository, uuid: uuid, logger: logger}
 }
 
-func (manager *EventManager) FindAll() ([]*entities.Event, error) {
-	return manager.repository.FindAll(0, 0)
+func (manager *EventManager) FindAll(limit int64, offset int64) ([]*entities.Event, error) {
+	return manager.repository.FindAll(limit, offset)
 }
 
 func (manager *EventManager) FindAllByVisit(visit *entities.Visit) (result []*entities.Event, err error) {

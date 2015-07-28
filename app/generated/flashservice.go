@@ -17,19 +17,19 @@ var _ = bytes.Equal
 type FlashService interface {
 	// Parameters:
 	//  - FlashID
-	FindByID(flashID string) (r *Flash, err error)
+	FindFlashByID(flashID string) (r *Flash, err error)
 	// Parameters:
 	//  - Limit
 	//  - Offset
-	FindAll(limit int64, offset int64) (r []*Flash, err error)
+	FindFlashAll(limit int64, offset int64) (r []*Flash, err error)
 	// Parameters:
 	//  - VisitID
-	FindAllByVisitID(visitID string) (r []*Flash, err error)
+	FindFlashAllByVisitID(visitID string) (r []*Flash, err error)
 	// Parameters:
 	//  - EventID
 	//  - Limit
 	//  - Offset
-	FindAllByEventID(eventID string, limit int64, offset int64) (r []*Flash, err error)
+	FindFlashAllByEventID(eventID string, limit int64, offset int64) (r []*Flash, err error)
 }
 
 type FlashServiceClient struct {
@@ -60,24 +60,24 @@ func NewFlashServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, 
 
 // Parameters:
 //  - FlashID
-func (p *FlashServiceClient) FindByID(flashID string) (r *Flash, err error) {
-	if err = p.sendFindByID(flashID); err != nil {
+func (p *FlashServiceClient) FindFlashByID(flashID string) (r *Flash, err error) {
+	if err = p.sendFindFlashByID(flashID); err != nil {
 		return
 	}
-	return p.recvFindByID()
+	return p.recvFindFlashByID()
 }
 
-func (p *FlashServiceClient) sendFindByID(flashID string) (err error) {
+func (p *FlashServiceClient) sendFindFlashByID(flashID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findByID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findFlashByID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindByIDArgs{
+	args := FindFlashByIDArgs{
 		FlashID: flashID,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -89,7 +89,7 @@ func (p *FlashServiceClient) sendFindByID(flashID string) (err error) {
 	return oprot.Flush()
 }
 
-func (p *FlashServiceClient) recvFindByID() (value *Flash, err error) {
+func (p *FlashServiceClient) recvFindFlashByID() (value *Flash, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -113,10 +113,10 @@ func (p *FlashServiceClient) recvFindByID() (value *Flash, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findByID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findFlashByID failed: out of sequence response")
 		return
 	}
-	result := FindByIDResult{}
+	result := FindFlashByIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -130,24 +130,24 @@ func (p *FlashServiceClient) recvFindByID() (value *Flash, err error) {
 // Parameters:
 //  - Limit
 //  - Offset
-func (p *FlashServiceClient) FindAll(limit int64, offset int64) (r []*Flash, err error) {
-	if err = p.sendFindAll(limit, offset); err != nil {
+func (p *FlashServiceClient) FindFlashAll(limit int64, offset int64) (r []*Flash, err error) {
+	if err = p.sendFindFlashAll(limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAll()
+	return p.recvFindFlashAll()
 }
 
-func (p *FlashServiceClient) sendFindAll(limit int64, offset int64) (err error) {
+func (p *FlashServiceClient) sendFindFlashAll(limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAll", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findFlashAll", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllArgs{
+	args := FindFlashAllArgs{
 		Limit:  limit,
 		Offset: offset,
 	}
@@ -160,7 +160,7 @@ func (p *FlashServiceClient) sendFindAll(limit int64, offset int64) (err error) 
 	return oprot.Flush()
 }
 
-func (p *FlashServiceClient) recvFindAll() (value []*Flash, err error) {
+func (p *FlashServiceClient) recvFindFlashAll() (value []*Flash, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -184,10 +184,10 @@ func (p *FlashServiceClient) recvFindAll() (value []*Flash, err error) {
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAll failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findFlashAll failed: out of sequence response")
 		return
 	}
-	result := FindAllResult{}
+	result := FindFlashAllResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -200,24 +200,24 @@ func (p *FlashServiceClient) recvFindAll() (value []*Flash, err error) {
 
 // Parameters:
 //  - VisitID
-func (p *FlashServiceClient) FindAllByVisitID(visitID string) (r []*Flash, err error) {
-	if err = p.sendFindAllByVisitID(visitID); err != nil {
+func (p *FlashServiceClient) FindFlashAllByVisitID(visitID string) (r []*Flash, err error) {
+	if err = p.sendFindFlashAllByVisitID(visitID); err != nil {
 		return
 	}
-	return p.recvFindAllByVisitID()
+	return p.recvFindFlashAllByVisitID()
 }
 
-func (p *FlashServiceClient) sendFindAllByVisitID(visitID string) (err error) {
+func (p *FlashServiceClient) sendFindFlashAllByVisitID(visitID string) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAllByVisitID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findFlashAllByVisitID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllByVisitIDArgs{
+	args := FindFlashAllByVisitIDArgs{
 		VisitID: visitID,
 	}
 	if err = args.Write(oprot); err != nil {
@@ -229,7 +229,7 @@ func (p *FlashServiceClient) sendFindAllByVisitID(visitID string) (err error) {
 	return oprot.Flush()
 }
 
-func (p *FlashServiceClient) recvFindAllByVisitID() (value []*Flash, err error) {
+func (p *FlashServiceClient) recvFindFlashAllByVisitID() (value []*Flash, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -253,10 +253,10 @@ func (p *FlashServiceClient) recvFindAllByVisitID() (value []*Flash, err error) 
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAllByVisitID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findFlashAllByVisitID failed: out of sequence response")
 		return
 	}
-	result := FindAllByVisitIDResult{}
+	result := FindFlashAllByVisitIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -271,24 +271,24 @@ func (p *FlashServiceClient) recvFindAllByVisitID() (value []*Flash, err error) 
 //  - EventID
 //  - Limit
 //  - Offset
-func (p *FlashServiceClient) FindAllByEventID(eventID string, limit int64, offset int64) (r []*Flash, err error) {
-	if err = p.sendFindAllByEventID(eventID, limit, offset); err != nil {
+func (p *FlashServiceClient) FindFlashAllByEventID(eventID string, limit int64, offset int64) (r []*Flash, err error) {
+	if err = p.sendFindFlashAllByEventID(eventID, limit, offset); err != nil {
 		return
 	}
-	return p.recvFindAllByEventID()
+	return p.recvFindFlashAllByEventID()
 }
 
-func (p *FlashServiceClient) sendFindAllByEventID(eventID string, limit int64, offset int64) (err error) {
+func (p *FlashServiceClient) sendFindFlashAllByEventID(eventID string, limit int64, offset int64) (err error) {
 	oprot := p.OutputProtocol
 	if oprot == nil {
 		oprot = p.ProtocolFactory.GetProtocol(p.Transport)
 		p.OutputProtocol = oprot
 	}
 	p.SeqId++
-	if err = oprot.WriteMessageBegin("findAllByEventID", thrift.CALL, p.SeqId); err != nil {
+	if err = oprot.WriteMessageBegin("findFlashAllByEventID", thrift.CALL, p.SeqId); err != nil {
 		return
 	}
-	args := FindAllByEventIDArgs{
+	args := FindFlashAllByEventIDArgs{
 		EventID: eventID,
 		Limit:   limit,
 		Offset:  offset,
@@ -302,7 +302,7 @@ func (p *FlashServiceClient) sendFindAllByEventID(eventID string, limit int64, o
 	return oprot.Flush()
 }
 
-func (p *FlashServiceClient) recvFindAllByEventID() (value []*Flash, err error) {
+func (p *FlashServiceClient) recvFindFlashAllByEventID() (value []*Flash, err error) {
 	iprot := p.InputProtocol
 	if iprot == nil {
 		iprot = p.ProtocolFactory.GetProtocol(p.Transport)
@@ -326,10 +326,10 @@ func (p *FlashServiceClient) recvFindAllByEventID() (value []*Flash, err error) 
 		return
 	}
 	if p.SeqId != seqId {
-		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findAllByEventID failed: out of sequence response")
+		err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "findFlashAllByEventID failed: out of sequence response")
 		return
 	}
-	result := FindAllByEventIDResult{}
+	result := FindFlashAllByEventIDResult{}
 	if err = result.Read(iprot); err != nil {
 		return
 	}
@@ -361,10 +361,10 @@ func (p *FlashServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunct
 func NewFlashServiceProcessor(handler FlashService) *FlashServiceProcessor {
 
 	self83 := &FlashServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self83.processorMap["findByID"] = &flashServiceProcessorFindByID{handler: handler}
-	self83.processorMap["findAll"] = &flashServiceProcessorFindAll{handler: handler}
-	self83.processorMap["findAllByVisitID"] = &flashServiceProcessorFindAllByVisitID{handler: handler}
-	self83.processorMap["findAllByEventID"] = &flashServiceProcessorFindAllByEventID{handler: handler}
+	self83.processorMap["findFlashByID"] = &flashServiceProcessorFindFlashByID{handler: handler}
+	self83.processorMap["findFlashAll"] = &flashServiceProcessorFindFlashAll{handler: handler}
+	self83.processorMap["findFlashAllByVisitID"] = &flashServiceProcessorFindFlashAllByVisitID{handler: handler}
+	self83.processorMap["findFlashAllByEventID"] = &flashServiceProcessorFindFlashAllByEventID{handler: handler}
 	return self83
 }
 
@@ -387,16 +387,16 @@ func (p *FlashServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success 
 
 }
 
-type flashServiceProcessorFindByID struct {
+type flashServiceProcessorFindFlashByID struct {
 	handler FlashService
 }
 
-func (p *flashServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindByIDArgs{}
+func (p *flashServiceProcessorFindFlashByID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindFlashByIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findFlashByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -404,12 +404,12 @@ func (p *flashServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindByIDResult{}
+	result := FindFlashByIDResult{}
 	var retval *Flash
 	var err2 error
-	if retval, err2 = p.handler.FindByID(args.FlashID); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findByID: "+err2.Error())
-		oprot.WriteMessageBegin("findByID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindFlashByID(args.FlashID); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findFlashByID: "+err2.Error())
+		oprot.WriteMessageBegin("findFlashByID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -417,7 +417,7 @@ func (p *flashServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findByID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findFlashByID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -435,16 +435,16 @@ func (p *flashServiceProcessorFindByID) Process(seqId int32, iprot, oprot thrift
 	return true, err
 }
 
-type flashServiceProcessorFindAll struct {
+type flashServiceProcessorFindFlashAll struct {
 	handler FlashService
 }
 
-func (p *flashServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllArgs{}
+func (p *flashServiceProcessorFindFlashAll) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindFlashAllArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findFlashAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -452,12 +452,12 @@ func (p *flashServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllResult{}
+	result := FindFlashAllResult{}
 	var retval []*Flash
 	var err2 error
-	if retval, err2 = p.handler.FindAll(args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAll: "+err2.Error())
-		oprot.WriteMessageBegin("findAll", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindFlashAll(args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findFlashAll: "+err2.Error())
+		oprot.WriteMessageBegin("findFlashAll", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -465,7 +465,7 @@ func (p *flashServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAll", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findFlashAll", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -483,16 +483,16 @@ func (p *flashServiceProcessorFindAll) Process(seqId int32, iprot, oprot thrift.
 	return true, err
 }
 
-type flashServiceProcessorFindAllByVisitID struct {
+type flashServiceProcessorFindFlashAllByVisitID struct {
 	handler FlashService
 }
 
-func (p *flashServiceProcessorFindAllByVisitID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllByVisitIDArgs{}
+func (p *flashServiceProcessorFindFlashAllByVisitID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindFlashAllByVisitIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAllByVisitID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findFlashAllByVisitID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -500,12 +500,12 @@ func (p *flashServiceProcessorFindAllByVisitID) Process(seqId int32, iprot, opro
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllByVisitIDResult{}
+	result := FindFlashAllByVisitIDResult{}
 	var retval []*Flash
 	var err2 error
-	if retval, err2 = p.handler.FindAllByVisitID(args.VisitID); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAllByVisitID: "+err2.Error())
-		oprot.WriteMessageBegin("findAllByVisitID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindFlashAllByVisitID(args.VisitID); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findFlashAllByVisitID: "+err2.Error())
+		oprot.WriteMessageBegin("findFlashAllByVisitID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -513,7 +513,7 @@ func (p *flashServiceProcessorFindAllByVisitID) Process(seqId int32, iprot, opro
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAllByVisitID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findFlashAllByVisitID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -531,16 +531,16 @@ func (p *flashServiceProcessorFindAllByVisitID) Process(seqId int32, iprot, opro
 	return true, err
 }
 
-type flashServiceProcessorFindAllByEventID struct {
+type flashServiceProcessorFindFlashAllByEventID struct {
 	handler FlashService
 }
 
-func (p *flashServiceProcessorFindAllByEventID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := FindAllByEventIDArgs{}
+func (p *flashServiceProcessorFindFlashAllByEventID) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := FindFlashAllByEventIDArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("findAllByEventID", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("findFlashAllByEventID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -548,12 +548,12 @@ func (p *flashServiceProcessorFindAllByEventID) Process(seqId int32, iprot, opro
 	}
 
 	iprot.ReadMessageEnd()
-	result := FindAllByEventIDResult{}
+	result := FindFlashAllByEventIDResult{}
 	var retval []*Flash
 	var err2 error
-	if retval, err2 = p.handler.FindAllByEventID(args.EventID, args.Limit, args.Offset); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findAllByEventID: "+err2.Error())
-		oprot.WriteMessageBegin("findAllByEventID", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.FindFlashAllByEventID(args.EventID, args.Limit, args.Offset); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing findFlashAllByEventID: "+err2.Error())
+		oprot.WriteMessageBegin("findFlashAllByEventID", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush()
@@ -561,7 +561,7 @@ func (p *flashServiceProcessorFindAllByEventID) Process(seqId int32, iprot, opro
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("findAllByEventID", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("findFlashAllByEventID", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -581,18 +581,18 @@ func (p *flashServiceProcessorFindAllByEventID) Process(seqId int32, iprot, opro
 
 // HELPER FUNCTIONS AND STRUCTURES
 
-type FindByIDArgs struct {
+type FindFlashByIDArgs struct {
 	FlashID string `thrift:"flashID,1" json:"flashID"`
 }
 
-func NewFindByIDArgs() *FindByIDArgs {
-	return &FindByIDArgs{}
+func NewFindFlashByIDArgs() *FindFlashByIDArgs {
+	return &FindFlashByIDArgs{}
 }
 
-func (p *FindByIDArgs) GetFlashID() string {
+func (p *FindFlashByIDArgs) GetFlashID() string {
 	return p.FlashID
 }
-func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashByIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -624,7 +624,7 @@ func (p *FindByIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindFlashByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -633,8 +633,8 @@ func (p *FindByIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_args"); err != nil {
+func (p *FindFlashByIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashByID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -649,7 +649,7 @@ func (p *FindByIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("flashID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:flashID: %s", p, err)
 	}
@@ -662,34 +662,34 @@ func (p *FindByIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDArgs) String() string {
+func (p *FindFlashByIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindFlashByIDArgs(%+v)", *p)
 }
 
-type FindByIDResult struct {
+type FindFlashByIDResult struct {
 	Success *Flash `thrift:"success,0" json:"success"`
 }
 
-func NewFindByIDResult() *FindByIDResult {
-	return &FindByIDResult{}
+func NewFindFlashByIDResult() *FindFlashByIDResult {
+	return &FindFlashByIDResult{}
 }
 
-var FindByIDResult_Success_DEFAULT *Flash
+var FindFlashByIDResult_Success_DEFAULT *Flash
 
-func (p *FindByIDResult) GetSuccess() *Flash {
+func (p *FindFlashByIDResult) GetSuccess() *Flash {
 	if !p.IsSetSuccess() {
-		return FindByIDResult_Success_DEFAULT
+		return FindFlashByIDResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *FindByIDResult) IsSetSuccess() bool {
+func (p *FindFlashByIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashByIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -721,7 +721,7 @@ func (p *FindByIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindFlashByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = &Flash{}
 	if err := p.Success.Read(iprot); err != nil {
 		return fmt.Errorf("%T error reading struct: %s", p.Success, err)
@@ -729,8 +729,8 @@ func (p *FindByIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findByID_result"); err != nil {
+func (p *FindFlashByIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashByID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -745,7 +745,7 @@ func (p *FindByIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -760,30 +760,30 @@ func (p *FindByIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindByIDResult) String() string {
+func (p *FindFlashByIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindByIDResult(%+v)", *p)
+	return fmt.Sprintf("FindFlashByIDResult(%+v)", *p)
 }
 
-type FindAllArgs struct {
+type FindFlashAllArgs struct {
 	Limit  int64 `thrift:"limit,1" json:"limit"`
 	Offset int64 `thrift:"offset,2" json:"offset"`
 }
 
-func NewFindAllArgs() *FindAllArgs {
-	return &FindAllArgs{}
+func NewFindFlashAllArgs() *FindFlashAllArgs {
+	return &FindFlashAllArgs{}
 }
 
-func (p *FindAllArgs) GetLimit() int64 {
+func (p *FindFlashAllArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllArgs) GetOffset() int64 {
+func (p *FindFlashAllArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashAllArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -819,7 +819,7 @@ func (p *FindAllArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindFlashAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -828,7 +828,7 @@ func (p *FindAllArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindFlashAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -837,8 +837,8 @@ func (p *FindAllArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_args"); err != nil {
+func (p *FindFlashAllArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashAll_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -856,7 +856,7 @@ func (p *FindAllArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:limit: %s", p, err)
 	}
@@ -869,7 +869,7 @@ func (p *FindAllArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:offset: %s", p, err)
 	}
@@ -882,31 +882,31 @@ func (p *FindAllArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllArgs) String() string {
+func (p *FindFlashAllArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllArgs(%+v)", *p)
+	return fmt.Sprintf("FindFlashAllArgs(%+v)", *p)
 }
 
-type FindAllResult struct {
+type FindFlashAllResult struct {
 	Success []*Flash `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllResult() *FindAllResult {
-	return &FindAllResult{}
+func NewFindFlashAllResult() *FindFlashAllResult {
+	return &FindFlashAllResult{}
 }
 
-var FindAllResult_Success_DEFAULT []*Flash
+var FindFlashAllResult_Success_DEFAULT []*Flash
 
-func (p *FindAllResult) GetSuccess() []*Flash {
+func (p *FindFlashAllResult) GetSuccess() []*Flash {
 	return p.Success
 }
-func (p *FindAllResult) IsSetSuccess() bool {
+func (p *FindFlashAllResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashAllResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -938,7 +938,7 @@ func (p *FindAllResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindFlashAllResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -958,8 +958,8 @@ func (p *FindAllResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAll_result"); err != nil {
+func (p *FindFlashAllResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashAll_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -974,7 +974,7 @@ func (p *FindAllResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -997,25 +997,25 @@ func (p *FindAllResult) writeField0(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllResult) String() string {
+func (p *FindFlashAllResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllResult(%+v)", *p)
+	return fmt.Sprintf("FindFlashAllResult(%+v)", *p)
 }
 
-type FindAllByVisitIDArgs struct {
+type FindFlashAllByVisitIDArgs struct {
 	VisitID string `thrift:"visitID,1" json:"visitID"`
 }
 
-func NewFindAllByVisitIDArgs() *FindAllByVisitIDArgs {
-	return &FindAllByVisitIDArgs{}
+func NewFindFlashAllByVisitIDArgs() *FindFlashAllByVisitIDArgs {
+	return &FindFlashAllByVisitIDArgs{}
 }
 
-func (p *FindAllByVisitIDArgs) GetVisitID() string {
+func (p *FindFlashAllByVisitIDArgs) GetVisitID() string {
 	return p.VisitID
 }
-func (p *FindAllByVisitIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByVisitIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1047,7 +1047,7 @@ func (p *FindAllByVisitIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByVisitIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByVisitIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -1056,8 +1056,8 @@ func (p *FindAllByVisitIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByVisitIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllByVisitID_args"); err != nil {
+func (p *FindFlashAllByVisitIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashAllByVisitID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1072,7 +1072,7 @@ func (p *FindAllByVisitIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByVisitIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllByVisitIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("visitID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:visitID: %s", p, err)
 	}
@@ -1085,31 +1085,31 @@ func (p *FindAllByVisitIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllByVisitIDArgs) String() string {
+func (p *FindFlashAllByVisitIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllByVisitIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindFlashAllByVisitIDArgs(%+v)", *p)
 }
 
-type FindAllByVisitIDResult struct {
+type FindFlashAllByVisitIDResult struct {
 	Success []*Flash `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllByVisitIDResult() *FindAllByVisitIDResult {
-	return &FindAllByVisitIDResult{}
+func NewFindFlashAllByVisitIDResult() *FindFlashAllByVisitIDResult {
+	return &FindFlashAllByVisitIDResult{}
 }
 
-var FindAllByVisitIDResult_Success_DEFAULT []*Flash
+var FindFlashAllByVisitIDResult_Success_DEFAULT []*Flash
 
-func (p *FindAllByVisitIDResult) GetSuccess() []*Flash {
+func (p *FindFlashAllByVisitIDResult) GetSuccess() []*Flash {
 	return p.Success
 }
-func (p *FindAllByVisitIDResult) IsSetSuccess() bool {
+func (p *FindFlashAllByVisitIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllByVisitIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByVisitIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1141,7 +1141,7 @@ func (p *FindAllByVisitIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByVisitIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByVisitIDResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -1161,8 +1161,8 @@ func (p *FindAllByVisitIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByVisitIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllByVisitID_result"); err != nil {
+func (p *FindFlashAllByVisitIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashAllByVisitID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1177,7 +1177,7 @@ func (p *FindAllByVisitIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByVisitIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllByVisitIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1200,35 +1200,35 @@ func (p *FindAllByVisitIDResult) writeField0(oprot thrift.TProtocol) (err error)
 	return err
 }
 
-func (p *FindAllByVisitIDResult) String() string {
+func (p *FindFlashAllByVisitIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllByVisitIDResult(%+v)", *p)
+	return fmt.Sprintf("FindFlashAllByVisitIDResult(%+v)", *p)
 }
 
-type FindAllByEventIDArgs struct {
+type FindFlashAllByEventIDArgs struct {
 	EventID string `thrift:"eventID,1" json:"eventID"`
 	Limit   int64  `thrift:"limit,2" json:"limit"`
 	Offset  int64  `thrift:"offset,3" json:"offset"`
 }
 
-func NewFindAllByEventIDArgs() *FindAllByEventIDArgs {
-	return &FindAllByEventIDArgs{}
+func NewFindFlashAllByEventIDArgs() *FindFlashAllByEventIDArgs {
+	return &FindFlashAllByEventIDArgs{}
 }
 
-func (p *FindAllByEventIDArgs) GetEventID() string {
+func (p *FindFlashAllByEventIDArgs) GetEventID() string {
 	return p.EventID
 }
 
-func (p *FindAllByEventIDArgs) GetLimit() int64 {
+func (p *FindFlashAllByEventIDArgs) GetLimit() int64 {
 	return p.Limit
 }
 
-func (p *FindAllByEventIDArgs) GetOffset() int64 {
+func (p *FindFlashAllByEventIDArgs) GetOffset() int64 {
 	return p.Offset
 }
-func (p *FindAllByEventIDArgs) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByEventIDArgs) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1268,7 +1268,7 @@ func (p *FindAllByEventIDArgs) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByEventIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return fmt.Errorf("error reading field 1: %s", err)
 	} else {
@@ -1277,7 +1277,7 @@ func (p *FindAllByEventIDArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDArgs) ReadField2(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByEventIDArgs) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 2: %s", err)
 	} else {
@@ -1286,7 +1286,7 @@ func (p *FindAllByEventIDArgs) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDArgs) ReadField3(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByEventIDArgs) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return fmt.Errorf("error reading field 3: %s", err)
 	} else {
@@ -1295,8 +1295,8 @@ func (p *FindAllByEventIDArgs) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDArgs) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllByEventID_args"); err != nil {
+func (p *FindFlashAllByEventIDArgs) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashAllByEventID_args"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField1(oprot); err != nil {
@@ -1317,7 +1317,7 @@ func (p *FindAllByEventIDArgs) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllByEventIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("eventID", thrift.STRING, 1); err != nil {
 		return fmt.Errorf("%T write field begin error 1:eventID: %s", p, err)
 	}
@@ -1330,7 +1330,7 @@ func (p *FindAllByEventIDArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllByEventIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllByEventIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("limit", thrift.I64, 2); err != nil {
 		return fmt.Errorf("%T write field begin error 2:limit: %s", p, err)
 	}
@@ -1343,7 +1343,7 @@ func (p *FindAllByEventIDArgs) writeField2(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllByEventIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllByEventIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
 	if err := oprot.WriteFieldBegin("offset", thrift.I64, 3); err != nil {
 		return fmt.Errorf("%T write field begin error 3:offset: %s", p, err)
 	}
@@ -1356,31 +1356,31 @@ func (p *FindAllByEventIDArgs) writeField3(oprot thrift.TProtocol) (err error) {
 	return err
 }
 
-func (p *FindAllByEventIDArgs) String() string {
+func (p *FindFlashAllByEventIDArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllByEventIDArgs(%+v)", *p)
+	return fmt.Sprintf("FindFlashAllByEventIDArgs(%+v)", *p)
 }
 
-type FindAllByEventIDResult struct {
+type FindFlashAllByEventIDResult struct {
 	Success []*Flash `thrift:"success,0" json:"success"`
 }
 
-func NewFindAllByEventIDResult() *FindAllByEventIDResult {
-	return &FindAllByEventIDResult{}
+func NewFindFlashAllByEventIDResult() *FindFlashAllByEventIDResult {
+	return &FindFlashAllByEventIDResult{}
 }
 
-var FindAllByEventIDResult_Success_DEFAULT []*Flash
+var FindFlashAllByEventIDResult_Success_DEFAULT []*Flash
 
-func (p *FindAllByEventIDResult) GetSuccess() []*Flash {
+func (p *FindFlashAllByEventIDResult) GetSuccess() []*Flash {
 	return p.Success
 }
-func (p *FindAllByEventIDResult) IsSetSuccess() bool {
+func (p *FindFlashAllByEventIDResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *FindAllByEventIDResult) Read(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByEventIDResult) Read(iprot thrift.TProtocol) error {
 	if _, err := iprot.ReadStructBegin(); err != nil {
 		return fmt.Errorf("%T read error: %s", p, err)
 	}
@@ -1412,7 +1412,7 @@ func (p *FindAllByEventIDResult) Read(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *FindFlashAllByEventIDResult) ReadField0(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return fmt.Errorf("error reading list begin: %s", err)
@@ -1432,8 +1432,8 @@ func (p *FindAllByEventIDResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDResult) Write(oprot thrift.TProtocol) error {
-	if err := oprot.WriteStructBegin("findAllByEventID_result"); err != nil {
+func (p *FindFlashAllByEventIDResult) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("findFlashAllByEventID_result"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
 	}
 	if err := p.writeField0(oprot); err != nil {
@@ -1448,7 +1448,7 @@ func (p *FindAllByEventIDResult) Write(oprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *FindAllByEventIDResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *FindFlashAllByEventIDResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err := oprot.WriteFieldBegin("success", thrift.LIST, 0); err != nil {
 			return fmt.Errorf("%T write field begin error 0:success: %s", p, err)
@@ -1471,9 +1471,9 @@ func (p *FindAllByEventIDResult) writeField0(oprot thrift.TProtocol) (err error)
 	return err
 }
 
-func (p *FindAllByEventIDResult) String() string {
+func (p *FindFlashAllByEventIDResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("FindAllByEventIDResult(%+v)", *p)
+	return fmt.Sprintf("FindFlashAllByEventIDResult(%+v)", *p)
 }

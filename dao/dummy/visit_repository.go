@@ -8,6 +8,10 @@ import (
 
 type VisitRepository struct{}
 
+func NewVisitRepository() *VisitRepository {
+	return &VisitRepository{}
+}
+
 func (repository *VisitRepository) FindByID(visitID [16]byte) (*entities.Visit, error) {
 	if visitID == [16]byte{} {
 		return nil, errors.New("Empty visitID is not allowed")
