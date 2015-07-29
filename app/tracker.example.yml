@@ -31,7 +31,7 @@ memory_visit_repository:
 visit_manager:
   constructor: NewVisitManager
   arguments:
-    - "%memory_visit_repository%"
+    - "%elastic_visit_repository%"
     - "%uuid%"
     - "%logger%"
 
@@ -52,7 +52,7 @@ memory_event_repository:
 event_manager:
   constructor: NewEventManager
   arguments:
-    - "%memory_event_repository%"
+    - "%elastic_event_repository%"
     - "%uuid%"
     - "%logger%"
 
