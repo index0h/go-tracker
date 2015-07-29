@@ -7,8 +7,7 @@ logger:
 elastic_client:
   constructor: NewElasticClient
   arguments:
-    -
-      - "http://127.0.0.1:9200"
+    - "http://127.0.0.1:9200"
     - 5
 
 processors:
@@ -138,5 +137,4 @@ thrift_service:
     - "%track_handler%"
     - "%mark_handler%"
     - "localhost:9090"
-    - "binary"
     - 8192

@@ -1,6 +1,8 @@
 package main
 
-import "git.apache.org/thrift.git/lib/go/thrift"
+import (
+	"git.apache.org/thrift.git/lib/go/thrift"
+)
 
 func main() {
 	server, err := NewServiceLocator().Get("thrift_service")
