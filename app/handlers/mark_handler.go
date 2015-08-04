@@ -42,6 +42,6 @@ func (handler *MarkHandler) FindMarkAll(limit int64, offset int64) ([]*generated
 	panic("NOT IMPLEMENTED")
 }
 
-func (handler *MarkHandler) UpdateMark(event *generated.Mark) (*generated.Mark, error) {
+func (handler *MarkHandler) UpdateMark(mark *generated.Mark) (*generated.Mark, error) {
 	panic("NOT IMPLEMENTED")
 }

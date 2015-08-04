@@ -36,26 +36,21 @@ func (handler *EventHandler) FindEventAll(limit int64, offset int64) ([]*generat
 }
 
 func (handler *EventHandler) InsertEvent(enabled bool, fields, filters map[string]string) (*generated.Event, error) {
-	panic("NOT IMPLEMENTED")
-
-	/*err := handler.eventManager.Insert(enabled, fields, filters)
-
-	if err != nil {
+	event, err := handler.eventManager.Insert(enabled, fields, filters)
+	if  err != nil {
 		return nil, err
-	}*/
+	}
 
-	return nil, nil
+	return handler.eventToThrift(event), nil
 }
 
 func (handler *EventHandler) UpdateEvent(event *generated.Event) (*generated.Event, error) {
 	eventModel, err := handler.thriftToEvent(event)
-
 	if err != nil {
 		return event, err
 	}
 
 	err = handler.eventManager.Update(eventModel)
-
 	if err != nil {
 		return event, err
 	}

@@ -1,21 +1,11 @@
-uuid:
-  constructor: NewUUID
-
-logger:
-  constructor: NewLogger
-
 elastic_client:
   constructor: NewElasticClient
   arguments:
-    -
-      - "http://127.0.0.1:9200"
+    - "http://127.0.0.1:9200"
     - 5
 
-processors:
-  constructor: NewProcessorList
-
-dummy_visit_repository:
-  constructor: NewDummyVisitRepository
+#visit_repository:
+#  constructor: NewDummyVisitRepository
 
 elastic_visit_repository:
   constructor: NewElasticVisitRepository
@@ -23,21 +13,14 @@ elastic_visit_repository:
     - "%elastic_client%"
     - "%uuid%"
 
-memory_visit_repository:
+visit_repository:
   constructor: NewMemoryVisitRepository
   arguments:
     - "%elastic_visit_repository%"
     - 1000
 
-visit_manager:
-  constructor: NewVisitManager
-  arguments:
-    - "%memory_visit_repository%"
-    - "%uuid%"
-    - "%logger%"
-
-dummy_event_repository:
-  constructor: NewDummyEventRepository
+#event_repository:
+#  constructor: NewDummyEventRepository
 
 elastic_event_repository:
   constructor: NewElasticEventRepository
@@ -45,98 +28,31 @@ elastic_event_repository:
     - "%elastic_client%"
     - "%uuid%"
 
-memory_event_repository:
+event_repository:
   constructor: NewMemoryEventRepository
   arguments:
     - "%elastic_event_repository%"
 
-event_manager:
-  constructor: NewEventManager
-  arguments:
-    - "%memory_event_repository%"
-    - "%uuid%"
-    - "%logger%"
+#flash_repository:
+#  constructor: NewDummyFlashRepository
 
-dummy_flash_repository:
-  constructor: NewDummyFlashRepository
-
-elastic_flash_repository:
+flash_repository:
   constructor: NewElasticFlashRepository
   arguments:
     - "%elastic_client%"
     - "%uuid%"
 
-flash_manager:
-  constructor: NewFlashManager
-  arguments:
-    - "%elastic_flash_repository%"
-    - "%uuid%"
-    - "%logger%"
+#elastic_mark_repository:
+#  constructor: NewElasticMarkRepository
+#  arguments:
+#    - "%elastic_client%"
+#    - "%uuid%"
 
-track_manager:
-  constructor: NewTrackManager
-  arguments:
-    - "%memory_visit_repository%"
-    - "%memory_event_repository%"
-    - "%elastic_flash_repository%"
-    - "processors" ############ TODO
-    - "%uuid%"
-    - "%logger%"
-
-dummy_mark_repository:
+mark_repository:
   constructor: NewDummyMarkRepository
-
-elastic_mark_repository:
-  constructor: NewElasticMarkRepository
-  arguments:
-    - "%elastic_client%"
-    - "%uuid%"
-
-mark_manager:
-  constructor: NewMarkManager
-  arguments:
-    - "%dummy_mark_repository%"
-    - "%uuid%"
-    - "%logger%"
-
-visit_handler:
-  constructor: NewVisitHandler
-  arguments:
-    - "%visit_manager%"
-    - "%uuid%"
-
-event_handler:
-  constructor: NewEventHandler
-  arguments:
-    - "%event_manager%"
-    - "%uuid%"
-
-flash_handler:
-  constructor: NewFlashHandler
-  arguments:
-    - "%flash_manager%"
-    - "%uuid%"
-
-track_handler:
-  constructor: NewTrackHandler
-  arguments:
-    - "%track_manager%"
-    - "%uuid%"
-
-mark_handler:
-  constructor: NewMarkHandler
-  arguments:
-    - "%mark_manager%"
-    - "%uuid%"
 
 thrift_service:
   constructor: NewThriftService
   arguments:
-    - "%visit_handler%"
-    - "%event_handler%"
-    - "%flash_handler%"
-    - "%track_handler%"
-    - "%mark_handler%"
     - "localhost:9090"
-    - "binary"
     - 8192

@@ -17,47 +17,43 @@ func NewVisitHandler(visitManager *components.VisitManager, uuid dao.UUIDProvide
 }
 
 func (handler *VisitHandler) FindVisitByID(visitID string) (*generated.Visit, error) {
-	/*result, err := handler.visitManager.FindByID(handler.uuid.ToBytes(visitID))
+	result, err := handler.visitManager.FindByID(handler.uuid.ToBytes(visitID))
 	if err != nil {
 		return nil, err
 	}
 
-	return handler.visitToThrift(result), nil*/
-
-	panic("NOT IMPLEMENTED")
+	return handler.visitToThrift(result), nil
 }
 
 func (handler *VisitHandler) FindVisitAll(limit int64, offset int64) ([]*generated.Visit, error) {
-	/*result, err := handler.visitManager.FindAll(limit, offset)
+	result, err := handler.visitManager.FindAll(limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	return handler.listVisitToThrift(result), nil*/
-
-	panic("NOT IMPLEMENTED")
+	return handler.listVisitToThrift(result), nil
 }
 
-func (handler *VisitHandler) FindVisitAllBySessionID(sessionID string, limit, offset int64) ([]*generated.Visit, error) {
-	/*result, err := handler.visitManager.FindAllBySessionID(handler.uuid.ToBytes(sessionID), limit, offset)
+func (handler *VisitHandler) FindVisitAllBySessionID(
+	sessionID string,
+	limit int64,
+	offset int64,
+) ([]*generated.Visit, error) {
+	result, err := handler.visitManager.FindAllBySessionID(handler.uuid.ToBytes(sessionID), limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	return handler.listVisitToThrift(result), nil*/
-
-	panic("NOT IMPLEMENTED")
+	return handler.listVisitToThrift(result), nil
 }
 
 func (handler *VisitHandler) FindVisitAllByClientID(clientID string, limit, offset int64) ([]*generated.Visit, error) {
-	/*result, err := handler.visitManager.FindAllByClientID(clientID, limit, offset)
+	result, err := handler.visitManager.FindAllByClientID(clientID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
-	return handler.listVisitToThrift(result), nil*/
-
-	panic("NOT IMPLEMENTED")
+	return handler.listVisitToThrift(result), nil
 }
 
 func (handler *VisitHandler) visitToThrift(input *entities.Visit) *generated.Visit {

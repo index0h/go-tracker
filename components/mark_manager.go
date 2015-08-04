@@ -1,9 +1,8 @@
 package components
 
 import (
-	"log"
-
 	"errors"
+
 	"github.com/index0h/go-tracker/dao"
 	"github.com/index0h/go-tracker/entities"
 )
@@ -11,13 +10,13 @@ import (
 type MarkManager struct {
 	repository dao.MarkRepositoryInterface
 	uuid       dao.UUIDProviderInterface
-	logger     *log.Logger
+	logger     dao.LoggerInterface
 }
 
 func NewMarkManager(
 	repository dao.MarkRepositoryInterface,
 	uuid dao.UUIDProviderInterface,
-	logger *log.Logger,
+	logger dao.LoggerInterface,
 ) *MarkManager {
 	return &MarkManager{repository: repository, uuid: uuid, logger: logger}
 }

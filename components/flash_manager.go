@@ -2,7 +2,6 @@ package components
 
 import (
 	"errors"
-	"log"
 
 	"github.com/index0h/go-tracker/dao"
 	"github.com/index0h/go-tracker/entities"
@@ -11,14 +10,14 @@ import (
 type FlashManager struct {
 	repository dao.FlashRepositoryInterface
 	uuid       dao.UUIDProviderInterface
-	logger     *log.Logger
+	logger     dao.LoggerInterface
 }
 
 // Create new manager instance
 func NewFlashManager(
 	repository dao.FlashRepositoryInterface,
 	uuid dao.UUIDProviderInterface,
-	logger *log.Logger,
+	logger dao.LoggerInterface,
 ) *FlashManager {
 	return &FlashManager{repository: repository, uuid: uuid, logger: logger}
 }
