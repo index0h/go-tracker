@@ -79,4 +79,4 @@ profile.cov
 ### application
 
 app/app
-app/config.yml
+app/tracker.yml

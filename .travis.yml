@@ -17,6 +17,7 @@ before_script:
   - sleep 10
   - curl -XPUT localhost:9200/_template/tracker_log -d'{"template":"test-tracker-*","mappings":{"visit":{"properties":{"_source":{"enabled":false},"_index":{"enabled":false},"_type":{"enabled":false},"_all":{"enabled":false},"_id":{"index":"not_analyzed","stored":true,"type":"string"},"@timestamp":{"format":"YYYY-MM-DD HH:mm:ss","type":"date"},"clientId":{"index":"not_analyzed","type":"string"},"fields":{"include_in_parent":true,"type":"nested","properties":{"key":{"index":"not_analyzed","type":"string"},"value":{"index":"not_analyzed","type":"string"}}},"sessionId":{"index":"not_analyzed","type":"string"},"warnings":{"index":"not_analyzed","type":"string"}}},"flash":{"properties":{"_source":{"enabled":false},"_index":{"enabled":false},"_type":{"enabled":false},"_all":{"enabled":false},"_id":{"index":"not_analyzed","stored":true,"type":"string"},"@timestamp":{"format":"YYYY-MM-DD HH:mm:ss","type":"date"},"visitId":{"index":"not_analyzed","type":"string"},"visitFields":{"include_in_parent":true,"type":"nested","properties":{"key":{"index":"not_analyzed","type":"string"},"value":{"index":"not_analyzed","type":"string"}}},"eventFields":{"include_in_parent":true,"type":"nested","properties":{"key":{"index":"not_analyzed","type":"string"},"value":{"index":"not_analyzed","type":"string"}}}}}}}'
   - curl -XPUT localhost:9200/_template/tracker -d'{"template":"test-tracker","mappings":{"event":{"properties":{"_source":{"enabled":false},"_index":{"enabled":false},"_type":{"enabled":false},"_all":{"enabled":false},"_id":{"index":"not_analyzed","stored":true,"type":"string"},"enabled":{"type":"boolean"},"fields":{"include_in_parent":true,"type":"nested","properties":{"key":{"index":"not_analyzed","type":"string"},"value":{"index":"not_analyzed","type":"string"}}},"filters":{"include_in_parent":true,"type":"nested","properties":{"key":{"index":"not_analyzed","type":"string"},"value":{"index":"not_analyzed","type":"string"}}}}}}}'
+  - cp app/tracker.example.yml app/tracker.yml
 
 script:
   - bash ./.test.sh
@@ -24,5 +25,5 @@ script:
 after_success:
   - GOPATH=`pwd`:$GOPATH $HOME/gopath/bin/goveralls -coverprofile=profile.cov -service=travis-ci
   - cd $HOME/gopath/src/github.com/index0h/go-tracker
-  - gofmt -e -l ./
-  - golint ./... | grep -v 'app/thrift/tracker/' | grep -v 'comment'
+  - gofmt -s -e -l ./
+  - golint ./... | grep -v 'app/generated/' | grep -v 'comment'
