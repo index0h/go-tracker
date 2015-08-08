@@ -36,9 +36,9 @@ func (repository *VisitRepository) FindByID(visitID [16]byte) (*entities.Visit, 
 	}
 
 	search, err := repository.client.Get().
-		Index("twitter").
-		Type("tweet").
-		Id("1").
+		Index(repository.indexName()).
+		Type(repository.typeName).
+		Id(repository.uuid.ToString(visitID)).
 		Do()
 
 	if err != nil {

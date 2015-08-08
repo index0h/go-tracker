@@ -30,28 +30,81 @@ func NewFlashRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (
 	return &FlashRepository{typeName: "event_flash", indexPrefix: "tracker-", client: client, uuid: uuid}, nil
 }
 
-func (repository *FlashRepository) FindByID(eventID [16]byte) (result *entities.Flash, err error) {
-	panic("IMPLEMENT ME")
+func (repository *FlashRepository) FindByID(flashID [16]byte) (result *entities.Flash, err error) {
+	if flashID == [16]byte{} {
+		return nil, errors.New("Empty flashID is not allowed")
+	}
+
+	search, err := repository.client.Get().
+		Index(repository.indexName()).
+		Type(repository.typeName).
+		Id(repository.uuid.ToString(flashID)).
+		Do()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !search.Found {
+		return nil, nil
+	}
+
+	return repository.byteToFlash(*search.Source)
 }
 
 func (repository *FlashRepository) FindAll(limit int64, offset int64) (result []*entities.Flash, err error) {
-	panic("IMPLEMENT ME")
+	return repository.find(nil, uint(limit), uint(offset))
 }
 
 func (repository *FlashRepository) FindAllByVisitID(visitID [16]byte) (result []*entities.Flash, err error) {
-	panic("IMPLEMENT ME")
+	if visitID == [16]byte{} {
+		return result, errors.New("Empty visitID is not allowed")
+	}
+
+	termQuery := driver.NewTermQuery("visitId", repository.uuid.ToString(visitID))
+
+	return repository.find(&termQuery, 0, 0)
 }
 
 func (repository *FlashRepository) FindAllByEventID(
-	visitID [16]byte,
+	eventID [16]byte,
 	limit int64,
 	offset int64,
 ) (result []*entities.Flash, err error) {
-	panic("IMPLEMENT ME")
+	if eventID == [16]byte{} {
+		return result, errors.New("Empty eventID is not allowed")
+	}
+
+	termQuery := driver.NewTermQuery("eventID", repository.uuid.ToString(eventID))
+
+	return repository.find(&termQuery, uint(limit), uint(offset))
 }
 
-func (repository *FlashRepository) Insert(event *entities.Flash) (err error) {
-	return nil //panic("IMPLEMENT ME")
+func (repository *FlashRepository) Insert(flash *entities.Flash) (err error) {
+	if flash == nil {
+		return errors.New("Empty flash is not allowed")
+	}
+
+	flashData, err := repository.flashToByte(flash)
+
+	if err != nil {
+		return err
+	}
+
+	request := repository.client.
+		Index().
+		Index(repository.indexName()).
+		Type(repository.typeName).
+		Id(repository.uuid.ToString(flash.FlashID())).
+		BodyString(string(flashData))
+
+	if repository.RefreshAfterInsert {
+		request.Refresh(true)
+	}
+
+	_, err = request.Do()
+
+	return err
 }
 
 func (repository *FlashRepository) find(term driver.Query, limit, offset uint) ([]*entities.Flash, error) {
