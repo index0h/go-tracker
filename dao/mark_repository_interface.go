@@ -11,6 +11,9 @@ type MarkRepositoryInterface interface {
 	FindByClientID(string) (result *entities.Mark, err error)
 
 	//
+	FindBySessionID([16]byte) (result *entities.Mark, err error)
+
+	//
 	FindAll(limit int64, offset int64) (result []*entities.Mark, err error)
 
 	//

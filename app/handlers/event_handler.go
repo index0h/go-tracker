@@ -37,7 +37,7 @@ func (handler *EventHandler) FindEventAll(limit int64, offset int64) ([]*generat
 
 func (handler *EventHandler) InsertEvent(enabled bool, fields, filters map[string]string) (*generated.Event, error) {
 	event, err := handler.eventManager.Insert(enabled, fields, filters)
-	if  err != nil {
+	if err != nil {
 		return nil, err
 	}
 

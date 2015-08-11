@@ -12,9 +12,9 @@ type TrackManager struct {
 	visitManager *VisitManager
 	eventManager *EventManager
 	flashManager *FlashManager
-	processors      []dao.ProcessorInterface
-	uuid            dao.UUIDProviderInterface
-	logger          dao.LoggerInterface
+	processors   []dao.ProcessorInterface
+	uuid         dao.UUIDProviderInterface
+	logger       dao.LoggerInterface
 }
 
 func NewTrackManager(
@@ -31,9 +31,9 @@ func NewTrackManager(
 		visitManager: visitManager,
 		eventManager: eventManager,
 		flashManager: flashManager,
-		processors:      processors,
-		uuid:            uuid,
-		logger:          logger,
+		processors:   processors,
+		uuid:         uuid,
+		logger:       logger,
 	}
 }
 

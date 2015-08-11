@@ -32,6 +32,14 @@ func (repository *MarkRepository) FindByClientID(clientID string) (result *entit
 	return result, err
 }
 
+func (repository *MarkRepository) FindBySessionID(sessionID [16]byte) (result *entities.Mark, err error) {
+	if sessionID == [16]byte{} {
+		return result, errors.New("Empty sessionID is not allowed")
+	}
+
+	return result, err
+}
+
 func (repository *MarkRepository) Insert(mark *entities.Mark) (err error) {
 	if mark == nil {
 		return errors.New("mark must be not nil")

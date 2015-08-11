@@ -12,6 +12,7 @@ type FlashRepositoryInterface interface {
 	//
 	FindAllByVisitID(visitID [16]byte) (result []*entities.Flash, err error)
 
+	//
 	FindAllByEventID(eventID [16]byte, limit int64, offset int64) (result []*entities.Flash, err error)
 
 	//
