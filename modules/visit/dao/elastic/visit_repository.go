@@ -1,24 +1,22 @@
 package elastic
 
 import (
-	"encoding/json"
 	"errors"
 	"time"
 
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
+	"github.com/index0h/go-tracker/modules/visit/dao/elastic/internal"
+	"github.com/index0h/go-tracker/modules/visit/entity"
+	"github.com/index0h/go-tracker/share/elastic"
+	"github.com/index0h/go-tracker/share"
 	driver "github.com/olivere/elastic"
 )
 
 type VisitRepository struct {
-	RefreshAfterInsert bool
-	indexPrefix        string
-	typeName           string
-	client             *driver.Client
-	uuid               dao.UUIDProviderInterface
+	shareRepository *elastic.Repository
+	uuid               share.UUIDProviderInterface
 }
 
-func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (*VisitRepository, error) {
+func NewVisitRepository(client *driver.Client, uuid share.UUIDProviderInterface) (*VisitRepository, error) {
 	if client == nil {
 		return nil, errors.New("client must be not nil")
 	}
@@ -27,10 +25,12 @@ func NewVisitRepository(client *driver.Client, uuid dao.UUIDProviderInterface) (
 		return nil, errors.New("uuid must be not nil")
 	}
 
-	return &VisitRepository{typeName: "visit", indexPrefix: "tracker-", client: client, uuid: uuid}, nil
+	shareRepository, _ := elastic.NewRepository(client, &internal.Repository{uuid: uuid}, 10 * time.Second)
+
+	return &VisitRepository{shareRepository: shareRepository, uuid: uuid}, nil
 }
 
-func (repository *VisitRepository) FindByID(visitID [16]byte) (*entities.Visit, error) {
+func (repository *VisitRepository) FindByID(visitID [16]byte) (*entity.Visit, error) {
 	if visitID == [16]byte{} {
 		return nil, errors.New("Empty visitID is not allowed")
 	}
@@ -52,7 +52,7 @@ func (repository *VisitRepository) FindByID(visitID [16]byte) (*entities.Visit, 
 	return repository.byteToVisit(*search.Source)
 }
 
-func (repository *VisitRepository) FindAll(limit int64, offset int64) ([]*entities.Visit, error) {
+func (repository *VisitRepository) FindAll(limit int64, offset int64) ([]*entity.Visit, error) {
 	return repository.find(nil, uint(limit), uint(offset))
 }
 
@@ -60,7 +60,7 @@ func (repository *VisitRepository) FindAllBySessionID(
 	sessionID [16]byte,
 	limit int64,
 	offset int64,
-) (result []*entities.Visit, err error) {
+) (result []*entity.Visit, err error) {
 	if sessionID == [16]byte{} {
 		return result, errors.New("Empty sessionID is not allowed")
 	}
@@ -74,7 +74,7 @@ func (repository *VisitRepository) FindAllByClientID(
 	clientID string,
 	limit int64,
 	offset int64,
-) (result []*entities.Visit, err error) {
+) (result []*entity.Visit, err error) {
 	if clientID == "" {
 		return result, errors.New("Empty clientID is not allowed")
 	}
@@ -109,7 +109,7 @@ func (repository *VisitRepository) Verify(sessionID [16]byte, clientID string) (
 }
 
 // Save visit
-func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
+func (repository *VisitRepository) Insert(visit *entity.Visit) (err error) {
 	if visit == nil {
 		return errors.New("Empty visit is not allowed")
 	}
@@ -136,7 +136,7 @@ func (repository *VisitRepository) Insert(visit *entities.Visit) (err error) {
 	return err
 }
 
-func (repository *VisitRepository) find(term driver.Query, limit, offset uint) ([]*entities.Visit, error) {
+func (repository *VisitRepository) find(term driver.Query, limit, offset uint) ([]*entity.Visit, error) {
 	request := repository.client.
 		Search().
 		Index(repository.indexName()).
@@ -158,65 +158,20 @@ func (repository *VisitRepository) find(term driver.Query, limit, offset uint) (
 	searchResult, err := request.Do()
 
 	if (err != nil) || (searchResult.TotalHits() == 0) {
-		return []*entities.Visit{}, err
+		return []*entity.Visit{}, err
 	}
 
-	result := make([]*entities.Visit, searchResult.TotalHits())
+	result := make([]*entity.Visit, searchResult.TotalHits())
 
 	for i, hit := range searchResult.Hits.Hits {
 		visit, err := repository.byteToVisit(*hit.Source)
 
 		if err != nil {
-			return []*entities.Visit{}, err
+			return []*entity.Visit{}, err
 		}
 
 		result[i] = visit
 	}
 
 	return result, nil
-}
-
-// Return current index name and check that it exists
-func (repository *VisitRepository) indexName() string {
-	return repository.indexPrefix + time.Unix(time.Now().Unix(), 0).Format("2006-01")
-}
-
-// Convert visit to bytes
-func (repository *VisitRepository) visitToByte(visit *entities.Visit) ([]byte, error) {
-	model := elasticVisit{
-		VisitID:   repository.uuid.ToString(visit.VisitID()),
-		Timestamp: time.Unix(visit.Timestamp(), 0).Format("2006-01-02 15:04:05"),
-		SessionID: repository.uuid.ToString(visit.SessionID()),
-		ClientID:  visit.ClientID(),
-		Fields:    keyValFromHash(visit.Fields()),
-	}
-
-	return json.Marshal(model)
-}
-
-func (repository *VisitRepository) byteToVisit(data []byte) (*entities.Visit, error) {
-	if len(data) == 0 {
-		return nil, errors.New("Empty data is not allowed")
-	}
-
-	structVisit := new(elasticVisit)
-
-	err := json.Unmarshal(data, structVisit)
-	if err != nil {
-		return nil, err
-	}
-
-	timestamp, err := time.Parse("2006-01-02 15:04:05", structVisit.Timestamp)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return entities.NewVisit(
-		repository.uuid.ToBytes(structVisit.VisitID),
-		timestamp.Unix(),
-		repository.uuid.ToBytes(structVisit.SessionID),
-		structVisit.ClientID,
-		hashFromKeyVal(structVisit.Fields),
-	)
 }

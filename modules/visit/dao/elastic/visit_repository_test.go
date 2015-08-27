@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/dao/uuid"
-	"github.com/index0h/go-tracker/entities"
+	"github.com/index0h/go-tracker/uuid"
+	"github.com/index0h/go-tracker/types"
+	"github.com/index0h/go-tracker/visit/entity"
 	driver "github.com/olivere/elastic"
 	"github.com/stretchr/testify/assert"
 )
@@ -35,7 +36,7 @@ func TestVisitRepository_Verify(t *testing.T) {
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, types.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -50,7 +51,7 @@ func TestVisitRepository_Verify_WrongClientID(t *testing.T) {
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, types.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -65,7 +66,7 @@ func TestVisitRepository_Verify_WrongSessionID(t *testing.T) {
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, types.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -80,7 +81,7 @@ func TestVisitRepository_Verify_EmptyClientID(t *testing.T) {
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, types.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -95,7 +96,7 @@ func TestVisitRepository_Verify_EmptySessionID(t *testing.T) {
 	sessionID := uuid.New().Generate()
 	clientID := "test_FindClientID"
 
-	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, entities.Hash{})
+	visit, _ := entities.NewVisit(visitID, int64(15), sessionID, clientID, types.Hash{})
 
 	_ = repository.Insert(visit)
 
@@ -109,7 +110,7 @@ func TestVisitRepository_Insert(t *testing.T) {
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "clientID"
-	fields := entities.Hash{"data": "here"}
+	fields := types.Hash{"data": "here"}
 	timestamp := int64(15)
 
 	indexName := repository.indexName()

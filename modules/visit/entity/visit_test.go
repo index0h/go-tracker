@@ -1,10 +1,11 @@
-package entities
+package entity
 
 import (
 	"testing"
 	"time"
 
-	"github.com/index0h/go-tracker/dao/uuid"
+	"github.com/index0h/go-tracker/uuid"
+	"github.com/index0h/go-tracker/types"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +14,7 @@ func TestVisit_NewVisit(t *testing.T) {
 	timestamp := time.Now().Unix()
 	sessionID := uuid.New().Generate()
 	clientID := "someClientID"
-	fields := Hash{"data": "here"}
+	fields := types.Hash{"data": "here"}
 
 	visit, err := NewVisit(visitID, timestamp, sessionID, clientID, fields)
 
@@ -29,7 +30,7 @@ func TestVisit_NewVisit(t *testing.T) {
 func TestVisit_NewVisit_EmptyVisitID(t *testing.T) {
 	sessionID := uuid.New().Generate()
 
-	visit, err := NewVisit([16]byte{}, time.Now().Unix(), sessionID, "", Hash{})
+	visit, err := NewVisit([16]byte{}, time.Now().Unix(), sessionID, "", types.Hash{})
 
 	assert.Nil(t, visit)
 	assert.NotNil(t, err)
@@ -38,14 +39,14 @@ func TestVisit_NewVisit_EmptyVisitID(t *testing.T) {
 func TestVisit_NewVisit_EmptySessionID(t *testing.T) {
 	visitID := uuid.New().Generate()
 
-	visit, err := NewVisit(visitID, time.Now().Unix(), [16]byte{}, "", Hash{})
+	visit, err := NewVisit(visitID, time.Now().Unix(), [16]byte{}, "", types.Hash{})
 
 	assert.Nil(t, visit)
 	assert.NotNil(t, err)
 }
 
 func TestVisit_Data_Copy(t *testing.T) {
-	fields := Hash{"A": "B"}
+	fields := types.Hash{"A": "B"}
 
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()

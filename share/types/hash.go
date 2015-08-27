@@ -1,4 +1,4 @@
-package entities
+package types
 
 type Hash map[string]string
 

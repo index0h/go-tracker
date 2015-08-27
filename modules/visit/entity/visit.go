@@ -1,17 +1,21 @@
-package entities
+package entity
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/index0h/go-tracker/types"
+)
 
 type Visit struct {
 	visitID   [16]byte
 	sessionID [16]byte
 	clientID  string
 	timestamp int64
-	fields    Hash
+	fields    types.Hash
 }
 
 // Create new visit instance
-func NewVisit(visitID [16]byte, timestamp int64, sessionID [16]byte, clientID string, fields Hash) (*Visit, error) {
+func NewVisit(visitID [16]byte, timestamp int64, sessionID [16]byte, clientID string, fields types.Hash) (*Visit, error) {
 	if visitID == [16]byte{} {
 		return nil, errors.New("Empty visitID is not allowed")
 	}
@@ -50,6 +54,6 @@ func (visit *Visit) ClientID() string {
 }
 
 // Get visit fields
-func (visit *Visit) Fields() Hash {
+func (visit *Visit) Fields() types.Hash {
 	return visit.fields.Copy()
 }

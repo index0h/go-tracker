@@ -1,17 +1,17 @@
-package components
+package visit
 
 import (
 	"time"
 
 	"errors"
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
+	"github.com/index0h/go-tracker/types"
+	"github.com/index0h/go-tracker/visit/entities"
 )
 
 type VisitManager struct {
-	repository dao.VisitRepositoryInterface
-	uuid       dao.UUIDProviderInterface
-	logger     dao.LoggerInterface
+	repository VisitRepositoryInterface
+	uuid       UUIDProviderInterface
+	logger     LoggerInterface
 }
 
 // Create new manager instance
@@ -24,9 +24,9 @@ func NewVisitManager(
 }
 
 func (manager *VisitManager) CreateVisit(
-	sessionID [16]byte,
+	sessionID types.UUID,
 	clientID string,
-	fields entities.Hash,
+	fields types.Hash,
 ) (visit *entities.Visit, err error) {
 	if sessionID == [16]byte{} {
 		sessionID = manager.uuid.Generate()
@@ -46,7 +46,7 @@ func (manager *VisitManager) CreateVisit(
 	return entities.NewVisit(manager.uuid.Generate(), time.Now().Unix(), sessionID, clientID, fields)
 }
 
-func (manager *VisitManager) FindByID(visitID [16]byte) (visit *entities.Visit, err error) {
+func (manager *VisitManager) FindByID(visitID types.UUID) (visit *entities.Visit, err error) {
 	if visitID == [16]byte{} {
 		return nil, errors.New("visitID must be not empty")
 	}
@@ -59,7 +59,7 @@ func (manager *VisitManager) FindAll(limit int64, offset int64) ([]*entities.Vis
 }
 
 func (manager *VisitManager) FindAllBySessionID(
-	sessionID [16]byte,
+	sessionID types.UUID,
 	limit int64,
 	offset int64,
 ) ([]*entities.Visit, error) {
@@ -76,7 +76,7 @@ func (manager *VisitManager) FindAllByClientID(
 
 // Track the visit
 func (manager *VisitManager) Insert(
-	sessionID [16]byte,
+	sessionID types.UUID,
 	clientID string,
 	fields entities.Hash,
 ) (visit *entities.Visit, err error) {
