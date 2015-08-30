@@ -3,22 +3,22 @@ package handlers
 import (
 	"errors"
 	"github.com/index0h/go-tracker/app/generated"
-	"github.com/index0h/go-tracker/components"
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
+	"github.com/index0h/go-tracker/modules/event"
+	"github.com/index0h/go-tracker/modules/event/entity"
+	"github.com/index0h/go-tracker/share"
 )
 
 type EventHandler struct {
-	eventManager *components.EventManager
-	uuid         dao.UUIDProviderInterface
+	eventManager *event.Manager
+	uuid         share.UUIDProviderInterface
 }
 
-func NewEventHandler(eventManager *components.EventManager, uuid dao.UUIDProviderInterface) *EventHandler {
+func NewEventHandler(eventManager *event.Manager, uuid share.UUIDProviderInterface) *EventHandler {
 	return &EventHandler{eventManager: eventManager, uuid: uuid}
 }
 
 func (handler *EventHandler) FindEventByID(eventID string) (*generated.Event, error) {
-	result, err := handler.eventManager.FindByID(handler.uuid.ToBytes(eventID))
+	result, err := handler.eventManager.FindByID(handler.uuid.FromString(eventID))
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (handler *EventHandler) UpdateEvent(event *generated.Event) (*generated.Eve
 	return handler.eventToThrift(eventModel), err
 }
 
-func (handler *EventHandler) eventToThrift(input *entities.Event) *generated.Event {
+func (handler *EventHandler) eventToThrift(input *entity.Event) *generated.Event {
 	if input == nil {
 		return nil
 	}
@@ -71,7 +71,7 @@ func (handler *EventHandler) eventToThrift(input *entities.Event) *generated.Eve
 	}
 }
 
-func (handler *EventHandler) listEventToThrift(input []*entities.Event) []*generated.Event {
+func (handler *EventHandler) listEventToThrift(input []*entity.Event) []*generated.Event {
 	if input == nil {
 		return nil
 	}
@@ -85,10 +85,10 @@ func (handler *EventHandler) listEventToThrift(input []*entities.Event) []*gener
 	return result
 }
 
-func (handler *EventHandler) thriftToEvent(input *generated.Event) (*entities.Event, error) {
+func (handler *EventHandler) thriftToEvent(input *generated.Event) (*entity.Event, error) {
 	if input == nil {
 		return nil, errors.New("input event must not be nil")
 	}
 
-	return entities.NewEvent(handler.uuid.ToBytes(input.EventID), input.Enabled, input.Fields, input.Filters)
+	return entity.NewEvent(handler.uuid.FromString(input.EventID), input.Enabled, input.Fields, input.Filters)
 }

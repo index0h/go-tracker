@@ -1,6 +1,10 @@
 package dummy
 
-import "github.com/index0h/go-tracker/entities"
+import (
+	eventEntity "github.com/index0h/go-tracker/modules/event/entity"
+	flashEntity "github.com/index0h/go-tracker/modules/flash/entity"
+	visitEntity "github.com/index0h/go-tracker/modules/visit/entity"
+)
 
 type Dummy struct {
 	priority int
@@ -15,9 +19,9 @@ func (processor *Dummy) GetPriority() int {
 }
 
 func (processor *Dummy) Process(
-	flash *entities.Flash,
-	event *entities.Event,
-	visit *entities.Visit,
-) *entities.Flash {
+	flash *flashEntity.Flash,
+	event *eventEntity.Event,
+	visit *visitEntity.Visit,
+) *flashEntity.Flash {
 	return flash
 }

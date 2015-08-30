@@ -6,12 +6,25 @@ import (
 	"github.com/index0h/go-servicelocator"
 	"github.com/index0h/go-tracker/app/generated"
 	"github.com/index0h/go-tracker/app/handlers"
-	"github.com/index0h/go-tracker/components"
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/dao/dummy"
-	"github.com/index0h/go-tracker/dao/elastic"
-	"github.com/index0h/go-tracker/dao/memory"
-	uuidDriver "github.com/index0h/go-tracker/dao/uuid"
+	"github.com/index0h/go-tracker/modules/event"
+	"github.com/index0h/go-tracker/modules/flash"
+	"github.com/index0h/go-tracker/modules/mark"
+	"github.com/index0h/go-tracker/modules/track"
+	"github.com/index0h/go-tracker/modules/visit"
+
+	markDummy "github.com/index0h/go-tracker/modules/mark/dao/dummy"
+	eventDummy "github.com/index0h/go-tracker/modules/visit/dao/dummy"
+	flashDummy "github.com/index0h/go-tracker/modules/visit/dao/dummy"
+	visitDummy "github.com/index0h/go-tracker/modules/visit/dao/dummy"
+
+	eventElastic "github.com/index0h/go-tracker/modules/visit/dao/elastic"
+	flashElastic "github.com/index0h/go-tracker/modules/visit/dao/elastic"
+	visitElastic "github.com/index0h/go-tracker/modules/visit/dao/elastic"
+
+	eventMemory "github.com/index0h/go-tracker/modules/visit/dao/memory"
+	visitMemory "github.com/index0h/go-tracker/modules/visit/dao/memory"
+
+	uuidDriver "github.com/index0h/go-tracker/share/uuid"
 	elasticClient "github.com/olivere/elastic"
 )
 
@@ -36,25 +49,25 @@ func NewServiceLocator() *servicelocator.ServiceLocator {
 	sl.SetService("track_manager_logger", logger.WithField("service", "TrackManager"))
 	sl.SetService("mark_manager_logger", logger.WithField("service", "MarkManager"))
 
-	sl.SetConstructor("NewDummyVisitRepository", dummy.NewVisitRepository)
-	sl.SetConstructor("NewDummyEventRepository", dummy.NewEventRepository)
-	sl.SetConstructor("NewDummyFlashRepository", dummy.NewFlashRepository)
-	sl.SetConstructor("NewDummyMarkRepository", dummy.NewMarkRepository)
+	sl.SetConstructor("NewDummyVisitRepository", visitDummy.NewRepository)
+	sl.SetConstructor("NewDummyEventRepository", eventDummy.NewRepository)
+	sl.SetConstructor("NewDummyFlashRepository", flashDummy.NewRepository)
+	sl.SetConstructor("NewDummyMarkRepository", markDummy.NewRepository)
 
 	sl.SetConstructor("NewElasticClient", NewElasticClient)
 
-	sl.SetConstructor("NewElasticVisitRepository", elastic.NewVisitRepository)
-	sl.SetConstructor("NewElasticEventRepository", elastic.NewEventRepository)
-	sl.SetConstructor("NewElasticFlashRepository", elastic.NewFlashRepository)
+	sl.SetConstructor("NewElasticVisitRepository", visitElastic.NewRepository)
+	sl.SetConstructor("NewElasticEventRepository", eventElastic.NewRepository)
+	sl.SetConstructor("NewElasticFlashRepository", flashElastic.NewRepository)
 
-	sl.SetConstructor("NewMemoryVisitRepository", memory.NewVisitRepository)
-	sl.SetConstructor("NewMemoryEventRepository", memory.NewEventRepository)
+	sl.SetConstructor("NewMemoryVisitRepository", visitMemory.NewRepository)
+	sl.SetConstructor("NewMemoryEventRepository", eventMemory.NewRepository)
 
-	sl.SetConstructor("NewVisitManager", components.NewVisitManager)
-	sl.SetConstructor("NewEventManager", components.NewEventManager)
-	sl.SetConstructor("NewFlashManager", components.NewFlashManager)
-	sl.SetConstructor("NewMarkManager", components.NewMarkManager)
-	sl.SetConstructor("NewTrackManager", components.NewTrackManager)
+	sl.SetConstructor("NewVisitManager", visit.NewManager)
+	sl.SetConstructor("NewEventManager", event.NewManager)
+	sl.SetConstructor("NewFlashManager", flash.NewManager)
+	sl.SetConstructor("NewTrackManager", track.NewManager)
+	sl.SetConstructor("NewMarkManager", mark.NewManager)
 
 	sl.SetConfig(
 		"visit_manager",
@@ -83,7 +96,7 @@ func NewServiceLocator() *servicelocator.ServiceLocator {
 			"%visit_manager%",
 			"%event_manager%",
 			"%flash_manager%",
-			[]dao.ProcessorInterface{},
+			[]track.ProcessorInterface{},
 			"%uuid%",
 			"%track_manager_logger%",
 		},

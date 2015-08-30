@@ -1,7 +1,10 @@
 package http
 
 import (
-	"github.com/index0h/go-tracker/entities"
+	eventEntity "github.com/index0h/go-tracker/modules/event/entity"
+	flashEntity "github.com/index0h/go-tracker/modules/flash/entity"
+	visitEntity "github.com/index0h/go-tracker/modules/visit/entity"
+	"github.com/index0h/go-tracker/share/types"
 	httpLib "net/http"
 	"net/url"
 	"regexp"
@@ -28,13 +31,13 @@ func (processor *HTTP) GetPriority() int {
 }
 
 func (processor *HTTP) Process(
-	flash *entities.Flash,
-	event *entities.Event,
-	visit *entities.Visit,
-) *entities.Flash {
+	flash *flashEntity.Flash,
+	event *eventEntity.Event,
+	visit *visitEntity.Visit,
+) *flashEntity.Flash {
 	var (
-		eventFields entities.Hash
-		visitFields entities.Hash
+		eventFields types.Hash
+		visitFields types.Hash
 		mustUpdate  bool
 	)
 
@@ -69,7 +72,7 @@ func (processor *HTTP) Process(
 			eventFields = flash.EventFields()
 		}
 
-		flash, _ = entities.NewFlashFromRaw(
+		flash, _ = flashEntity.NewFlash(
 			flash.FlashID(),
 			flash.VisitID(),
 			flash.EventID(),

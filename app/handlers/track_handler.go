@@ -2,22 +2,23 @@ package handlers
 
 import (
 	"github.com/index0h/go-tracker/app/generated"
-	"github.com/index0h/go-tracker/components"
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
+	flashEntity "github.com/index0h/go-tracker/modules/flash/entity"
+	"github.com/index0h/go-tracker/modules/track"
+	visitEntity "github.com/index0h/go-tracker/modules/visit/entity"
+	"github.com/index0h/go-tracker/share"
 )
 
 type TrackHandler struct {
-	trackManager *components.TrackManager
-	uuid         dao.UUIDProviderInterface
+	trackManager *track.Manager
+	uuid         share.UUIDProviderInterface
 }
 
-func NewTrackHandler(trackManager *components.TrackManager, uuid dao.UUIDProviderInterface) *TrackHandler {
+func NewTrackHandler(trackManager *track.Manager, uuid share.UUIDProviderInterface) *TrackHandler {
 	return &TrackHandler{trackManager: trackManager, uuid: uuid}
 }
 
 func (handler *TrackHandler) Track(sessionID, clientID string, fields map[string]string) (*generated.Track, error) {
-	visit, flashes, err := handler.trackManager.Track(handler.uuid.ToBytes(sessionID), clientID, fields)
+	visit, flashes, err := handler.trackManager.Track(handler.uuid.FromString(sessionID), clientID, fields)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +29,7 @@ func (handler *TrackHandler) Track(sessionID, clientID string, fields map[string
 	}, nil
 }
 
-func (handler *TrackHandler) visitToThrift(input *entities.Visit) *generated.Visit {
+func (handler *TrackHandler) visitToThrift(input *visitEntity.Visit) *generated.Visit {
 	if input == nil {
 		return nil
 	}
@@ -42,7 +43,7 @@ func (handler *TrackHandler) visitToThrift(input *entities.Visit) *generated.Vis
 	}
 }
 
-func (handler *TrackHandler) listFlashToThrift(input []*entities.Flash) []*generated.Flash {
+func (handler *TrackHandler) listFlashToThrift(input []*flashEntity.Flash) []*generated.Flash {
 	if input == nil {
 		return nil
 	}

@@ -2,22 +2,22 @@ package handlers
 
 import (
 	"github.com/index0h/go-tracker/app/generated"
-	"github.com/index0h/go-tracker/components"
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
+	"github.com/index0h/go-tracker/modules/flash"
+	"github.com/index0h/go-tracker/modules/flash/entity"
+	"github.com/index0h/go-tracker/share"
 )
 
 type FlashHandler struct {
-	flashManager *components.FlashManager
-	uuid         dao.UUIDProviderInterface
+	flashManager *flash.Manager
+	uuid         share.UUIDProviderInterface
 }
 
-func NewFlashHandler(flashManager *components.FlashManager, uuid dao.UUIDProviderInterface) *FlashHandler {
+func NewFlashHandler(flashManager *flash.Manager, uuid share.UUIDProviderInterface) *FlashHandler {
 	return &FlashHandler{flashManager: flashManager, uuid: uuid}
 }
 
 func (handler *FlashHandler) FindFlashByID(flashID string) (*generated.Flash, error) {
-	result, err := handler.flashManager.FindByID(handler.uuid.ToBytes(flashID))
+	result, err := handler.flashManager.FindByID(handler.uuid.FromString(flashID))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (handler *FlashHandler) FindFlashAll(limit int64, offset int64) ([]*generat
 }
 
 func (handler *FlashHandler) FindFlashAllByVisitID(visitID string) ([]*generated.Flash, error) {
-	result, err := handler.flashManager.FindAllByVisitID(handler.uuid.ToBytes(visitID))
+	result, err := handler.flashManager.FindAllByVisitID(handler.uuid.FromString(visitID))
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (handler *FlashHandler) FindFlashAllByVisitID(visitID string) ([]*generated
 }
 
 func (handler *FlashHandler) FindFlashAllByEventID(eventID string, limit, offset int64) ([]*generated.Flash, error) {
-	result, err := handler.flashManager.FindAllByEventID(handler.uuid.ToBytes(eventID), limit, offset)
+	result, err := handler.flashManager.FindAllByEventID(handler.uuid.FromString(eventID), limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (handler *FlashHandler) FindFlashAllByEventID(eventID string, limit, offset
 	return handler.listFlashToThrift(result), nil
 }
 
-func (handler *FlashHandler) flashToThrift(input *entities.Flash) *generated.Flash {
+func (handler *FlashHandler) flashToThrift(input *entity.Flash) *generated.Flash {
 	if input == nil {
 		return nil
 	}
@@ -67,7 +67,7 @@ func (handler *FlashHandler) flashToThrift(input *entities.Flash) *generated.Fla
 	}
 }
 
-func (handler *FlashHandler) listFlashToThrift(input []*entities.Flash) []*generated.Flash {
+func (handler *FlashHandler) listFlashToThrift(input []*entity.Flash) []*generated.Flash {
 	if input == nil {
 		return nil
 	}

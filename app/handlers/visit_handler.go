@@ -2,22 +2,22 @@ package handlers
 
 import (
 	"github.com/index0h/go-tracker/app/generated"
-	"github.com/index0h/go-tracker/components"
-	"github.com/index0h/go-tracker/dao"
-	"github.com/index0h/go-tracker/entities"
+	"github.com/index0h/go-tracker/modules/visit"
+	"github.com/index0h/go-tracker/modules/visit/entity"
+	"github.com/index0h/go-tracker/share"
 )
 
 type VisitHandler struct {
-	visitManager *components.VisitManager
-	uuid         dao.UUIDProviderInterface
+	visitManager *visit.Manager
+	uuid         share.UUIDProviderInterface
 }
 
-func NewVisitHandler(visitManager *components.VisitManager, uuid dao.UUIDProviderInterface) *VisitHandler {
+func NewVisitHandler(visitManager *visit.Manager, uuid share.UUIDProviderInterface) *VisitHandler {
 	return &VisitHandler{visitManager: visitManager, uuid: uuid}
 }
 
 func (handler *VisitHandler) FindVisitByID(visitID string) (*generated.Visit, error) {
-	result, err := handler.visitManager.FindByID(handler.uuid.ToBytes(visitID))
+	result, err := handler.visitManager.FindByID(handler.uuid.FromString(visitID))
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (handler *VisitHandler) FindVisitAllBySessionID(
 	limit int64,
 	offset int64,
 ) ([]*generated.Visit, error) {
-	result, err := handler.visitManager.FindAllBySessionID(handler.uuid.ToBytes(sessionID), limit, offset)
+	result, err := handler.visitManager.FindAllBySessionID(handler.uuid.FromString(sessionID), limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (handler *VisitHandler) FindVisitAllByClientID(clientID string, limit, offs
 	return handler.listVisitToThrift(result), nil
 }
 
-func (handler *VisitHandler) visitToThrift(input *entities.Visit) *generated.Visit {
+func (handler *VisitHandler) visitToThrift(input *entity.Visit) *generated.Visit {
 	if input == nil {
 		return nil
 	}
@@ -70,7 +70,7 @@ func (handler *VisitHandler) visitToThrift(input *entities.Visit) *generated.Vis
 	}
 }
 
-func (handler *VisitHandler) listVisitToThrift(input []*entities.Visit) []*generated.Visit {
+func (handler *VisitHandler) listVisitToThrift(input []*entity.Visit) []*generated.Visit {
 	if input == nil {
 		return nil
 	}
