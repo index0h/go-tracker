@@ -10,7 +10,7 @@ type RepositoryInterface interface {
 	FindAll(limit int64, offset int64) (result []*entity.Event, err error)
 
 	//
-	FindAllByFields(types.Hash) (result []*entity.Event, err error)
+	FindAllByFields(fields types.Hash) (result []*entity.Event, err error)
 
 	//
 	FindByID(types.UUID) (result *entity.Event, err error)

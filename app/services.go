@@ -12,16 +12,16 @@ import (
 	"github.com/index0h/go-tracker/modules/track"
 	"github.com/index0h/go-tracker/modules/visit"
 
+	eventDummy "github.com/index0h/go-tracker/modules/event/dao/dummy"
+	flashDummy "github.com/index0h/go-tracker/modules/flash/dao/dummy"
 	markDummy "github.com/index0h/go-tracker/modules/mark/dao/dummy"
-	eventDummy "github.com/index0h/go-tracker/modules/visit/dao/dummy"
-	flashDummy "github.com/index0h/go-tracker/modules/visit/dao/dummy"
 	visitDummy "github.com/index0h/go-tracker/modules/visit/dao/dummy"
 
-	eventElastic "github.com/index0h/go-tracker/modules/visit/dao/elastic"
-	flashElastic "github.com/index0h/go-tracker/modules/visit/dao/elastic"
+	eventElastic "github.com/index0h/go-tracker/modules/event/dao/elastic"
+	flashElastic "github.com/index0h/go-tracker/modules/flash/dao/elastic"
 	visitElastic "github.com/index0h/go-tracker/modules/visit/dao/elastic"
 
-	eventMemory "github.com/index0h/go-tracker/modules/visit/dao/memory"
+	eventMemory "github.com/index0h/go-tracker/modules/event/dao/memory"
 	visitMemory "github.com/index0h/go-tracker/modules/visit/dao/memory"
 
 	uuidDriver "github.com/index0h/go-tracker/share/uuid"
@@ -32,6 +32,7 @@ var sl *servicelocator.ServiceLocator
 
 func NewServiceLocator() *servicelocator.ServiceLocator {
 	sl = servicelocator.New("tracker")
+	sl.SetPanicMode(true)
 
 	logger := logrus.New()
 	logger.Formatter = &logrus.JSONFormatter{}
