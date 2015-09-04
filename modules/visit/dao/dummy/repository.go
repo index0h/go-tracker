@@ -21,32 +21,32 @@ func (repository *Repository) FindByID(visitID types.UUID) (*entity.Visit, error
 	return nil, nil
 }
 
-func (repository *Repository) FindAll(limit int64, offset int64) (result []*entity.Visit, err error) {
-	return result, err
+func (repository *Repository) FindAll(limit int64, offset int64) ([]*entity.Visit, error) {
+	return []*entity.Visit{}, nil
 }
 
 func (repository *Repository) FindAllBySessionID(
 	sessionID types.UUID,
 	limit int64,
 	offset int64,
-) (result []*entity.Visit, err error) {
+) ([]*entity.Visit, error) {
+	result := []*entity.Visit{}
+
 	if sessionID.IsEmpty() {
 		return result, errors.New("Empty sessionID is not allowed")
 	}
 
-	return result, err
+	return result, nil
 }
 
-func (repository *Repository) FindAllByClientID(
-	clientID string,
-	limit int64,
-	offset int64,
-) (result []*entity.Visit, err error) {
+func (repository *Repository) FindAllByClientID(clientID string, limit int64, offset int64) ([]*entity.Visit, error) {
+	result := []*entity.Visit{}
+
 	if clientID == "" {
 		return result, errors.New("Empty clientID is not allowed")
 	}
 
-	return result, err
+	return result, nil
 }
 
 // Save visit
