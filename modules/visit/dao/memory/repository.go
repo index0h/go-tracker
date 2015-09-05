@@ -10,9 +10,8 @@ import (
 )
 
 type Repository struct {
-	nested          visit.RepositoryInterface
-	sessionToClient *lru.Cache
-	clientToSession *lru.Cache
+	nested visit.RepositoryInterface
+	cache  *lru.Cache
 }
 
 func NewRepository(nested visit.RepositoryInterface, maxEntries int) (*Repository, error) {
@@ -21,9 +20,8 @@ func NewRepository(nested visit.RepositoryInterface, maxEntries int) (*Repositor
 	}
 
 	return &Repository{
-		nested:          nested,
-		sessionToClient: lru.New(int(maxEntries / 2)),
-		clientToSession: lru.New(int(maxEntries / 2)),
+		nested: nested,
+		cache:  lru.New(maxEntries),
 	}, nil
 }
 
@@ -69,10 +67,8 @@ func (repository *Repository) Insert(visit *entity.Visit) (err error) {
 		return errors.New("visit must be not nil")
 	}
 
-	repository.sessionToClient.Add(visit.SessionID(), visit.ClientID())
-
 	if visit.ClientID() != "" {
-		repository.clientToSession.Add(visit.ClientID(), visit.SessionID())
+		repository.cache.Add(visit.SessionID(), visit.ClientID())
 	}
 
 	return repository.nested.Insert(visit)
@@ -82,54 +78,28 @@ func (repository *Repository) Insert(visit *entity.Visit) (err error) {
 // If sessionID or clientID not found it'll run nested repository and cache result (if its ok)
 func (repository *Repository) Verify(sessionID types.UUID, clientID string) (ok bool, err error) {
 	if sessionID.IsEmpty() {
-		return false, errors.New("Empty sessioID is not allowed")
+		return false, errors.New("Empty sessionID is not allowed")
 	}
 
 	if clientID == "" {
 		return false, errors.New("Empty clientID is not allowed")
 	}
 
-	var (
-		foundRaw       interface{}
-		foundSessionID types.UUID
-		foundClientID  string
-	)
-
-	if foundRaw, ok = repository.sessionToClient.Get(sessionID); ok {
-		foundClientID, _ = foundRaw.(string)
+	if foundRaw, ok := repository.cache.Get(sessionID); ok {
+		foundClientID, _ := foundRaw.(string)
 
 		if foundClientID == clientID {
-			repository.clientToSession.Add(clientID, sessionID)
-
 			return true, nil
-		}
-
-		if foundClientID != "" {
+		} else {
 			return false, errors.New("sessionID registered by another clientID")
 		}
 	}
 
-	if foundRaw, ok = repository.clientToSession.Get(clientID); ok {
-		foundSessionID, _ = foundRaw.(types.UUID)
-
-		if foundSessionID == sessionID {
-			repository.sessionToClient.Add(sessionID, clientID)
-
-			return true, nil
-		}
-
-		if !foundSessionID.IsEmpty() {
-			return false, errors.New("sessionID registered by another clientID")
-		}
-	}
-
-	ok, err = repository.nested.Verify(sessionID, clientID)
-	if !ok || err != nil {
+	if ok, err := repository.nested.Verify(sessionID, clientID); !ok || (err != nil) {
 		return ok, err
 	}
 
-	repository.sessionToClient.Add(sessionID, clientID)
-	repository.clientToSession.Add(clientID, sessionID)
+	repository.cache.Add(clientID, sessionID)
 
 	return true, nil
 }

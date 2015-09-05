@@ -31,7 +31,9 @@ func (manager *Manager) CreateVisit(
 ) (visit *entity.Visit, err error) {
 	if sessionID.IsEmpty() {
 		sessionID = manager.uuid.Generate()
-	} else {
+	}
+
+	if clientID != "" {
 		ok, err := manager.repository.Verify(sessionID, clientID)
 
 		if err != nil {

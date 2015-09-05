@@ -45,10 +45,10 @@ func TestRepository_Verify_Cached(t *testing.T) {
 	visitID := uuid.New().Generate()
 	sessionID := uuid.New().Generate()
 	clientID := "clientID"
-	fileds := types.Hash{"data": "here"}
+	fields := types.Hash{"data": "here"}
 	timestamp := int64(15)
 
-	visit, _ := entity.NewVisit(visitID, timestamp, sessionID, clientID, fileds)
+	visit, _ := entity.NewVisit(visitID, timestamp, sessionID, clientID, fields)
 
 	nested.On("Insert", visit).Return(nil)
 
@@ -118,11 +118,9 @@ func TestRepository_Insert(t *testing.T) {
 
 	err := checkRepository.Insert(visit)
 
-	_, okClientID := checkRepository.sessionToClient.Get(sessionID)
-	_, okSessionID := checkRepository.clientToSession.Get(clientID)
+	_, okClientID := checkRepository.cache.Get(sessionID)
 
 	assert.True(t, okClientID)
-	assert.True(t, okSessionID)
 	assert.Nil(t, err)
 	nested.AssertExpectations(t)
 }
