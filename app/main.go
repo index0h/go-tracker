@@ -177,7 +177,7 @@ func Run(config *Config, logger *logrus.Logger) {
 		}
 	}
 
-	visitManager := visit.NewManager(visitRepository, uuid, logger.WithField("service", "VisitManager"))
+	visitManager := visit.NewManager(visitRepository, uuid, logger)
 
 	eventRepository = eventDummy.NewRepository()
 
@@ -199,7 +199,7 @@ func Run(config *Config, logger *logrus.Logger) {
 		}
 	}
 
-	eventManager := event.NewManager(eventRepository, uuid, logger.WithField("service", "EventManager"))
+	eventManager := event.NewManager(eventRepository, uuid, logger)
 
 	flashRepository = flashDummy.NewRepository()
 
@@ -212,10 +212,9 @@ func Run(config *Config, logger *logrus.Logger) {
 		}
 	}
 
-	flashManager := flash.NewManager(flashRepository, uuid, logger.WithField("service", "FlashManager"))
+	flashManager := flash.NewManager(flashRepository, uuid, logger)
 
-	trackLogger := logger.WithField("service", "TrackManager")
-	trackManager := track.NewManager(visitManager, eventManager, flashManager, nil, uuid, trackLogger)
+	trackManager := track.NewManager(visitManager, eventManager, flashManager, nil, uuid, logger)
 
 	logger.Info("init thrift")
 
